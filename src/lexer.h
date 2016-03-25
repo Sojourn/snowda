@@ -1,5 +1,5 @@
-#ifndef SUNDOWN_LEXER_H
-#define SUNDOWN_LEXER_H
+#ifndef SNOWDA_LEXER_H
+#define SNOWDA_LEXER_H
 
 #define SNOWDA_TOKENS_KEYWORDS \
     X(Def, "def") \
@@ -116,4 +116,4 @@ namespace Snowda {
     };
 }
 
-#endif // SUNDOWN_LEXER_H
+#endif // SNOWDA_LEXER_H
