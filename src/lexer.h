@@ -57,6 +57,9 @@ namespace Snowda {
         size_t row;
         size_t col;
 
+        // TODO: Use this instead of a union
+        // StringView view;
+
         union {
             struct {
                 const char *begin;
