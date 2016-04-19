@@ -1,12 +1,5 @@
-#ifndef SNOWDA_FIXED_VECTOR_H
-#define SNOWDA_FIXED_VECTOR_H
-
-#include <limits>
-#include <utility>
-
-#include <cstdint>
-#include <cstddef>
-#include <cassert>
+#ifndef SNW_FIXED_VECTOR_H
+#define SNW_FIXED_VECTOR_H
 
 namespace Snowda {
 

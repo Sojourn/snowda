@@ -1,8 +1,5 @@
-#ifndef SNOWDA_VIEW_H
-#define SNOWDA_VIEW_H
-
-#include <cstring>
-#include <cassert>
+#ifndef SNW_VIEW_H
+#define SNW_VIEW_H
 
 namespace Snowda {
 
@@ -157,4 +154,4 @@ namespace Snowda {
 
 }
 
-#endif // SNOWDA_VIEW_H
+#endif // SNW_VIEW_H

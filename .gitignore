@@ -28,6 +28,6 @@
 *.app
 
 # Custom
-bin
+bld
 CMakeLists.txt.user
 

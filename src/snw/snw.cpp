@@ -1,4 +1,4 @@
-#include "snowda.h"
+#include "snw.h"
 
 using namespace Snowda;
 

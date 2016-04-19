@@ -2,14 +2,17 @@
 #define SNOWDA_LEXER_H
 
 #define SNOWDA_TOKENS_KEYWORDS \
-    X(Def, "def") \
-    X(Var, "var")
+    X(Import, "import") \
+    X(Def,    "def") \
+    X(Var,    "var") \
 
 #define SNOWDA_TOKENS_PUNCTUATION \
     X(Equal   , "==") \
     X(NEqual  , "!=") \
     X(GEqual  , ">=") \
     X(LEqual  , "<=") \
+    X(LShift  , "<<") \
+    X(RShift  , ">>") \
     X(Assign  , "=") \
     X(LABrace , "<") \
     X(RABrace , ">") \
@@ -30,6 +33,7 @@
     X(Minus   , "-") \
     X(Pound   , "#") \
     X(Semi    , ";") \
+    X(Colon   , ":") \
     X(Dot     , ".") \
     X(Comma   , ",")
 
@@ -53,28 +57,12 @@ namespace Snowda {
     StringView name(TokenType type);
 
     struct Token {
-        TokenType type;
-        size_t row;
-        size_t col;
+        TokenType  type;
+        StringView content;
+        size_t     row;
+        size_t     col;
 
-        // TODO: Use this instead of a union
-        // StringView view;
-
-        union {
-            struct {
-                const char *begin;
-                const char *end;
-            } string;
-
-            struct {
-                const char *begin;
-                const char *end;
-            } symbol;
-
-            struct {
-                const char *reason;
-            } error;
-        };
+        Token();
     };
     std::ostream &operator<<(std::ostream &os, const Token &token);
 

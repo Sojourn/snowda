@@ -1,18 +1,9 @@
-set(SNOWDA_HDRS
-    snowda.h
-    result.h
-    fixed_vector.h
-    heap.h
-    view.h
-    lexer.h
-    parser.h
-)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-set(SNOWDA_SRCS
-    snowda.cpp
-    heap.cpp
-    lexer.cpp
-    parser.cpp
-)
+add_subdirectory(libsnw_util)
+add_subdirectory(libsnw_compiler)
 
-add_executable(snowda ${SNOWDA_SRCS} ${SNOWDA_HDRS})
+add_subdirectory(snw)
+add_subdirectory(snw_tst)

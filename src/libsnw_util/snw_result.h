@@ -1,10 +1,5 @@
-#ifndef SNOWDA_RESULT_H
-#define SNOWDA_RESULT_H
-
-#include <type_traits>
-
-#include <cstdint>
-#include <cassert>
+#ifndef SNW_RESULT_H
+#define SNW_RESULT_H
 
 namespace Snowda {
 
@@ -98,4 +93,4 @@ namespace Snowda {
 
 }
 
-#endif // SNOWDA_RESULT_H
+#endif // SNW_RESULT_H

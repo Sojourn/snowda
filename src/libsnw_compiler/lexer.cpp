@@ -1,4 +1,4 @@
-#include "snowda.h"
+#include "snw_compiler.h"
 
 using namespace Snowda;
 
@@ -30,25 +30,21 @@ StringView Snowda::name(TokenType type)
     }
 }
 
+Token::Token()
+    : type(TokenType::Error)
+    , content("Uninitialized token")
+    , row(0)
+    , col(0)
+{
+}
+
 std::ostream &Snowda::operator<<(std::ostream &os, const Token &token)
 {
     os << "Token {\n";
-    os << "  type: " << name(token.type) << '\n';
-    os << "  row: " << token.row << '\n';
-    os << "  col: " << token.col << '\n';
-    switch (token.type) {
-    case TokenType::String:
-        os << "  value: " << StringView(token.string.begin, token.string.end) << '\n';
-        break;
-    case TokenType::Symbol:
-        os << "  value: " << StringView(token.symbol.begin, token.symbol.end) << '\n';
-        break;
-    case TokenType::Error:
-        os << "  value: " << StringView(token.error.reason) << '\n';
-        break;
-    default:
-        break;
-    }
+    os << "  type:    " << name(token.type) << '\n';
+    os << "  row:     " << token.row << '\n';
+    os << "  col:     " << token.col << '\n';
+    os << "  content: " << token.content << '\n';
     os << "}";
 
     return os;
@@ -170,7 +166,7 @@ bool Lexer::next(Token &token)
     }
     else {
         token.type = TokenType::Error;
-        token.error.reason = "Lexer unable to generate any tokens";
+        token.content = "Lexer unable to generate any tokens";
         return true;
     }
 }
@@ -202,6 +198,7 @@ bool Lexer::syntaxStage(LexerState &state, Token &token)
         if (str.startsWith(typeName)) {
             state.advance(typeName.size());
             token.type = type;
+            token.content = typeName;
             return true;
         }
     }
@@ -216,7 +213,7 @@ bool Lexer::symbolStage(LexerState &state, Token &token)
     token.type = TokenType::Symbol;
     token.row = state.row();
     token.col = state.col();
-    token.symbol.begin = state.begin();
+    auto begin = state.begin();
     if (alpha(state.next())) {
         while (!state.done()) {
             auto c = state.peek();
@@ -228,7 +225,8 @@ bool Lexer::symbolStage(LexerState &state, Token &token)
             }
         }
 
-        token.symbol.end = state.begin();
+        auto end = state.begin();
+        token.content = StringView(begin, end);
         return true;
     }
 
@@ -243,11 +241,12 @@ bool Lexer::stringStage(LexerState &state, Token &token)
     token.row = state.row();
     token.col = state.col();
     if (state.next() == '"') {
-        token.string.begin = state.begin();
+        auto begin = state.begin();
         while (!state.done()) {
             auto c = state.peek();
             if (c == '"') {
-                token.string.end = state.begin();
+                auto end = state.begin();
+                token.content = StringView(begin, end);
                 state.advance();
                 return true;
             }
