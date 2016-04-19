@@ -1,12 +1,12 @@
-#ifndef SNOWDA_LEXER_H
-#define SNOWDA_LEXER_H
+#ifndef SNW_LEXER_H
+#define SNW_LEXER_H
 
-#define SNOWDA_TOKENS_KEYWORDS \
+#define SNW_TOKENS_KEYWORDS \
     X(Import, "import") \
     X(Def,    "def") \
     X(Var,    "var") \
 
-#define SNOWDA_TOKENS_PUNCTUATION \
+#define SNW_TOKENS_PUNCTUATION \
     X(Equal   , "==") \
     X(NEqual  , "!=") \
     X(GEqual  , ">=") \
@@ -37,21 +37,21 @@
     X(Dot     , ".") \
     X(Comma   , ",")
 
-#define SNOWDA_TOKENS_OTHER \
+#define SNW_TOKENS_OTHER \
     X(String, "string") \
     X(Symbol, "symbol") \
     X(Error,  "error")
 
-#define SNOWDA_TOKENS \
-    SNOWDA_TOKENS_KEYWORDS \
-    SNOWDA_TOKENS_PUNCTUATION \
-    SNOWDA_TOKENS_OTHER
+#define SNW_TOKENS \
+    SNW_TOKENS_KEYWORDS \
+    SNW_TOKENS_PUNCTUATION \
+    SNW_TOKENS_OTHER
 
 namespace Snowda {
 
     enum class TokenType {
 #define X(xType, xName) xType,
-        SNOWDA_TOKENS
+        SNW_TOKENS
 #undef X
     };
     StringView name(TokenType type);
@@ -107,4 +107,4 @@ namespace Snowda {
     };
 }
 
-#endif // SNOWDA_LEXER_H
+#endif // SNW_LEXER_H

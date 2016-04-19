@@ -9,8 +9,8 @@
 
 #include "snw_util.h"
 
-#include "lexer.h"
-#include "parser.h"
+#include "snw_lexer.h"
+#include "snw_parser.h"
 
 namespace Snowda {
 }

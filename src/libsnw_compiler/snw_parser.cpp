@@ -1,0 +1,3 @@
+#include "snw_compiler.h"
+
+using namespace Snowda;

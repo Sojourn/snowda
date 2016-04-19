@@ -4,11 +4,11 @@ set(SNW_LIBS
 )
 
 set(SNW_HDRS
-    tst.h
+    snw_tst.h
 )
 
 set(SNW_SRCS
-    tst.cpp
+    snw_tst.cpp
 )
 
 add_executable(snw_tst ${SNW_HDRS} ${SNW_SRCS})

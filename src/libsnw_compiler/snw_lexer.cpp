@@ -24,7 +24,7 @@ StringView Snowda::name(TokenType type)
 {
     switch(type) {
 #define X(xType, xName) case TokenType::xType: return StringView(xName);
-    SNOWDA_TOKENS
+    SNW_TOKENS
 #undef X
         default: abort();
     }
@@ -185,8 +185,8 @@ bool Lexer::syntaxStage(LexerState &state, Token &token)
     // Longer tokens match first
     TokenType types[] = {
 #define X(xType, xName) TokenType::xType,
-    SNOWDA_TOKENS_KEYWORDS
-    SNOWDA_TOKENS_PUNCTUATION
+    SNW_TOKENS_KEYWORDS
+    SNW_TOKENS_PUNCTUATION
 #undef X
     };
 

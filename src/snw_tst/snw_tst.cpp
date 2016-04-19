@@ -1,4 +1,4 @@
-#include "tst.h"
+#include "snw_tst.h"
 
 int main(int argc, char **argv) {
     std::cout << "Hello, World!" << std::endl;

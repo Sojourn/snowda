@@ -3,13 +3,13 @@ set(SNW_LIBS
 )
 
 set(SNW_HDRS
-    lexer.h
-    parser.h
+    snw_lexer.h
+    snw_parser.h
 )
 
 set(SNW_SRCS
-    lexer.cpp
-    parser.cpp
+    snw_lexer.cpp
+    snw_parser.cpp
 )
 
 add_library(snw_compiler ${SNW_HDRS} ${SNW_SRCS})
