@@ -20,36 +20,6 @@ namespace {
     }
 }
 
-StringView Snowda::name(TokenType type)
-{
-    switch(type) {
-#define X(xType, xName) case TokenType::xType: return StringView(xName);
-    SNW_TOKENS
-#undef X
-        default: abort();
-    }
-}
-
-Token::Token()
-    : type(TokenType::Error)
-    , content("Uninitialized token")
-    , row(0)
-    , col(0)
-{
-}
-
-std::ostream &Snowda::operator<<(std::ostream &os, const Token &token)
-{
-    os << "Token {\n";
-    os << "  type:    " << name(token.type) << '\n';
-    os << "  row:     " << token.row << '\n';
-    os << "  col:     " << token.col << '\n';
-    os << "  content: " << token.content << '\n';
-    os << "}";
-
-    return os;
-}
-
 Lexer::Lexer(StringView src)
     : state_(src)
 {
@@ -136,12 +106,32 @@ void Lexer::LexerState::advance(size_t count)
     pos_ += count;
 }
 
-bool Lexer::next(Token &token)
+size_t Lexer::pos() const
+{
+    return state_.pos();
+}
+
+size_t Lexer::col() const
+{
+    return state_.col();
+}
+
+size_t Lexer::row() const
+{
+    return state_.row();
+}
+
+Token Lexer::next()
 {
     consumeWhitespace();
 
     if (state_.done()) {
-        return false;
+        Token token;
+        token.type = TokenType::Finished;
+        token.content = StringView();
+        token.col = col();
+        token.row = row();
+        return token;
     }
 
     using Stage = bool(*)(LexerState &, Token &);
@@ -153,22 +143,28 @@ bool Lexer::next(Token &token)
 
     for (auto stage: stages) {
         LexerState tmpState = state_;
-        Token tmpToken;
-        if (stage(tmpState, tmpToken)) {
+        Token token;
+        if (stage(tmpState, token)) {
             state_ = tmpState;
-            token = tmpToken;
-            return true;
+            return token;
         }
     }
 
+    Token token;
     if (state_.done()) {
-        return false;
+        token.type = TokenType::Finished;
+        token.content = StringView();
+        token.col = col();
+        token.row = row();
     }
     else {
         token.type = TokenType::Error;
         token.content = "Lexer unable to generate any tokens";
-        return true;
+        token.col = col();
+        token.row = row();
     }
+
+    return token;
 }
 
 void Lexer::consumeWhitespace()

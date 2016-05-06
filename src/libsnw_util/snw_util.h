@@ -15,7 +15,4 @@
 #include "snw_result.h"
 #include "snw_view.h"
 
-namespace Snowda {
-}
-
 #endif // SNW_UTIL_H

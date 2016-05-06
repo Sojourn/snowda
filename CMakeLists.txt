@@ -4,10 +4,10 @@ project(snowda)
 
 if(UNIX)
     set(SNOWDA_OS_POSIX TRUE)
-    add_definitions(-DSNOWDA_OS_POSIX)
+    add_definitions(-DSNW_OS_POSIX)
 elseif(WIN32)
     set(SNOWDA_OS_WIN32 TRUE)
-    add_definitions(-DSNOWDA_OS_WIN32)
+    add_definitions(-DSNW_OS_WIN32)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)

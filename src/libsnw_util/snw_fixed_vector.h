@@ -124,7 +124,14 @@ namespace Snowda {
 
     private:
         size_type_ size_;
-        alignas(alignof(T)) uint8_t buffer_[sizeof(T) * capacity_];
+
+		// FIXME: Alignment on windows
+#ifdef SNW_OS_WIN32
+		// FIXME: Variable alignment
+		__declspec(align(8)) uint8_t buffer_[sizeof(T) * capacity_];
+#else
+		alignof(alignas(T)) uint8_t buffer_[sizeof(T) * capacity_];
+#endif
     };
 
 }

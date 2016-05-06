@@ -47,7 +47,24 @@ namespace Snowda {
         }
 
         Result &operator=(const Result &) = delete;
-        Result &operator=(Result &&) = delete;
+        
+        Result &operator=(Result &&rhs)
+        {
+            if (this != &rhs) {
+                this->~Result();
+                type_ = rhs.type_;
+                switch (type_) {
+                case Type::ValueType:
+                    new (&value()) Value(std::move(rhs.value()));
+                    break;
+                case Type::ErrorType:
+                    new (&error()) Error(std::move(rhs.error()));
+                    break;
+                }
+            }
+
+            return *this;
+        }
 
         explicit operator bool() const
         {
@@ -79,6 +96,16 @@ namespace Snowda {
             }
         }
 
+        bool hasValue() const
+        {
+            return type_ == Type::ValueType;
+        }
+
+        bool hasError() const
+        {
+            return type_ == Type::ErrorType;
+        }
+
     private:
         enum class Type {
             ValueType,
@@ -86,8 +113,14 @@ namespace Snowda {
         } type_;
 
         union {
-            alignas(alignof(Value)) uint8_t value_[sizeof(Value)];
-            alignas(alignof(Error)) uint8_t error_[sizeof(Error)];
+#ifdef SNW_OS_WIN32
+			// FIXME: Variable alignment
+			__declspec(align(8)) uint8_t value_[sizeof(Value)];
+			__declspec(align(8)) uint8_t error_[sizeof(Error)];
+#else
+			alignas(alignof(Value)) uint8_t value_[sizeof(Value)];
+			alignas(alignof(Error)) uint8_t error_[sizeof(Error)];
+#endif
         } data_;
     };
 
