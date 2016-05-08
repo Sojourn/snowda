@@ -111,18 +111,42 @@ private:
         }
     }
 
-    int depth_;
+    size_t depth_;
 };
+
+template<int bp, UnaryOperator op>
+void prefix(Parser &parser, TokenType type) {
+    parser.add(type, [](Parser &parser) {
+        ParserResult result = parser.parseExpression(bp);
+        if (result.hasError()) {
+            return result;
+        }
+        else {
+            return std::make_unique<UnaryExpression>(op, std::move(result.value()));
+        }
+    });
+}
+
+template<int bp, BinaryOperator op>
+void infix(Parser &parser, TokenType type) {
+    parser.add(type, bp, [](Parser &parser, ExpressionPtr left) -> ParserResult {
+        ParserResult result = parser.parseExpression(bp);
+        if (result.hasError()) {
+            return result;
+        }
+        else {
+            return std::make_unique<BinaryExpression>(op, std::move(left), std::move(result.value()));
+        }
+    });
+}
 
 void testParser()
 {
-    NullDelimitedFunc identifier = [](Parser &parser) -> ParserResult {
-        return std::make_unique<IdentifierExpression>(parser.consume().content);
+    NullDelimitedFunc identifier = [](Parser &parser, Token token) -> ParserResult {
+        return std::make_unique<IdentifierExpression>(token.content);
     };
 
-	LeftDelimitedFunc addition = [](Parser &parser, ExpressionPtr left) -> ParserResult {
-		parser.consume(); // +
-		
+	LeftDelimitedFunc addition = [](Parser &parser, ExpressionPtr left, Token token) -> ParserResult {
 		ParserResult result = parser.parseExpression(BindingPower::Sum);
 		if (result.hasError()) {
 			return result;
@@ -132,9 +156,7 @@ void testParser()
 		}
 	};
 
-    NullDelimitedFunc plus = [](Parser &parser) -> ParserResult {
-        parser.consume(); // +
-
+    NullDelimitedFunc plus = [](Parser &parser, Token token) -> ParserResult {
         ParserResult result = parser.parseExpression(BindingPower::Unary);
         if (result.hasError()) {
             return result;
@@ -148,6 +170,8 @@ void testParser()
 
     Parser parser(lexer);
     parser.add(TokenType::Identifier, identifier);
+    // infix<BindingPower::Unary, UnaryOperator::Plus>(parser, TokenType::Plus);
+    // infix<BindingPower::Sum, BinaryOperator::Add>(parser, TokenType::Plus);
     parser.add(TokenType::Plus, plus);
 	parser.add(TokenType::Plus, BindingPower::Sum, addition);
 

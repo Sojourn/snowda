@@ -15,8 +15,8 @@ namespace Snowda {
     };
     using ParserResult = Result<Ast::ExpressionPtr, ParserError>;
 
-    using NullDelimitedFunc = ParserResult (*)(Parser &);
-    using LeftDelimitedFunc = ParserResult (*)(Parser &, Ast::ExpressionPtr);
+    using NullDelimitedFunc = ParserResult (*)(Parser &, Token);
+    using LeftDelimitedFunc = ParserResult (*)(Parser &, Ast::ExpressionPtr, Token);
 
     namespace BindingPower {
         enum {
@@ -47,19 +47,21 @@ namespace Snowda {
 
         ParserResult parseExpression(int bp)
         {
-            ParserResult result = currentSymbol().nud(*this);
+            Token token = consume();
+            ParserResult result = getSymbol(token.type).nud(*this, token);
             if (result.hasError()) {
                 return std::move(result);
             }
             else {
                 Ast::ExpressionPtr expr = std::move(result.value());
                 for (;;) {
-                    const Symbol &symbol = currentSymbol();
+                    token = consume();
+                    const Symbol &symbol = getSymbol(token.type);
                     if (bp >= symbol.bp) {
                         return std::move(expr);
                     }
                     else {
-                        result = symbol.led(*this, std::move(expr));
+                        result = symbol.led(*this, std::move(expr), token);
                         if (result.hasError()) {
                             return std::move(result);
                         }
@@ -98,11 +100,6 @@ namespace Snowda {
             return token;
         }
 
-        const Symbol &currentSymbol()
-        {
-            return getSymbol(currentToken().type);
-        }
-
         void add(TokenType key, NullDelimitedFunc nud)
         {
             Symbol &symbol = getSymbol(key);
@@ -121,10 +118,10 @@ namespace Snowda {
         {
             auto it = symbols_.find(key);
             if (it == symbols_.end()) {
-                const NullDelimitedFunc defaultNud = [](Parser &parser) -> ParserResult {
+                const NullDelimitedFunc defaultNud = [](Parser &parser, Token token) -> ParserResult {
                     return ParserError(parser, "No null delimited parselet");
                 };
-                const LeftDelimitedFunc defaultLed = [](Parser &parser, Ast::ExpressionPtr expr) -> ParserResult {
+                const LeftDelimitedFunc defaultLed = [](Parser &parser, Ast::ExpressionPtr expr, Token token) -> ParserResult {
                     return ParserError(parser, "No left delimited parselet");
                 };
 
