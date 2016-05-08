@@ -3,6 +3,19 @@
 
 namespace Snowda {
 
+    namespace BindingPower {
+        enum {
+            None       = 0,
+            Assignment = 10,
+            Logical    = 20,
+            Relational = 30,
+            Sum        = 40,
+            Product    = 50,
+            Unary      = 60,
+            Call       = 70,
+        };
+    }
+
     template<TokenType type>
     struct LookupUnaryOperator;
 
