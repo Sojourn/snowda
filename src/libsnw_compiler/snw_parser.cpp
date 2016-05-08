@@ -10,6 +10,13 @@ ParserError::ParserError(Parser &parser, StringView message)
 {
 }
 
+ParserError::ParserError(Token token, StringView message)
+    : message(message)
+    , row(token.row)
+    , col(token.col)
+{
+}
+
 Parser::Parser(Lexer &lexer)
     : stream_(lexer)
 {

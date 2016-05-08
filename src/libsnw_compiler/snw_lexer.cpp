@@ -139,6 +139,8 @@ Token Lexer::next()
         &Lexer::syntaxStage,
         &Lexer::identifierStage,
         &Lexer::stringStage,
+        &Lexer::characterStage,
+        &Lexer::numberStage,
     };
 
     for (auto stage: stages) {
@@ -250,6 +252,66 @@ bool Lexer::stringStage(LexerState &state, Token &token)
                 state.advance();
             }
         }
+    }
+
+    return false;
+}
+
+bool Lexer::characterStage(LexerState &state, Token &token)
+{
+    assert(!state.done());
+
+    token.type = TokenType::Character;
+    token.row = state.row();
+    token.col = state.col();
+    if (state.next() == '\'') {
+        auto begin = state.begin();
+        state.next();
+        auto end = state.begin();
+        if (state.next() == '\'') {
+            token.content = StringView(begin, end);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Numbers start with a digit and end with ![A-Za-z0-9.]
+// TODO: Rules that parse and categorize types of numbers
+// 10
+// 10u8
+// 10u32
+// 10f
+// 10.0f
+// 0.0f
+// 0xaf3
+// 10s
+// 10ms
+// 10us
+// 10ns
+bool Lexer::numberStage(LexerState &state, Token &token)
+{
+    assert(!state.done());
+
+    token.type = TokenType::Number;
+    token.row = state.row();
+    token.col = state.col();
+    auto begin = state.begin();
+    if (digit(state.next())) {
+        while (!state.done()) {
+            auto c = state.peek();
+            if (alpha(c) || digit(c) || (c == '.')) {
+                state.advance();
+            }
+            else {
+                break;
+            }
+        }
+
+        auto end = state.begin();
+        token.content = StringView(begin, end);
+        return true;
     }
 
     return false;

@@ -12,8 +12,9 @@ namespace Snowda {
         size_t     col;
 
         ParserError(Parser &parser, StringView message);
+        ParserError(Token token, StringView message);
     };
-    
+
     using ParserResult = Result<Ast::ExpressionPtr, ParserError>;
     using NullDelimitedFunc = ParserResult (*)(Parser &, Token);
     using LeftDelimitedFunc = ParserResult (*)(Parser &, Ast::ExpressionPtr, Token);

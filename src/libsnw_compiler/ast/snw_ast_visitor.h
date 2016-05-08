@@ -3,21 +3,25 @@
 
 namespace Snowda {
     namespace Ast {
-        class LiteralExpression;
+        class NumberExpression;
+        class CharacterExpression;
+        class StringExpression;
+        class IdentifierExpression;
         class UnaryExpression;
         class BinaryExpression;
-        class IdentifierExpression;
         class ConditionalExpression;
 
         class Visitor {
         public:
             virtual ~Visitor() {}
 
-            virtual void visit(const LiteralExpression &node) {}
-            virtual void visit(const UnaryExpression &node) {}
-            virtual void visit(const BinaryExpression &node) {}
-            virtual void visit(const IdentifierExpression &node) {}
-            virtual void visit(const ConditionalExpression &node) {}
+            virtual void visit(const NumberExpression &expr) {}
+            virtual void visit(const CharacterExpression &expr) {}
+            virtual void visit(const StringExpression &expr) {}
+            virtual void visit(const IdentifierExpression &expr) {}
+            virtual void visit(const UnaryExpression &expr) {}
+            virtual void visit(const BinaryExpression &expr) {}
+            virtual void visit(const ConditionalExpression &expr) {}
         };
     }
 }

@@ -94,9 +94,10 @@ namespace Snowda {
             const ExpressionPtr rhs_;
         };
 
-        class LiteralExpression : public Expression {
+        // FIXME: Need a Number class to hold the value
+        class NumberExpression : public Expression {
         public:
-            LiteralExpression(int value);
+            NumberExpression(int value);
 
             int value() const;
 
@@ -104,6 +105,31 @@ namespace Snowda {
 
         private:
             const int value_;
+        };
+
+        // FIXME: Need a Character (utf8) class to hold the value
+        class CharacterExpression : public Expression {
+        public:
+            CharacterExpression(char value);
+
+            char value() const;
+
+            virtual void accept(Visitor &visitor) const;
+
+        private:
+            const char value_;
+        };
+
+        class StringExpression : public Expression {
+        public:
+            StringExpression(StringView value);
+
+            const StringView &value() const;
+
+            virtual void accept(Visitor &visitor) const;
+
+        private:
+            const StringView value_;
         };
 
     }

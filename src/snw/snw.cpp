@@ -59,11 +59,23 @@ public:
     {
     }
 
-    virtual void visit(const LiteralExpression &node)
+    virtual void visit(const NumberExpression &node)
     {
         pad();
-        std::cout << "LiteralExpression value:" << node.value() << std::endl;
+        std::cout << "NumberExpression value:" << node.value() << std::endl;
     }
+
+	virtual void visit(const CharacterExpression &node)
+	{
+		pad();
+		std::cout << "CharacterExpression value:" << node.value() << std::endl;
+	}
+
+	virtual void visit(const StringExpression &node)
+	{
+		pad();
+		std::cout << "StringExpression value:" << node.value() << std::endl;
+	}
 
     virtual void visit(const UnaryExpression &node)
     {
@@ -114,66 +126,18 @@ private:
     size_t depth_;
 };
 
-template<int bp, UnaryOperator op>
-void prefix(Parser &parser, TokenType type) {
-    parser.add(type, [](Parser &parser) {
-        ParserResult result = parser.parseExpression(bp);
-        if (result.hasError()) {
-            return result;
-        }
-        else {
-            return std::make_unique<UnaryExpression>(op, std::move(result.value()));
-        }
-    });
-}
-
-template<int bp, BinaryOperator op>
-void infix(Parser &parser, TokenType type) {
-    parser.add(type, bp, [](Parser &parser, ExpressionPtr left) -> ParserResult {
-        ParserResult result = parser.parseExpression(bp);
-        if (result.hasError()) {
-            return result;
-        }
-        else {
-            return std::make_unique<BinaryExpression>(op, std::move(left), std::move(result.value()));
-        }
-    });
-}
-
 void testParser()
 {
     NullDelimitedFunc identifier = [](Parser &parser, Token token) -> ParserResult {
         return std::make_unique<IdentifierExpression>(token.content);
     };
 
-	LeftDelimitedFunc addition = [](Parser &parser, ExpressionPtr left, Token token) -> ParserResult {
-		ParserResult result = parser.parseExpression(BindingPower::Sum);
-		if (result.hasError()) {
-			return result;
-		}
-		else {
-			return std::make_unique<BinaryExpression>(BinaryOperator::Add, std::move(left), std::move(result.value()));
-		}
-	};
-
-    NullDelimitedFunc plus = [](Parser &parser, Token token) -> ParserResult {
-        ParserResult result = parser.parseExpression(BindingPower::Unary);
-        if (result.hasError()) {
-            return result;
-        }
-        else {
-            return std::make_unique<UnaryExpression>(UnaryOperator::Plus, std::move(result.value()));
-        }
-    };
 
     Lexer lexer("a ++ a");
-
     Parser parser(lexer);
     parser.add(TokenType::Identifier, identifier);
-    // infix<BindingPower::Unary, UnaryOperator::Plus>(parser, TokenType::Plus);
-    // infix<BindingPower::Sum, BinaryOperator::Add>(parser, TokenType::Plus);
-    parser.add(TokenType::Plus, plus);
-	parser.add(TokenType::Plus, BindingPower::Sum, addition);
+    prefix<TokenType::Plus, BindingPower::Unary, UnaryOperator::Plus>(parser);
+    infix<TokenType::Plus, BindingPower::Sum, BinaryOperator::Add>(parser);
 
     ParserResult result = parser.parseExpression(0);
     if (result.hasValue()) {

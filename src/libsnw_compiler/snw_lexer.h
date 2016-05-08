@@ -42,6 +42,8 @@ namespace Snowda {
         static bool syntaxStage(LexerState &state, Token &token);
         static bool identifierStage(LexerState &state, Token &token);
         static bool stringStage(LexerState &state, Token &token);
+        static bool characterStage(LexerState &state, Token &token);
+        static bool numberStage(LexerState &state, Token &token);
 
     private:
         LexerState state_;

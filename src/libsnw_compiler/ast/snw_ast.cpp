@@ -107,17 +107,47 @@ void BinaryExpression::accept(Visitor &visitor) const
     visitor.visit(*this);
 }
 
-LiteralExpression::LiteralExpression(int value)
+NumberExpression::NumberExpression(int value)
     : value_(value)
 {
 }
 
-int LiteralExpression::value() const
+int NumberExpression::value() const
 {
     return value_;
 }
 
-void LiteralExpression::accept(Visitor &visitor) const
+void NumberExpression::accept(Visitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
+CharacterExpression::CharacterExpression(char value)
+    : value_(value)
+{
+}
+
+char CharacterExpression::value() const
+{
+    return value_;
+}
+
+void CharacterExpression::accept(Visitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
+StringExpression::StringExpression(StringView value)
+    : value_(value)
+{
+}
+
+const StringView &StringExpression::value() const
+{
+    return value_;
+}
+
+void StringExpression::accept(Visitor &visitor) const
 {
     visitor.visit(*this);
 }

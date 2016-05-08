@@ -16,24 +16,30 @@ namespace Snowda {
         };
     }
 
-    template<TokenType type>
-    struct LookupUnaryOperator;
-
-    template<TokenType type>
-    struct LookupBinaryOperator;
-
-    template<TokenType type, int bp>
-    NullDelimitedFunc prefix() {
-        return [](Parser &parser) -> ParserResult {
-            return ParserError(parser, "Not implemented");
-        };
+    template<TokenType type, int bp, Ast::UnaryOperator op>
+    void prefix(Parser &parser) {
+        parser.add(type, [](Parser &parser, Token token) -> ParserResult {
+            ParserResult result = parser.parseExpression(bp);
+            if (result.hasError()) {
+                return result;
+            }
+            else {
+                return std::make_unique<UnaryExpression>(op, std::move(result.value()));
+            }
+        });
     }
 
-    template<TokenType type, int bp>
-    LeftDelimitedFunc infix() {
-        return [](Parser &parser) -> ParserResult {
-            return ParserError(parser, "Not implemented");
-        };
+    template<TokenType type, int bp, Ast::BinaryOperator op>
+    void infix(Parser &parser) {
+        parser.add(type, bp, [](Parser &parser, ExpressionPtr left, Token token) -> ParserResult {
+            ParserResult result = parser.parseExpression(bp);
+            if (result.hasError()) {
+                return result;
+            }
+            else {
+                return std::make_unique<BinaryExpression>(op, std::move(left), std::move(result.value()));
+            }
+        });
     }
 
 }

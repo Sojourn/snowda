@@ -39,6 +39,8 @@
     X(Comma   , ",")
 
 #define SNW_TOKENS_OTHER \
+    X(Number,     "number") \
+    X(Character,  "character") \
     X(String,     "string") \
     X(Identifier, "identifier") \
     X(Finished,   "finished") \
