@@ -5,38 +5,39 @@ namespace Snowda {
     namespace Ast {
         class Visitor;
 
-        class Node {
+        enum class UnaryOperator {
+            Plus  = '+',
+            Minus = '-',
+            Tilde = '~',
+            Bang  = '!',
+        };
+
+        enum class BinaryOperator {
+            Add = '+',
+            Sub = '-',
+            Mul = '*',
+            Div = '/',
+            Mod = '%',
+
+            Or = '|',
+            XOr = '^',
+            And = '&',
+
+            LeftShift = 0,  // FIXME
+            RightShift = 1, // FIXME
+        };
+
+        class Expression {
         public:
-            virtual ~Node() {}
+            virtual ~Expression() {}
 
             virtual void accept(Visitor &visitor) const = 0;
         };
-        using NodePtr = std::unique_ptr<Node>;
-
-        class Statement : public Node {
-        };
-        using StatementPtr = std::unique_ptr<Statement>;
-
-        class CompoundStatement : public Node {
-        public:
-            CompoundStatement(std::vector<StatementPtr> stmts);
-
-            const std::vector<StatementPtr> &stmts() const;
-
-            virtual void accept(Visitor &visitor) const;
-
-        private:
-            const std::vector<StatementPtr> stmts_;
-        };
-        using CompoundStatementPtr = std::unique_ptr<CompoundStatement>;
-
-        class Expression : public Statement {
-        };
         using ExpressionPtr = std::unique_ptr<Expression>;
 
-        class SymbolExpression : public Expression {
+        class IdentifierExpression : public Expression {
         public:
-            SymbolExpression(StringView name);
+            IdentifierExpression(StringView name);
 
             StringView name() const;
 
@@ -48,23 +49,19 @@ namespace Snowda {
 
         class ConditionalExpression : public Expression {
         public:
-            ConditionalExpression(StatementPtr cond, StatementPtr taken);
-            ConditionalExpression(StatementPtr cond, StatementPtr taken, StatementPtr notTaken);
+            ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr);
+            ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr, ExpressionPtr elseExpr);
+
+            const ExpressionPtr &condExpr() const;
+            const ExpressionPtr &thenExpr() const;
+            const ExpressionPtr &elseExpr() const; // FIXME: Optional
 
             virtual void accept(Visitor &visitor) const;
 
         private:
-            const StatementPtr cond_;
-            const StatementPtr taken_;
-            const StatementPtr notTaken_;
-        };
-        using ConditionalExpressionPtr = std::unique_ptr<ConditionalExpression>;
-
-        enum class UnaryOperator {
-            Plus  = static_cast<size_t>(TokenType::Plus),
-            Minus = static_cast<size_t>(TokenType::Minus),
-            Tilde = static_cast<size_t>(TokenType::Tilde),
-            Bang  = static_cast<size_t>(TokenType::Bang),
+            const ExpressionPtr cond_;
+            const ExpressionPtr then_;
+            const ExpressionPtr else_;
         };
 
         class UnaryExpression : public Expression {
@@ -79,21 +76,6 @@ namespace Snowda {
         private:
             const UnaryOperator op_;
             const ExpressionPtr expr_;
-        };
-
-        enum class BinaryOperator {
-            Add,
-            Sub,
-            Mul,
-            Div,
-            Mod,
-
-            Or,
-            XOr,
-            And,
-
-            LeftShift,
-            RightShift,
         };
 
         class BinaryExpression : public Expression {
@@ -111,7 +93,6 @@ namespace Snowda {
             const ExpressionPtr lhs_;
             const ExpressionPtr rhs_;
         };
-        using BinaryExpressionPtr = std::unique_ptr<BinaryExpression>;
 
         class LiteralExpression : public Expression {
         public:
@@ -124,7 +105,6 @@ namespace Snowda {
         private:
             const int value_;
         };
-        using LiteralExpressionPtr = std::unique_ptr<LiteralExpression>;
 
     }
 }

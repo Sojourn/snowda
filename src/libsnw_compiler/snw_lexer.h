@@ -40,7 +40,7 @@ namespace Snowda {
 
         void consumeWhitespace();
         static bool syntaxStage(LexerState &state, Token &token);
-        static bool symbolStage(LexerState &state, Token &token);
+        static bool identifierStage(LexerState &state, Token &token);
         static bool stringStage(LexerState &state, Token &token);
 
     private:

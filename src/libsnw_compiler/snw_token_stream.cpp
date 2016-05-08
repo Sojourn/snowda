@@ -2,7 +2,7 @@
 
 using namespace Snowda;
 
-TokenStream::TokenStream(Lexer lexer)
+TokenStream::TokenStream(Lexer &lexer)
     : lexer_(lexer)
     , head_(0)
     , tail_(0)

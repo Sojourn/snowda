@@ -137,7 +137,7 @@ Token Lexer::next()
     using Stage = bool(*)(LexerState &, Token &);
     Stage stages[] = {
         &Lexer::syntaxStage,
-        &Lexer::symbolStage,
+        &Lexer::identifierStage,
         &Lexer::stringStage,
     };
 
@@ -202,11 +202,11 @@ bool Lexer::syntaxStage(LexerState &state, Token &token)
     return false;
 }
 
-bool Lexer::symbolStage(LexerState &state, Token &token)
+bool Lexer::identifierStage(LexerState &state, Token &token)
 {
     assert(!state.done());
 
-    token.type = TokenType::Symbol;
+    token.type = TokenType::Identifier;
     token.row = state.row();
     token.col = state.col();
     auto begin = state.begin();

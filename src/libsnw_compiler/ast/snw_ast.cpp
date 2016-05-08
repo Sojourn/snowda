@@ -3,66 +3,57 @@
 using namespace Snowda;
 using namespace Snowda::Ast;
 
-
-CompoundStatement::CompoundStatement(std::vector<StatementPtr> stmts)
-    : stmts_(std::move(stmts))
-{
-}
-
-const std::vector<StatementPtr> &CompoundStatement::stmts() const
-{
-    return stmts_;
-}
-
-void CompoundStatement::accept(Visitor &visitor) const
-{
-    visitor.visit(*this);
-    for (auto &stmt: stmts_) {
-        stmt->accept(visitor);
-    }
-}
-
-SymbolExpression::SymbolExpression(StringView name)
+IdentifierExpression::IdentifierExpression(StringView name)
     : name_(name)
 {
 }
 
-StringView SymbolExpression::name() const
+StringView IdentifierExpression::name() const
 {
     return name_;
 }
 
-void SymbolExpression::accept(Visitor &visitor) const
+void IdentifierExpression::accept(Visitor &visitor) const
 {
     visitor.visit(*this);
 }
 
-ConditionalExpression::ConditionalExpression(StatementPtr cond, StatementPtr taken)
-    : cond_(std::move(cond))
-    , taken_(std::move(taken))
+ConditionalExpression::ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr)
+    : cond_(std::move(condExpr))
+    , then_(std::move(thenExpr))
 {
     assert(cond_);
-    assert(taken_);
+    assert(then_);
 }
 
-ConditionalExpression::ConditionalExpression(StatementPtr cond, StatementPtr taken, StatementPtr notTaken)
-    : cond_(std::move(cond))
-    , taken_(std::move(taken))
-    , notTaken_(std::move(notTaken))
+ConditionalExpression   ::ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr, ExpressionPtr elseExpr)
+    : cond_(std::move(condExpr))
+    , then_(std::move(thenExpr))
+    , else_(std::move(elseExpr))
 {
     assert(cond_);
-    assert(taken_);
-    assert(notTaken_);
+    assert(then_);
+    assert(else_);
+}
+
+const ExpressionPtr &ConditionalExpression::condExpr() const
+{
+    return cond_;
+}
+
+const ExpressionPtr &ConditionalExpression::thenExpr() const
+{
+    return then_;
+}
+
+const ExpressionPtr &ConditionalExpression::elseExpr() const
+{
+    return else_;
 }
 
 void ConditionalExpression::accept(Visitor &visitor) const
 {
     visitor.visit(*this);
-    cond_->accept(visitor);
-    taken_->accept(visitor);
-    if (notTaken_) {
-        notTaken_->accept(visitor);
-    }
 }
 
 UnaryExpression::UnaryExpression(UnaryOperator op, ExpressionPtr expr)
@@ -85,7 +76,6 @@ const ExpressionPtr &UnaryExpression::expr() const
 void UnaryExpression::accept(Visitor &visitor) const
 {
     visitor.visit(*this);
-    expr_->accept(visitor);
 }
 
 BinaryExpression::BinaryExpression(BinaryOperator op, ExpressionPtr lhs, ExpressionPtr rhs)
@@ -115,8 +105,6 @@ const ExpressionPtr &BinaryExpression::rhs() const
 void BinaryExpression::accept(Visitor &visitor) const
 {
     visitor.visit(*this);
-    lhs_->accept(visitor);
-    rhs_->accept(visitor);
 }
 
 LiteralExpression::LiteralExpression(int value)

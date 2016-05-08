@@ -20,5 +20,6 @@
 #include "ast/snw_ast.h"
 #include "ast/snw_ast_visitor.h"
 #include "snw_parser.h"
+#include "snw_parser_util.h"
 
 #endif // SNW_COMPILER_H

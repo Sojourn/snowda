@@ -38,10 +38,10 @@ void testTokenStream()
 
     checkpoint();
     checkNext(TokenType::LParen);
-    checkNext(TokenType::Symbol);
+    checkNext(TokenType::Identifier);
     checkpoint();
-    checkNext(TokenType::Symbol);
-    checkNext(TokenType::Symbol);
+    checkNext(TokenType::Identifier);
+    checkNext(TokenType::Identifier);
     checkNext(TokenType::RParen);
     checkpoint();
     checkNext(TokenType::Semi);
@@ -52,18 +52,110 @@ void testTokenStream()
     checkpoint();
 }
 
+struct Printer : public Visitor {
+public:
+    Printer()
+        : depth_(0)
+    {
+    }
+
+    virtual void visit(const LiteralExpression &node)
+    {
+        pad();
+        std::cout << "LiteralExpression value:" << node.value() << std::endl;
+    }
+
+    virtual void visit(const UnaryExpression &node)
+    {
+        pad();
+        std::cout << "UnaryExpression op:" << (char)node.op() << std::endl;
+        depth_ += 1;
+        node.expr()->accept(*this);
+        depth_ -= 1;
+    }
+
+    virtual void visit(const BinaryExpression &node)
+    {
+        pad();
+        std::cout << "BinaryExpression op:" << (char)node.op() << std::endl;
+        depth_ += 1;
+        node.lhs()->accept(*this);
+        node.rhs()->accept(*this);
+        depth_ -= 1;
+    }
+
+    virtual void visit(const IdentifierExpression &node)
+    {
+        pad();
+        std::cout << "IdentifierExpression name:" << node.name() << std::endl;
+    }
+
+    virtual void visit(const ConditionalExpression &node)
+    {
+        pad();
+        std::cout << "ConditionalExpression" << std::endl;
+        depth_ += 1;
+        node.condExpr()->accept(*this);
+        node.thenExpr()->accept(*this);
+        if (node.elseExpr()) {
+            node.elseExpr()->accept(*this);
+        }
+        depth_ -= 1;
+    }
+
+private:
+    void pad() const
+    {
+        for (size_t i = 0; i < depth_; ++i) {
+            std::cout << "  ";
+        }
+    }
+
+    int depth_;
+};
+
 void testParser()
 {
-    PrefixParselet symbolParselet = [](Parser &parser, Token token) {
-        return std::make_unique<SymbolExpression>(token.content);
+    NullDelimitedFunc identifier = [](Parser &parser) -> ParserResult {
+        return std::make_unique<IdentifierExpression>(parser.consume().content);
     };
 
-    Parser parser(Lexer("1"));
-    parser.add(TokenType::Symbol, 0, symbolParselet);
+	LeftDelimitedFunc addition = [](Parser &parser, ExpressionPtr left) -> ParserResult {
+		parser.consume(); // +
+		
+		ParserResult result = parser.parseExpression(BindingPower::Sum);
+		if (result.hasError()) {
+			return result;
+		}
+		else {
+			return std::make_unique<BinaryExpression>(BinaryOperator::Add, std::move(left), std::move(result.value()));
+		}
+	};
 
-    ParserResult result = parser.parse(0);
+    NullDelimitedFunc plus = [](Parser &parser) -> ParserResult {
+        parser.consume(); // +
+
+        ParserResult result = parser.parseExpression(BindingPower::Unary);
+        if (result.hasError()) {
+            return result;
+        }
+        else {
+            return std::make_unique<UnaryExpression>(UnaryOperator::Plus, std::move(result.value()));
+        }
+    };
+
+    Lexer lexer("a ++ a");
+
+    Parser parser(lexer);
+    parser.add(TokenType::Identifier, identifier);
+    parser.add(TokenType::Plus, plus);
+	parser.add(TokenType::Plus, BindingPower::Sum, addition);
+
+    ParserResult result = parser.parseExpression(0);
     if (result.hasValue()) {
         std::cout << "Parse succceeded" << std::endl;
+		Printer printer;
+		result.value()->accept(printer);
     }
     else {
         ParserError error = result.error();

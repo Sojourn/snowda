@@ -5,7 +5,7 @@ namespace Snowda {
 
     class TokenStream {
     public:
-        explicit TokenStream(Lexer lexer);
+        explicit TokenStream(Lexer &lexer);
 
         size_t pos() const;
         size_t row() const;
@@ -21,7 +21,7 @@ namespace Snowda {
         };
 
         std::array<Token, size> buffer_;
-        Lexer  lexer_;
+        Lexer &lexer_;
         size_t head_;
         size_t tail_;
     };

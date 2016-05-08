@@ -3,40 +3,144 @@
 
 namespace Snowda {
 
+    class Parser;
+    class Parselet;
+
     struct ParserError {
         StringView message;
         size_t     row;
         size_t     col;
 
-        ParserError(const TokenStream &stream, StringView message);
+        ParserError(Parser &parser, StringView message);
     };
     using ParserResult = Result<Ast::ExpressionPtr, ParserError>;
 
-    class Parser;
+    using NullDelimitedFunc = ParserResult (*)(Parser &);
+    using LeftDelimitedFunc = ParserResult (*)(Parser &, Ast::ExpressionPtr);
 
-    using PrefixParselet = std::function<ParserResult(Parser &, Token)>;
-    using InfixParselet = std::function<ParserResult(Parser &, Ast::ExpressionPtr, Token)>;
+    namespace BindingPower {
+        enum {
+            None       = 0,
+            Assignment = 10,
+            Logical    = 20,
+            Relational = 30,
+            Sum        = 40,
+            Product    = 50,
+            Unary      = 60,
+            Call       = 70,
+        };
+    }
+
+    struct Symbol {
+        int               bp;
+        NullDelimitedFunc nud;
+        LeftDelimitedFunc led;
+    };
 
     class Parser {
         friend class ParserState;
     public:
-        explicit Parser(Lexer lexer);
+        explicit Parser(Lexer &lexer)
+            : stream_(lexer)
+        {
+        }
 
-        ParserResult parse(int precedence);
+        ParserResult parseExpression(int bp)
+        {
+            ParserResult result = currentSymbol().nud(*this);
+            if (result.hasError()) {
+                return std::move(result);
+            }
+            else {
+                Ast::ExpressionPtr expr = std::move(result.value());
+                for (;;) {
+                    const Symbol &symbol = currentSymbol();
+                    if (bp >= symbol.bp) {
+                        return std::move(expr);
+                    }
+                    else {
+                        result = symbol.led(*this, std::move(expr));
+                        if (result.hasError()) {
+                            return std::move(result);
+                        }
+                        else {
+                            expr = std::move(result.value());
+                        }
+                    }
+                }
+            }
+        }
 
-        void add(TokenType key, int precedence, PrefixParselet parselet);
-        void add(TokenType key, int precedence, InfixParselet parselet);
+        int row()
+        {
+            return currentToken().row;
+        }
 
-	private:
-		int getPrecedence();
+        int col()
+        {
+            return currentToken().col;
+        }
+
+        Token currentToken()
+        {
+            return stream_[0];
+        }
+
+        Token next()
+        {
+            return stream_[1];
+        }
+
+        Token consume()
+        {
+            const Token token = currentToken();
+            stream_.advance(1);
+            return token;
+        }
+
+        const Symbol &currentSymbol()
+        {
+            return getSymbol(currentToken().type);
+        }
+
+        void add(TokenType key, NullDelimitedFunc nud)
+        {
+            Symbol &symbol = getSymbol(key);
+            symbol.nud = nud;
+        }
+
+        void add(TokenType key, int bp, LeftDelimitedFunc led)
+        {
+            Symbol &symbol = getSymbol(key);
+            symbol.bp = bp;
+            symbol.led = led;
+        }
 
     private:
-		using PrefixParseletMap = std::map<TokenType, std::tuple<int, PrefixParselet>>;
-		using InfixParseletMap = std::map<TokenType, std::tuple<int, InfixParselet>>;
+        Symbol &getSymbol(TokenType key)
+        {
+            auto it = symbols_.find(key);
+            if (it == symbols_.end()) {
+                const NullDelimitedFunc defaultNud = [](Parser &parser) -> ParserResult {
+                    return ParserError(parser, "No null delimited parselet");
+                };
+                const LeftDelimitedFunc defaultLed = [](Parser &parser, Ast::ExpressionPtr expr) -> ParserResult {
+                    return ParserError(parser, "No left delimited parselet");
+                };
 
+                Symbol symbol;
+                symbol.bp = BindingPower::None;
+                symbol.nud = defaultNud;
+                symbol.led = defaultLed;
+                std::tie(it, std::ignore) = symbols_.insert(std::make_pair(key, symbol));
+            }
+
+            return it->second;
+        }
+
+    private:
         TokenStream stream_;
-        PrefixParseletMap prefixParselets_;
-        InfixParseletMap infixParselets_;
+        std::map<TokenType, Symbol> symbols_;
     };
 
 }

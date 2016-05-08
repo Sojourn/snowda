@@ -39,10 +39,10 @@
     X(Comma   , ",")
 
 #define SNW_TOKENS_OTHER \
-    X(String,   "string") \
-    X(Symbol,   "symbol") \
-    X(Finished, "finished") \
-    X(Error,    "error")
+    X(String,     "string") \
+    X(Identifier, "identifier") \
+    X(Finished,   "finished") \
+    X(Error,      "error")
 
 #define SNW_TOKENS \
     SNW_TOKENS_KEYWORDS \
