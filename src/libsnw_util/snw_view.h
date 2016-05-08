@@ -141,13 +141,17 @@ namespace Snowda {
                 return false;
             }
             else {
-                for (size_t i = 0; i < other.size(); ++i) {
-                    if ((*this)[i] != other[i]) {
-                        return false;
-                    }
-                }
+                return memcmp(&(*this)[0], &other[0], other.size()) == 0;
+            }
+        }
 
-                return true;
+        bool endsWith(StringView other)
+        {
+            if (size() < other.size()) {
+                return false;
+            }
+            else {
+                return memcmp(&(*this)[size() - other.size()], &other[0], other.size()) == 0;
             }
         }
     };
