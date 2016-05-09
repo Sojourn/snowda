@@ -4,16 +4,6 @@
 namespace Snowda {
 
     class Parser;
-    class Parselet;
-
-    struct ParserError {
-        StringView message;
-        size_t     row;
-        size_t     col;
-
-        ParserError(Parser &parser, StringView message);
-        ParserError(Token token, StringView message);
-    };
 
     using ParserResult = Result<Ast::ExpressionPtr, ParserError>;
     using NullDelimitedFunc = ParserResult (*)(Parser &, Token);

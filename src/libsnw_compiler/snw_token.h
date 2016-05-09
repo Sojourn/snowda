@@ -57,6 +57,7 @@ namespace Snowda {
 #define X(xType, xName) xType,
         SNW_TOKENS
 #undef X
+        Count,
     };
 
     struct Token {

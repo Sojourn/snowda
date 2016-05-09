@@ -3,20 +3,6 @@
 using namespace Snowda;
 using namespace Snowda::Ast;
 
-ParserError::ParserError(Parser &parser, StringView message)
-    : message(message)
-    , row(parser.row())
-    , col(parser.col())
-{
-}
-
-ParserError::ParserError(Token token, StringView message)
-    : message(message)
-    , row(token.row)
-    , col(token.col)
-{
-}
-
 Parser::Parser(Lexer &lexer)
     : stream_(lexer)
 {
@@ -95,10 +81,10 @@ Parser::Symbol &Parser::getSymbol(TokenType key)
     auto it = symbols_.find(key);
     if (it == symbols_.end()) {
         const NullDelimitedFunc defaultNud = [](Parser &parser, Token token) -> ParserResult {
-            return ParserError(parser, "No null delimited parselet");
+            return ParserError(token, "No null delimited parselet");
         };
         const LeftDelimitedFunc defaultLed = [](Parser &parser, Ast::ExpressionPtr expr, Token token) -> ParserResult {
-            return ParserError(parser, "No left delimited parselet");
+            return ParserError(token, "No left delimited parselet");
         };
 
         Symbol symbol;

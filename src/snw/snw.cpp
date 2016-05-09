@@ -147,9 +147,9 @@ void testParser()
     }
     else {
         ParserError error = result.error();
-        std::cout << "Parse failed: " << error.message << std::endl;
-        std::cout << "  row: " << error.row << std::endl;
-        std::cout << "  col: " << error.col << std::endl;
+        std::cout << "Parse failed: " << error.msg() << std::endl;
+        std::cout << "  row: " << error.row() << std::endl;
+        std::cout << "  col: " << error.col() << std::endl;
     }
 }
 
