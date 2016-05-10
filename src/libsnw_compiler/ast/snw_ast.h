@@ -23,8 +23,8 @@ namespace Snowda {
             XOr = '^',
             And = '&',
 
-            LeftShift = 0,  // FIXME
-            RightShift = 1, // FIXME
+            LShift = 0,  // FIXME
+            RShift = 1, // FIXME
         };
 
         class Expression {

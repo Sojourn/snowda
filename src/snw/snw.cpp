@@ -128,9 +128,10 @@ private:
 
 void testParser()
 {
-    Lexer lexer("a ++ a");
+    Lexer lexer("a ++ b & c");
     Parser parser(lexer);
 
+	// Fixme: The parse tree is screwy
     ParserResult result = parser.parseExpression(0);
     if (result.hasValue()) {
         std::cout << "Parse succceeded" << std::endl;

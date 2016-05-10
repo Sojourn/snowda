@@ -107,6 +107,20 @@ Grammar::Grammar()
     addRule(TokenType::Plus, BindingPower::Sum, &infix<BinaryOperator::Add, BindingPower::Sum>);
     addRule(TokenType::Minus, &prefix<UnaryOperator::Minus>);
     addRule(TokenType::Minus, BindingPower::Sum, &infix<BinaryOperator::Sub, BindingPower::Sum>);
+    addRule(TokenType::Tilde, &prefix<UnaryOperator::Tilde>);
+    addRule(TokenType::Bang, &prefix<UnaryOperator::Bang>);
+
+    addRule(TokenType::Mult, BindingPower::Product, &infix<BinaryOperator::Mul, BindingPower::Product>);
+    addRule(TokenType::Div, BindingPower::Product, &infix<BinaryOperator::Div, BindingPower::Product>);
+    addRule(TokenType::Mod, BindingPower::Product, &infix<BinaryOperator::Mod, BindingPower::Product>);
+
+    // FIXME: Is this precedence correct?
+    addRule(TokenType::Or, BindingPower::Relational, &infix<BinaryOperator::Or, BindingPower::Relational>);
+    addRule(TokenType::XOr, BindingPower::Relational, &infix<BinaryOperator::XOr, BindingPower::Relational>);
+    addRule(TokenType::And, BindingPower::Relational, &infix<BinaryOperator::And, BindingPower::Relational>);
+    addRule(TokenType::LShift, BindingPower::Relational, &infix<BinaryOperator::And, BindingPower::Relational>);
+    addRule(TokenType::LShift, BindingPower::Relational, &infix<BinaryOperator::LShift, BindingPower::Relational>);
+    addRule(TokenType::RShift, BindingPower::Relational, &infix<BinaryOperator::RShift, BindingPower::Relational>);
 
     addRule(TokenType::Error, &errorNud);
     addRule(TokenType::Error, 0, &errorLed);
