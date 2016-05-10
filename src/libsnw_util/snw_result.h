@@ -10,7 +10,7 @@ namespace Snowda {
         Result(Value value)
             : type_(Type::ValueType)
         {
-            new(data_.error_) Value(std::move(value)); 
+            new(data_.value_) Value(std::move(value)); 
         }
 
         Result(Error error)
@@ -114,7 +114,6 @@ namespace Snowda {
 
         union {
 #ifdef SNW_OS_WIN32
-			// FIXME: Variable alignment
 			__declspec(align(8)) uint8_t value_[sizeof(Value)];
 			__declspec(align(8)) uint8_t error_[sizeof(Error)];
 #else

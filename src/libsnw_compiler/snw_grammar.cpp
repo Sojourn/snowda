@@ -38,6 +38,7 @@ namespace {
 
     ParserResult numberNud(Parser &parser, Token token)
     {
+        // FIXME: Get an actual number hierarchy
         int number = 0;
         for (char c: token.content) {
             number *= 10;
@@ -104,7 +105,6 @@ Grammar::Grammar()
 
     addRule(TokenType::Plus, &prefix<UnaryOperator::Plus>);
     addRule(TokenType::Plus, BindingPower::Sum, &infix<BinaryOperator::Add, BindingPower::Sum>);
-
     addRule(TokenType::Minus, &prefix<UnaryOperator::Minus>);
     addRule(TokenType::Minus, BindingPower::Sum, &infix<BinaryOperator::Sub, BindingPower::Sum>);
 
