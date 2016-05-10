@@ -3,14 +3,7 @@
 
 namespace Snowda {
 
-    class Parser;
-
-    using ParserResult = Result<Ast::ExpressionPtr, ParserError>;
-    using NullDelimitedFunc = ParserResult (*)(Parser &, Token);
-    using LeftDelimitedFunc = ParserResult (*)(Parser &, Ast::ExpressionPtr, Token);
-
     class Parser {
-        friend class ParserState;
     public:
         explicit Parser(Lexer &lexer);
 
@@ -23,21 +16,9 @@ namespace Snowda {
         Token next();
         Token consume();
 
-        void add(TokenType key, NullDelimitedFunc nud);
-        void add(TokenType key, int bp, LeftDelimitedFunc led);
-
-    private:
-        struct Symbol {
-            int               bp;
-            NullDelimitedFunc nud;
-            LeftDelimitedFunc led;
-        };
-
-        Symbol &getSymbol(TokenType key);
-
     private:
         TokenStream stream_;
-        std::map<TokenType, Symbol> symbols_;
+        Grammar grammar_;
     };
 
 }

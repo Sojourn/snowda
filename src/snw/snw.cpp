@@ -128,20 +128,14 @@ private:
 
 void testParser()
 {
-    NullDelimitedFunc identifier = [](Parser &parser, Token token) -> ParserResult {
-        return std::make_unique<IdentifierExpression>(token.content);
-    };
-
-
     Lexer lexer("a ++ a");
     Parser parser(lexer);
-    parser.add(TokenType::Identifier, identifier);
 
     ParserResult result = parser.parseExpression(0);
     if (result.hasValue()) {
         std::cout << "Parse succceeded" << std::endl;
-		Printer printer;
-		result.value()->accept(printer);
+        Printer printer;
+        result.value()->accept(printer);
     }
     else {
         ParserError error = result.error();

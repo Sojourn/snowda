@@ -112,14 +112,19 @@ Grammar::Grammar()
     addRule(TokenType::Error, 0, &errorLed);
 }
 
-ParserResult Grammar::nud(TokenType type, Parser &parser, Token token) const
+int Grammar::bp(Token token) const
 {
-    return getRule(type).nud(parser, token);
+    return getRule(token.type).bp;
 }
 
-ParserResult Grammar::led(TokenType type, Parser &parser, Expr expr, Token token) const
+ParserResult Grammar::nud(Parser &parser, Token token) const
 {
-    return getRule(type).led(parser, std::move(expr), token);
+    return getRule(token.type).nud(parser, token);
+}
+
+ParserResult Grammar::led(Parser &parser, Expr expr, Token token) const
+{
+    return getRule(token.type).led(parser, std::move(expr), token);
 }
 
 Grammar::Rule &Grammar::getRule(TokenType type)

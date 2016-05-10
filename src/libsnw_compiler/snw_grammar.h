@@ -13,8 +13,9 @@ namespace Snowda {
 
         Grammar();
 
-        ParserResult nud(TokenType type, Parser &parser, Token) const;
-        ParserResult led(TokenType type, Parser &parser, Expr, Token) const;
+        int bp(Token token) const;
+        ParserResult nud(Parser &parser, Token token) const;
+        ParserResult led(Parser &parser, Expr expr, Token token) const;
 
     private:
         struct Rule {
