@@ -88,7 +88,7 @@ Parser::Symbol &Parser::getSymbol(TokenType key)
         };
 
         Symbol symbol;
-        symbol.bp = BindingPower::None;
+		symbol.bp = 0;
         symbol.nud = defaultNud;
         symbol.led = defaultLed;
         std::tie(it, std::ignore) = symbols_.insert(std::make_pair(key, symbol));

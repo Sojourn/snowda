@@ -22,6 +22,5 @@
 #include "snw_parser_result.h"
 #include "snw_grammar.h"
 #include "snw_parser.h"
-#include "snw_parser_util.h"
 
 #endif // SNW_COMPILER_H

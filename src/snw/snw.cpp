@@ -136,8 +136,6 @@ void testParser()
     Lexer lexer("a ++ a");
     Parser parser(lexer);
     parser.add(TokenType::Identifier, identifier);
-    prefix<TokenType::Plus, BindingPower::Unary, UnaryOperator::Plus>(parser);
-    infix<TokenType::Plus, BindingPower::Sum, BinaryOperator::Add>(parser);
 
     ParserResult result = parser.parseExpression(0);
     if (result.hasValue()) {
