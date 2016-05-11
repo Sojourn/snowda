@@ -128,7 +128,7 @@ private:
 
 void testParser()
 {
-    Lexer lexer("a + b * -c / d");
+    Lexer lexer("a / (b + c)");
     Parser parser(lexer);
 
 	// Fixme: The parse tree is screwy

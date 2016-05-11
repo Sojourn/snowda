@@ -58,3 +58,14 @@ Token Parser::consume()
     stream_.advance(1);
     return token;
 }
+
+bool Parser::advance(TokenType type)
+{
+    if (currentToken().type != type) {
+        return false;
+    }
+    else {
+        consume();
+        return true;
+    }
+}

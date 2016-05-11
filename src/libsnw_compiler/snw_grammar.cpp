@@ -61,6 +61,20 @@ namespace {
         return Expr(new StringExpression(token.content));
     }
 
+    ParserResult parenNud(Parser &parser, Token token)
+    {
+        ParserResult result = parser.parseExpression(0);
+        if (result.hasError()) {
+            return std::move(result);
+        }
+
+        if (!parser.advance(TokenType::RParen)) {
+            return ParserError(parser.currentToken(), "Expected left paren");
+        }
+
+        return std::move(result.value());
+    }
+
     ParserResult errorNud(Parser &parser, Token token)
     {
         return ParserError(token, token.content);
@@ -102,6 +116,8 @@ Grammar::Grammar()
     prefix(TokenType::Number, &numberNud);
     prefix(TokenType::Character, &characterNud);
     prefix(TokenType::String, &stringNud);
+
+    prefix(TokenType::LParen, &parenNud);
 
     prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);
     prefix(TokenType::Minus, &unaryNud<UnaryOperator::Minus>);

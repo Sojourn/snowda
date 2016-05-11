@@ -15,6 +15,7 @@ namespace Snowda {
         Token currentToken();
         Token next();
         Token consume();
+        bool advance(TokenType type);
 
     private:
         TokenStream stream_;
