@@ -145,9 +145,9 @@ namespace {
         }
     }
 
-    template<BinaryOperator op, int bp>
+    template<BinaryOperator op>
     ParserResult binaryLed(Parser &parser, Expr left, Token token) {
-        ParserResult result = parser.parseExpression(bp);
+        ParserResult result = parser.parseExpression(parser.grammar().bp(token));
         if (result.hasError()) {
             return result;
         }
@@ -174,10 +174,10 @@ Grammar::Grammar()
     prefix(TokenType::Tilde, &unaryNud<UnaryOperator::Tilde>);
     prefix(TokenType::Bang, &unaryNud<UnaryOperator::Bang>);
 
-    infix(TokenType::Plus, BindingPower::Sum, &binaryLed<BinaryOperator::Add, BindingPower::Sum>);
-    infix(TokenType::Minus, BindingPower::Sum, &binaryLed<BinaryOperator::Sub, BindingPower::Sum>);
-    infix(TokenType::Mult, BindingPower::Product, &binaryLed<BinaryOperator::Mul, BindingPower::Product>);
-    infix(TokenType::Div, BindingPower::Product, &binaryLed<BinaryOperator::Div, BindingPower::Product>);
+    infix(TokenType::Plus, BindingPower::Sum, &binaryLed<BinaryOperator::Add>);
+    infix(TokenType::Minus, BindingPower::Sum, &binaryLed<BinaryOperator::Sub>);
+    infix(TokenType::Mult, BindingPower::Product, &binaryLed<BinaryOperator::Mul>);
+    infix(TokenType::Div, BindingPower::Product, &binaryLed<BinaryOperator::Div>);
 
     prefix(TokenType::Error, &errorNud);
     infix(TokenType::Error, BindingPower::None, &errorLed);

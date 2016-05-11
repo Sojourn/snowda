@@ -17,9 +17,11 @@ namespace Snowda {
         Token consume();
         bool advance(TokenType type);
 
+        const Grammar &grammar() const;
+
     private:
         TokenStream stream_;
-        Grammar grammar_;
+        const Grammar grammar_;
     };
 
 }

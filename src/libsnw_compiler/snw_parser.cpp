@@ -69,3 +69,8 @@ bool Parser::advance(TokenType type)
         return true;
     }
 }
+
+const Grammar &Parser::grammar() const
+{
+    return grammar_;
+}
