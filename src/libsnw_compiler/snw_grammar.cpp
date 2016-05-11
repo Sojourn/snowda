@@ -72,7 +72,7 @@ namespace {
     }
 
     template<UnaryOperator op>
-    ParserResult prefix (Parser &parser, Token token) {
+    ParserResult unaryNud(Parser &parser, Token token) {
         ParserResult result = parser.parseExpression(BindingPower::Unary);
         if (result.hasError()) {
             return result;
@@ -84,7 +84,7 @@ namespace {
     }
 
     template<BinaryOperator op, int bp>
-    ParserResult infix(Parser &parser, Expr left, Token token) {
+    ParserResult binaryLed(Parser &parser, Expr left, Token token) {
         ParserResult result = parser.parseExpression(bp);
         if (result.hasError()) {
             return result;
@@ -98,32 +98,23 @@ namespace {
 
 Grammar::Grammar()
 {
-    addRule(TokenType::Identifier, &identifierNud);
-    addRule(TokenType::Number, &numberNud);
-    addRule(TokenType::Character, &characterNud);
-    addRule(TokenType::String, &stringNud);
+    prefix(TokenType::Identifier, &identifierNud);
+    prefix(TokenType::Number, &numberNud);
+    prefix(TokenType::Character, &characterNud);
+    prefix(TokenType::String, &stringNud);
 
-    addRule(TokenType::Plus, &prefix<UnaryOperator::Plus>);
-    addRule(TokenType::Plus, BindingPower::Sum, &infix<BinaryOperator::Add, BindingPower::Sum>);
-    addRule(TokenType::Minus, &prefix<UnaryOperator::Minus>);
-    addRule(TokenType::Minus, BindingPower::Sum, &infix<BinaryOperator::Sub, BindingPower::Sum>);
-    addRule(TokenType::Tilde, &prefix<UnaryOperator::Tilde>);
-    addRule(TokenType::Bang, &prefix<UnaryOperator::Bang>);
+    prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);
+    prefix(TokenType::Minus, &unaryNud<UnaryOperator::Minus>);
+    prefix(TokenType::Tilde, &unaryNud<UnaryOperator::Tilde>);
+    prefix(TokenType::Bang, &unaryNud<UnaryOperator::Bang>);
 
-    addRule(TokenType::Mult, BindingPower::Product, &infix<BinaryOperator::Mul, BindingPower::Product>);
-    addRule(TokenType::Div, BindingPower::Product, &infix<BinaryOperator::Div, BindingPower::Product>);
-    addRule(TokenType::Mod, BindingPower::Product, &infix<BinaryOperator::Mod, BindingPower::Product>);
+    infix(TokenType::Plus, BindingPower::Sum, &binaryLed<BinaryOperator::Add, BindingPower::Sum>);
+    infix(TokenType::Minus, BindingPower::Sum, &binaryLed<BinaryOperator::Sub, BindingPower::Sum>);
+    infix(TokenType::Mult, BindingPower::Product, &binaryLed<BinaryOperator::Mul, BindingPower::Product>);
+    infix(TokenType::Div, BindingPower::Product, &binaryLed<BinaryOperator::Div, BindingPower::Product>);
 
-    // FIXME: Is this precedence correct?
-    addRule(TokenType::Or, BindingPower::Relational, &infix<BinaryOperator::Or, BindingPower::Relational>);
-    addRule(TokenType::XOr, BindingPower::Relational, &infix<BinaryOperator::XOr, BindingPower::Relational>);
-    addRule(TokenType::And, BindingPower::Relational, &infix<BinaryOperator::And, BindingPower::Relational>);
-    addRule(TokenType::LShift, BindingPower::Relational, &infix<BinaryOperator::And, BindingPower::Relational>);
-    addRule(TokenType::LShift, BindingPower::Relational, &infix<BinaryOperator::LShift, BindingPower::Relational>);
-    addRule(TokenType::RShift, BindingPower::Relational, &infix<BinaryOperator::RShift, BindingPower::Relational>);
-
-    addRule(TokenType::Error, &errorNud);
-    addRule(TokenType::Error, 0, &errorLed);
+    prefix(TokenType::Error, &errorNud);
+    infix(TokenType::Error, BindingPower::None, &errorLed);
 }
 
 int Grammar::bp(Token token) const
@@ -153,13 +144,13 @@ const Grammar::Rule &Grammar::getRule(TokenType type) const
     return rules_[static_cast<size_t>(type)];
 }
 
-void Grammar::addRule(TokenType type, Nud nud)
+void Grammar::prefix(TokenType type, Nud nud)
 {
     Rule &rule = getRule(type);
     rule.nud = nud;
 }
 
-void Grammar::addRule(TokenType type, int bp, Led led)
+void Grammar::infix(TokenType type, int bp, Led led)
 {
     Rule &rule = getRule(type);
     rule.bp = bp;

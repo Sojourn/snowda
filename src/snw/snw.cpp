@@ -80,7 +80,7 @@ public:
     virtual void visit(const UnaryExpression &node)
     {
         pad();
-        std::cout << "UnaryExpression op:" << (char)node.op() << std::endl;
+        std::cout << "UnaryExpression op:" << str(node.op()) << std::endl;
         depth_ += 1;
         node.expr()->accept(*this);
         depth_ -= 1;
@@ -89,7 +89,7 @@ public:
     virtual void visit(const BinaryExpression &node)
     {
         pad();
-        std::cout << "BinaryExpression op:" << (char)node.op() << std::endl;
+        std::cout << "BinaryExpression op:" << str(node.op()) << std::endl;
         depth_ += 1;
         node.lhs()->accept(*this);
         node.rhs()->accept(*this);
@@ -128,7 +128,7 @@ private:
 
 void testParser()
 {
-    Lexer lexer("a ++ b & c");
+    Lexer lexer("a + b * -c / d");
     Parser parser(lexer);
 
 	// Fixme: The parse tree is screwy

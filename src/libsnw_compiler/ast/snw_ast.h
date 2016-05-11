@@ -1,31 +1,41 @@
 #ifndef SNW_AST_H
 #define SNW_AST_H
 
+#define SNW_AST_UNARY_OPERATORS \
+    X(Plus,  "+") \
+    X(Minus, "-") \
+    X(Tilde, "~") \
+    X(Bang,  "!")
+
+#define SNW_AST_BINARY_OPERATORS \
+    X(Add,    "+") \
+    X(Sub,    "-") \
+    X(Mul,    "*") \
+    X(Div,    "/") \
+    X(Mod,    "%") \
+    X(Or,     "|") \
+    X(XOr,    "^") \
+    X(And,    "&") \
+    X(LShift, "<<") \
+    X(RShift, ">>")
+
 namespace Snowda {
     namespace Ast {
         class Visitor;
 
         enum class UnaryOperator {
-            Plus  = '+',
-            Minus = '-',
-            Tilde = '~',
-            Bang  = '!',
+#define X(xType, xName) xType,
+            SNW_AST_UNARY_OPERATORS
+#undef X
         };
+        StringView str(UnaryOperator op);
 
         enum class BinaryOperator {
-            Add = '+',
-            Sub = '-',
-            Mul = '*',
-            Div = '/',
-            Mod = '%',
-
-            Or = '|',
-            XOr = '^',
-            And = '&',
-
-            LShift = 0,  // FIXME
-            RShift = 1, // FIXME
+#define X(xType, xName) xType,
+            SNW_AST_BINARY_OPERATORS
+#undef X
         };
+        StringView str(BinaryOperator op);
 
         class Expression {
         public:

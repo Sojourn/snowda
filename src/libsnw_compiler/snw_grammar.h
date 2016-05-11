@@ -29,8 +29,8 @@ namespace Snowda {
         Rule &getRule(TokenType type);
         const Rule &getRule(TokenType type) const;
 
-        void addRule(TokenType type, Nud func);
-        void addRule(TokenType type, int bp, Led func);
+        void prefix(TokenType type, Nud nud);
+        void infix(TokenType type, int bp, Led led);
 
     private:
         Rule rules_[static_cast<size_t>(TokenType::Count)];

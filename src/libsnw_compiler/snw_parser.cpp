@@ -17,21 +17,18 @@ ParserResult Parser::parseExpression(int bp)
     }
     else {
         ExpressionPtr expr = std::move(result.value());
-        for (;;) {
+        while (bp < grammar_.bp(currentToken())) {
             token = consume();
-            if (bp >= grammar_.bp(token)) {
-                return std::move(expr);
+            result = grammar_.led(*this, std::move(expr), token);
+            if (result.hasError()) {
+                return std::move(result);
             }
             else {
-                result = grammar_.led(*this, std::move(expr), token);
-                if (result.hasError()) {
-                    return std::move(result);
-                }
-                else {
-                    expr = std::move(result.value());
-                }
+                expr = std::move(result.value());
             }
         }
+
+        return std::move(expr);
     }
 }
 

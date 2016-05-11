@@ -3,6 +3,32 @@
 using namespace Snowda;
 using namespace Snowda::Ast;
 
+StringView Snowda::Ast::str(UnaryOperator op)
+{
+    switch (op) {
+#define X(xType, xName) \
+    case UnaryOperator::xType: \
+        return StringView(xName);
+        SNW_AST_UNARY_OPERATORS
+#undef X
+    default:
+        abort();
+    }
+}
+
+StringView Snowda::Ast::str(BinaryOperator op)
+{
+    switch (op) {
+#define X(xType, xName) \
+    case BinaryOperator::xType: \
+        return StringView(xName);
+        SNW_AST_BINARY_OPERATORS
+#undef X
+    default:
+        abort();
+    }
+}
+
 IdentifierExpression::IdentifierExpression(StringView name)
     : name_(name)
 {
