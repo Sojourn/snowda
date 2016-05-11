@@ -57,6 +57,20 @@ namespace Snowda {
             const StringView name_;
         };
 
+        class DerefExpression : public IdentifierExpression {
+        public:
+            DerefExpression(ExpressionPtr parent, ExpressionPtr child);
+
+            const ExpressionPtr &parent() const;
+            const ExpressionPtr &child() const;
+
+            virtual void accept(Visitor &visitor) const;
+
+        private:
+            const ExpressionPtr parent_;
+            const ExpressionPtr child_;
+        };
+
         class ConditionalExpression : public Expression {
         public:
             ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr);

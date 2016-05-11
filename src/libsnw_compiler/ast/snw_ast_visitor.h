@@ -7,6 +7,7 @@ namespace Snowda {
         class CharacterExpression;
         class StringExpression;
         class IdentifierExpression;
+        class DerefExpression;
         class UnaryExpression;
         class BinaryExpression;
         class ConditionalExpression;
@@ -19,6 +20,7 @@ namespace Snowda {
             virtual void visit(const CharacterExpression &expr) {}
             virtual void visit(const StringExpression &expr) {}
             virtual void visit(const IdentifierExpression &expr) {}
+            virtual void visit(const DerefExpression &expr) {}
             virtual void visit(const UnaryExpression &expr) {}
             virtual void visit(const BinaryExpression &expr) {}
             virtual void visit(const ConditionalExpression &expr) {}

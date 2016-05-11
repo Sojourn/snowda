@@ -44,6 +44,29 @@ void IdentifierExpression::accept(Visitor &visitor) const
     visitor.visit(*this);
 }
 
+
+DerefExpression::DerefExpression(ExpressionPtr parent, ExpressionPtr child)
+    : IdentifierExpression(dynamic_cast<const IdentifierExpression *>(child.get())->name())
+    , parent_(std::move(parent))
+    , child_(std::move(child))
+{
+}
+
+const ExpressionPtr &DerefExpression::parent() const
+{
+    return parent_;
+}
+
+const ExpressionPtr &DerefExpression::child() const
+{
+    return child_;
+}
+
+void DerefExpression::accept(Visitor &visitor) const
+{
+    return visitor.visit(*this);
+}
+
 ConditionalExpression::ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr)
     : cond_(std::move(condExpr))
     , then_(std::move(thenExpr))

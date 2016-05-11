@@ -115,6 +115,16 @@ public:
         depth_ -= 1;
     }
 
+	virtual void visit(const DerefExpression &node)
+	{
+		pad();
+		std::cout << "DerefExpression name:" << node.name() << std::endl;
+		depth_ += 1;
+		node.parent()->accept(*this);
+		node.child()->accept(*this);
+		depth_ -= 1;
+	}
+
 private:
     void pad() const
     {
@@ -128,10 +138,9 @@ private:
 
 void testParser()
 {
-    Lexer lexer("a / (b + c)");
+    Lexer lexer("a.b.c/((d).e)");
     Parser parser(lexer);
 
-	// Fixme: The parse tree is screwy
     ParserResult result = parser.parseExpression(0);
     if (result.hasValue()) {
         std::cout << "Parse succceeded" << std::endl;

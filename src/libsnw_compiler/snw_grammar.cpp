@@ -61,7 +61,7 @@ namespace {
         return Expr(new StringExpression(token.content));
     }
 
-    ParserResult parenNud(Parser &parser, Token token)
+    ParserResult groupNud(Parser &parser, Token token)
     {
         ParserResult result = parser.parseExpression(0);
         if (result.hasError()) {
@@ -73,6 +73,25 @@ namespace {
         }
 
         return std::move(result.value());
+    }
+
+    ParserResult derefLed(Parser &parser, Expr left, Token token)
+    {
+        if (dynamic_cast<const IdentifierExpression *>(left.get()) == nullptr) {
+            return ParserError(token, "Expected an identifier (lhs)");
+        }
+
+        ParserResult result = parser.parseExpression(BindingPower::Call);
+        if (result.hasError()) {
+            return std::move(result);
+        }
+
+        Expr right = std::move(result.value());
+        if (dynamic_cast<const IdentifierExpression *>(right.get()) == nullptr) {
+            return ParserError(token, "Expected an identifier (rhs)");
+        }
+
+        return Expr(new DerefExpression(std::move(left), std::move(right)));
     }
 
     ParserResult errorNud(Parser &parser, Token token)
@@ -117,7 +136,8 @@ Grammar::Grammar()
     prefix(TokenType::Character, &characterNud);
     prefix(TokenType::String, &stringNud);
 
-    prefix(TokenType::LParen, &parenNud);
+    prefix(TokenType::LParen, &groupNud);
+    infix(TokenType::Dot, BindingPower::Call, &derefLed);
 
     prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);
     prefix(TokenType::Minus, &unaryNud<UnaryOperator::Minus>);
