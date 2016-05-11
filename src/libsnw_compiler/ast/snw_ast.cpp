@@ -67,6 +67,27 @@ void DerefExpression::accept(Visitor &visitor) const
     return visitor.visit(*this);
 }
 
+CallExpression::CallExpression(ExpressionPtr ident, std::vector<ExpressionPtr> args)
+    : ident_(std::move(ident))
+    , args_(std::move(args))
+{
+}
+
+const ExpressionPtr &CallExpression::ident() const
+{
+    return ident_;
+}
+
+const std::vector<ExpressionPtr> &CallExpression::args() const
+{
+    return args_;
+}
+
+void CallExpression::accept(Visitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
 ConditionalExpression::ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr)
     : cond_(std::move(condExpr))
     , then_(std::move(thenExpr))

@@ -71,6 +71,20 @@ namespace Snowda {
             const ExpressionPtr child_;
         };
 
+        class CallExpression : public Expression {
+        public:
+            CallExpression(ExpressionPtr ident, std::vector<ExpressionPtr> args);
+
+            const ExpressionPtr &ident() const;
+            const std::vector<ExpressionPtr> &args() const;
+
+            virtual void accept(Visitor &visitor) const;
+
+        private:
+            const ExpressionPtr ident_;
+            const std::vector<ExpressionPtr> args_;
+        };
+
         class ConditionalExpression : public Expression {
         public:
             ConditionalExpression(ExpressionPtr condExpr, ExpressionPtr thenExpr);

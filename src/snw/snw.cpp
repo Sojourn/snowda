@@ -125,6 +125,18 @@ public:
 		depth_ -= 1;
 	}
 
+	virtual void visit(const CallExpression &node)
+	{
+		pad();
+		std::cout << "CallExpression" << std::endl;
+		depth_ += 1;
+		node.ident()->accept(*this);
+		for (auto &arg : node.args()) {
+			arg->accept(*this);
+		}
+		depth_ -= 1;
+	}
+
 private:
     void pad() const
     {
@@ -138,7 +150,7 @@ private:
 
 void testParser()
 {
-    Lexer lexer("a.b.c/((d).e)");
+    Lexer lexer("a.b.c((z).(x) / 4, 2)");
     Parser parser(lexer);
 
     ParserResult result = parser.parseExpression(0);

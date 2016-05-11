@@ -94,6 +94,35 @@ namespace {
         return Expr(new DerefExpression(std::move(left), std::move(right)));
     }
 
+    ParserResult callLed(Parser &parser, Expr left, Token token)
+    {
+        if (dynamic_cast<const IdentifierExpression *>(left.get()) == nullptr) {
+            return ParserError(token, "Expected an identifier (lhs)");
+        }
+
+        std::vector<ExpressionPtr> args;
+        while (parser.currentToken().type != TokenType::RParen) {
+            ParserResult result = parser.parseExpression(0);
+            if (result.hasError()) {
+                return std::move(result);
+            }
+            else {
+                args.push_back(std::move(result.value()));
+                if (parser.currentToken().type == TokenType::Comma) {
+                    if (parser.nextToken().type == TokenType::RParen) {
+                        return ParserError(parser.currentToken(), "Comma trailing argument list");
+                    }
+                    else {
+                        parser.consume();
+                    }
+                }
+            }
+        }
+
+        parser.advance(TokenType::RParen);
+        return Expr(new CallExpression(std::move(left), std::move(args)));
+    }
+
     ParserResult errorNud(Parser &parser, Token token)
     {
         return ParserError(token, token.content);
@@ -137,6 +166,7 @@ Grammar::Grammar()
     prefix(TokenType::String, &stringNud);
 
     prefix(TokenType::LParen, &groupNud);
+    infix(TokenType::LParen, BindingPower::Call, &callLed);
     infix(TokenType::Dot, BindingPower::Call, &derefLed);
 
     prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);

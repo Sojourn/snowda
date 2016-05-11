@@ -13,7 +13,7 @@ namespace Snowda {
         int col();
 
         Token currentToken();
-        Token next();
+		Token nextToken();
         Token consume();
         bool advance(TokenType type);
 

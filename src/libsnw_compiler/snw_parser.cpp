@@ -47,7 +47,7 @@ Token Parser::currentToken()
     return stream_[0];
 }
 
-Token Parser::next()
+Token Parser::nextToken()
 {
     return stream_[1];
 }

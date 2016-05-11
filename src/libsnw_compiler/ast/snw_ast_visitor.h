@@ -20,6 +20,7 @@ namespace Snowda {
             virtual void visit(const CharacterExpression &expr) {}
             virtual void visit(const StringExpression &expr) {}
             virtual void visit(const IdentifierExpression &expr) {}
+            virtual void visit(const CallExpression &expr) {}
             virtual void visit(const DerefExpression &expr) {}
             virtual void visit(const UnaryExpression &expr) {}
             virtual void visit(const BinaryExpression &expr) {}
