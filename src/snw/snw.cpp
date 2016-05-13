@@ -170,7 +170,15 @@ private:
 
 void testParser()
 {
-	Lexer lexer("1 + 2; { 3 + 4; 5 + a.b.c(15, d); }");
+	Lexer lexer(
+        "{" \
+        "    if (a + b) {" \
+        "        print(\"stuff\");" \
+        "    }" \
+        "    else {}" \
+        "    1 + 2 / (3 + 4);" \
+        "}"
+        );
     Parser parser(lexer);
     while (!parser.finished()) {
         ParserResult result = parser.parseStatement();

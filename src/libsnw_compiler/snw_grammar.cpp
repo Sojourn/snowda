@@ -160,6 +160,50 @@ namespace {
         return Expr(new BlockExpression(std::move(exprs)));
     }
 
+    ParserResult ifStd(Parser &parser, Token token)
+    {
+		ParserResult result(ParserError(token, ""));
+        Expr condExpr;
+        Expr thenExpr;
+        // std::vector<std::tuple(Expr, Expr)> elifExprs;
+        Expr elseExpr;
+
+        if (!parser.advanceToken(TokenType::LParen)) {
+            return ParserError(parser.currentToken(), "Expected LParen");
+        }
+
+        result = parser.parseExpression(0);
+        if (result.hasError()) {
+            return std::move(result);
+        }
+
+        condExpr = std::move(result.value());
+
+        if (!parser.advanceToken(TokenType::RParen)) {
+            return ParserError(parser.currentToken(), "Expected RParen");
+        }
+
+		result = parser.parseStatement();
+        if (result.hasError()) {
+            return std::move(result);
+        }
+
+        thenExpr = std::move(result.value());
+
+        if (parser.currentToken().type != TokenType::Else) {
+            return Expr(new ConditionalExpression(std::move(condExpr), std::move(thenExpr)));
+        }
+
+		parser.consumeToken();
+		result = parser.parseStatement();
+        if (result.hasError()) {
+            return std::move(result);
+        }
+
+        elseExpr = std::move(result.value());
+        return Expr(new ConditionalExpression(std::move(condExpr), std::move(thenExpr), std::move(elseExpr)));
+    }
+
     ParserResult errorNud(Parser &parser, Token token)
     {
         return ParserError(token, token.content);
@@ -207,6 +251,7 @@ Grammar::Grammar()
     infix(TokenType::Dot, BindingPower::Call, &derefLed);
 
     stmt(TokenType::LCBrace, &blockStd);
+    stmt(TokenType::If, &ifStd);
 
     prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);
     prefix(TokenType::Minus, &unaryNud<UnaryOperator::Minus>);

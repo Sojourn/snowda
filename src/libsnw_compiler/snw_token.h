@@ -5,6 +5,8 @@
     X(Import, "import") \
     X(Def,    "def") \
     X(Var,    "var") \
+    X(If,     "if") \
+    X(Else,   "else")
 
 #define SNW_TOKENS_PUNCTUATION \
     X(Equal   , "==") \
