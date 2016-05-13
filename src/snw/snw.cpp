@@ -146,6 +146,17 @@ public:
         depth_ -= 1;
     }
 
+    virtual void visit(const BlockExpression &node)
+    {
+        pad();
+        std::cout << "BlockExpression" << std::endl;
+        depth_ += 1;
+        for (auto &expr: node.exprs()) {
+            expr->accept(*this);
+        }
+        depth_ -= 1;
+    }
+
 private:
     void pad() const
     {
@@ -159,7 +170,7 @@ private:
 
 void testParser()
 {
-	Lexer lexer("1 + 2; 3 + 4; 5 + a.b.c(15, d);");
+	Lexer lexer("1 + 2; { 3 + 4; 5 + a.b.c(15, d); }");
     Parser parser(lexer);
     for (;;) {
         if (parser.currentToken().type == TokenType::Finished) {

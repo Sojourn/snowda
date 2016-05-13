@@ -44,6 +44,21 @@ void StatementExpression::accept(Visitor &visitor) const
     visitor.visit(*this);
 }
 
+BlockExpression::BlockExpression(std::vector<ExpressionPtr> exprs)
+    : exprs_(std::move(exprs))
+{
+}
+
+const std::vector<ExpressionPtr> &BlockExpression::exprs() const
+{
+    return exprs_;
+}
+
+void BlockExpression::accept(Visitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
 IdentifierExpression::IdentifierExpression(StringView name)
     : name_(name)
 {

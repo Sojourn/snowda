@@ -57,6 +57,18 @@ namespace Snowda {
             const ExpressionPtr expr_;
         };
 
+        class BlockExpression : public Expression {
+        public:
+            BlockExpression(std::vector<ExpressionPtr> exprs);
+
+            const std::vector<ExpressionPtr> &exprs() const;
+
+            virtual void accept(Visitor &visitor) const;
+
+        private:
+            const std::vector<ExpressionPtr> exprs_;
+        };
+
         class IdentifierExpression : public Expression {
         public:
             IdentifierExpression(StringView name);

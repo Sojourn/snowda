@@ -137,6 +137,26 @@ namespace {
         return Expr(new StatementExpression(std::move(result.value())));
     }
 
+    ParserResult blockStd(Parser &parser, Token token)
+    {
+        std::vector<ExpressionPtr> exprs;
+        while (parser.currentToken().type != TokenType::RCBrace) {
+            ParserResult result = parser.parseStatement();
+            if (result.hasError()) {
+                return std::move(result);
+            }
+            else {
+                exprs.push_back(std::move(result.value()));
+            }
+        }
+
+        if (!parser.advance(TokenType::RCBrace)) {
+            return ParserError(parser.currentToken(), "Internal parser error matching '}'");
+        }
+
+        return Expr(new BlockExpression(std::move(exprs)));
+    }
+
     ParserResult errorNud(Parser &parser, Token token)
     {
         return ParserError(token, token.content);
@@ -182,6 +202,8 @@ Grammar::Grammar()
     prefix(TokenType::LParen, &groupNud);
     infix(TokenType::LParen, BindingPower::Call, &callLed);
     infix(TokenType::Dot, BindingPower::Call, &derefLed);
+
+    stmt(TokenType::LCBrace, &blockStd);
 
     prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);
     prefix(TokenType::Minus, &unaryNud<UnaryOperator::Minus>);
