@@ -8,6 +8,11 @@ Parser::Parser(Lexer &lexer)
 {
 }
 
+bool Parser::finished()
+{
+    return currentToken().type == TokenType::Finished;
+}
+
 ParserResult Parser::parseExpression(int bp)
 {
     Token token = currentToken();
@@ -57,20 +62,20 @@ Token Parser::nextToken()
     return stream_[1];
 }
 
-Token Parser::consume()
+Token Parser::consumeToken()
 {
     const Token token = currentToken();
     stream_.advance(1);
     return token;
 }
 
-bool Parser::advance(TokenType type)
+bool Parser::advanceToken(TokenType type)
 {
     if (currentToken().type != type) {
         return false;
     }
     else {
-        consume();
+        consumeToken();
         return true;
     }
 }

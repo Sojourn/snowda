@@ -7,6 +7,7 @@ namespace Snowda {
     public:
         explicit Parser(Lexer &lexer);
 
+        bool finished();
         ParserResult parseExpression(int bp);
         ParserResult parseStatement();
 
@@ -15,8 +16,8 @@ namespace Snowda {
 
         Token currentToken();
 		Token nextToken();
-        Token consume();
-        bool advance(TokenType type);
+        Token consumeToken();
+        bool advanceToken(TokenType type);
 
         const Grammar &grammar() const;
 

@@ -68,7 +68,7 @@ namespace {
             return std::move(result);
         }
 
-        if (!parser.advance(TokenType::RParen)) {
+        if (!parser.advanceToken(TokenType::RParen)) {
             return ParserError(parser.currentToken(), "Expected left paren");
         }
 
@@ -113,13 +113,16 @@ namespace {
                         return ParserError(parser.currentToken(), "Comma trailing argument list");
                     }
                     else {
-                        parser.consume();
+                        parser.consumeToken();
                     }
                 }
             }
         }
 
-        parser.advance(TokenType::RParen);
+        if (!parser.advanceToken(TokenType::RParen)) {
+            return ParserError(parser.currentToken(), "Internal parser error matching ')'");
+        }
+
         return Expr(new CallExpression(std::move(left), std::move(args)));
     }
 
@@ -130,7 +133,7 @@ namespace {
             return std::move(result);
         }
 
-        if (!parser.advance(TokenType::Semi)) {
+        if (!parser.advanceToken(TokenType::Semi)) {
             return ParserError(parser.currentToken(), "Expected statement expression to end with a ';'");
         }
 
@@ -150,7 +153,7 @@ namespace {
             }
         }
 
-        if (!parser.advance(TokenType::RCBrace)) {
+        if (!parser.advanceToken(TokenType::RCBrace)) {
             return ParserError(parser.currentToken(), "Internal parser error matching '}'");
         }
 
@@ -228,23 +231,24 @@ ParserResult Grammar::std(Parser &parser, Token token) const
 {
     const Rule &rule = getRule(token.type);
     if (rule.std) {
-        parser.consume();
+        parser.consumeToken();
         return rule.std(parser, token);
     }
     else {
+        // The current token is part of the expression; don't consume
         return expressionStd(parser, token);
     }
 }
 
 ParserResult Grammar::nud(Parser &parser, Token token) const
 {
-    parser.consume();
+    parser.consumeToken();
     return getRule(token.type).nud(parser, token);
 }
 
 ParserResult Grammar::led(Parser &parser, Expr expr, Token token) const
 {
-    parser.consume();
+    parser.consumeToken();
     return getRule(token.type).led(parser, std::move(expr), token);
 }
 

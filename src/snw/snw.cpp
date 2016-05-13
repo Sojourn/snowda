@@ -172,12 +172,7 @@ void testParser()
 {
 	Lexer lexer("1 + 2; { 3 + 4; 5 + a.b.c(15, d); }");
     Parser parser(lexer);
-    for (;;) {
-        if (parser.currentToken().type == TokenType::Finished) {
-            std::cout << "Parse finished" << std::endl;
-            break;
-        }
-
+    while (!parser.finished()) {
         ParserResult result = parser.parseStatement();
         if (result.hasValue()) {
             Printer printer;
