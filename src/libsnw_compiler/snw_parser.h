@@ -8,6 +8,7 @@ namespace Snowda {
         explicit Parser(Lexer &lexer);
 
         ParserResult parseExpression(int bp);
+        ParserResult parseStatement();
 
         int row();
         int col();

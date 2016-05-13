@@ -137,6 +137,15 @@ public:
 		depth_ -= 1;
 	}
 
+    virtual void visit(const StatementExpression &node)
+    {
+        pad();
+        std::cout << "StatementExpression" << std::endl;
+        depth_ += 1;
+        node.expr()->accept(*this);
+        depth_ -= 1;
+    }
+
 private:
     void pad() const
     {
@@ -150,20 +159,26 @@ private:
 
 void testParser()
 {
-    Lexer lexer("a.b.c((z).(x) / 4, 2)");
+	Lexer lexer("1 + 2; 3 + 4; 5 + a.b.c(15, d);");
     Parser parser(lexer);
+    for (;;) {
+        if (parser.currentToken().type == TokenType::Finished) {
+            std::cout << "Parse finished" << std::endl;
+            break;
+        }
 
-    ParserResult result = parser.parseExpression(0);
-    if (result.hasValue()) {
-        std::cout << "Parse succceeded" << std::endl;
-        Printer printer;
-        result.value()->accept(printer);
-    }
-    else {
-        ParserError error = result.error();
-        std::cout << "Parse failed: " << error.msg() << std::endl;
-        std::cout << "  row: " << error.row() << std::endl;
-        std::cout << "  col: " << error.col() << std::endl;
+        ParserResult result = parser.parseStatement();
+        if (result.hasValue()) {
+            Printer printer;
+            result.value()->accept(printer);
+        }
+        else {
+            ParserError error = result.error();
+            std::cout << "Parse failed: " << error.msg() << std::endl;
+            std::cout << "  row: " << error.row() << std::endl;
+            std::cout << "  col: " << error.col() << std::endl;
+            break;
+        }
     }
 }
 

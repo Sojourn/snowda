@@ -10,7 +10,7 @@ Parser::Parser(Lexer &lexer)
 
 ParserResult Parser::parseExpression(int bp)
 {
-    Token token = consume();
+    Token token = currentToken();
     ParserResult result = grammar_.nud(*this, token);
     if (result.hasError()) {
         return std::move(result);
@@ -18,7 +18,7 @@ ParserResult Parser::parseExpression(int bp)
     else {
         ExpressionPtr expr = std::move(result.value());
         while (bp < grammar_.bp(currentToken())) {
-            token = consume();
+            token = currentToken();
             result = grammar_.led(*this, std::move(expr), token);
             if (result.hasError()) {
                 return std::move(result);
@@ -30,6 +30,11 @@ ParserResult Parser::parseExpression(int bp)
 
         return std::move(expr);
     }
+}
+
+ParserResult Parser::parseStatement()
+{
+    return grammar_.std(*this, currentToken());
 }
 
 int Parser::row()

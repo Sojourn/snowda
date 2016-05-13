@@ -123,6 +123,20 @@ namespace {
         return Expr(new CallExpression(std::move(left), std::move(args)));
     }
 
+    ParserResult expressionStd(Parser &parser, Token token)
+    {
+        ParserResult result = parser.parseExpression(0);
+        if (result.hasError()) {
+            return std::move(result);
+        }
+
+        if (!parser.advance(TokenType::Semi)) {
+            return ParserError(parser.currentToken(), "Expected statement expression to end with a ';'");
+        }
+
+        return Expr(new StatementExpression(std::move(result.value())));
+    }
+
     ParserResult errorNud(Parser &parser, Token token)
     {
         return ParserError(token, token.content);
@@ -188,13 +202,27 @@ int Grammar::bp(Token token) const
     return getRule(token.type).bp;
 }
 
+ParserResult Grammar::std(Parser &parser, Token token) const
+{
+    const Rule &rule = getRule(token.type);
+    if (rule.std) {
+        parser.consume();
+        return rule.std(parser, token);
+    }
+    else {
+        return expressionStd(parser, token);
+    }
+}
+
 ParserResult Grammar::nud(Parser &parser, Token token) const
 {
+    parser.consume();
     return getRule(token.type).nud(parser, token);
 }
 
 ParserResult Grammar::led(Parser &parser, Expr expr, Token token) const
 {
+    parser.consume();
     return getRule(token.type).led(parser, std::move(expr), token);
 }
 
@@ -208,6 +236,12 @@ const Grammar::Rule &Grammar::getRule(TokenType type) const
 {
     assert(type != TokenType::Count);
     return rules_[static_cast<size_t>(type)];
+}
+
+void Grammar::stmt(TokenType type, Std std)
+{
+    Rule &rule = getRule(type);
+    rule.std = std;
 }
 
 void Grammar::prefix(TokenType type, Nud nud)
@@ -225,6 +259,7 @@ void Grammar::infix(TokenType type, int bp, Led led)
 
 Grammar::Rule::Rule()
     : bp(0)
+    , std(nullptr)
     , nud(&defaultNud)
     , led(&defaultLed)
 {

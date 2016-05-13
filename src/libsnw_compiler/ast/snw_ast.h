@@ -45,6 +45,18 @@ namespace Snowda {
         };
         using ExpressionPtr = std::unique_ptr<Expression>;
 
+        class StatementExpression : public Expression {
+        public:
+            StatementExpression(ExpressionPtr expr);
+
+            const ExpressionPtr &expr() const;
+
+            virtual void accept(Visitor &visitor) const;
+
+        private:
+            const ExpressionPtr expr_;
+        };
+
         class IdentifierExpression : public Expression {
         public:
             IdentifierExpression(StringView name);

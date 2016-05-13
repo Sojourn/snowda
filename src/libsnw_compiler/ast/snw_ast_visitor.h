@@ -3,6 +3,7 @@
 
 namespace Snowda {
     namespace Ast {
+        class StatementExpression;
         class NumberExpression;
         class CharacterExpression;
         class StringExpression;
@@ -16,6 +17,7 @@ namespace Snowda {
         public:
             virtual ~Visitor() {}
 
+            virtual void visit(const StatementExpression &expr) {}
             virtual void visit(const NumberExpression &expr) {}
             virtual void visit(const CharacterExpression &expr) {}
             virtual void visit(const StringExpression &expr) {}

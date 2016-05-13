@@ -29,6 +29,21 @@ StringView Snowda::Ast::str(BinaryOperator op)
     }
 }
 
+StatementExpression::StatementExpression(ExpressionPtr expr)
+    : expr_(std::move(expr))
+{
+}
+
+const ExpressionPtr &StatementExpression::expr() const
+{
+    return expr_;
+}
+
+void StatementExpression::accept(Visitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
 IdentifierExpression::IdentifierExpression(StringView name)
     : name_(name)
 {
