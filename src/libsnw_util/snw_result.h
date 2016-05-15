@@ -113,13 +113,8 @@ namespace Snowda {
         } type_;
 
         union {
-#ifdef SNW_OS_WIN32
-			__declspec(align(8)) uint8_t value_[sizeof(Value)];
-			__declspec(align(8)) uint8_t error_[sizeof(Error)];
-#else
-			alignas(alignof(Value)) uint8_t value_[sizeof(Value)];
-			alignas(alignof(Error)) uint8_t error_[sizeof(Error)];
-#endif
+            SNW_ALIGN8 uint8_t value_[sizeof(Value)];
+            SNW_ALIGN8 uint8_t error_[sizeof(Error)];
         } data_;
     };
 

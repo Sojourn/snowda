@@ -1,8 +1,6 @@
 #ifndef SNW_AST_NODE_H
 #define SNW_AST_NODE_H
 
-/*
-
 namespace Snowda {
     namespace Ast {
         class NodeVisitor;
@@ -27,8 +25,8 @@ namespace Snowda {
         class ExprStmt;
 
         class NodeVisitor {
+        public:
             virtual ~NodeVisitor() {}
-
             virtual void visit(const NumberExpr &expr) {}
             virtual void visit(const CharacterExpr &expr) {}
             virtual void visit(const StringExpr &expr) {}
@@ -92,12 +90,20 @@ namespace Snowda {
             virtual void visit(NodeVisitor &visitor) const = 0;
 
         private:
-            const NodeType type_;
-            const NodeContent content_;
+            const NodeType nodeType_;
+            const NodeContent nodeContent_;
         };
         using NodePtr = std::unique_ptr<Node>;
 
-        class Expr : public Node {};
+        struct Type {};
+        using TypePtr = std::unique_ptr<Type>;
+
+        class Expr : public Node {
+        public:
+            Expr(NodeType type, NodeContent content);
+
+            virtual const TypePtr &type() const = 0;
+        };
         using ExprPtr = std::unique_ptr<Expr>;
 
         class NumberExpr : public Expr {
@@ -112,14 +118,19 @@ namespace Snowda {
             const int value_;
         };
 
-        class IfStmt : public Node {
+        class Stmt : public Node {
         public:
-            using ElifVec = std::vector<std::tuple(ExprPtr, ExprPtr)>;
+            Stmt(NodeType type, NodeContent content);
+        };
 
-            IfStmt(ExprPtr condExpr, ExprPtr thenExpr);
-            IfStmt(ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs);
-            IfStmt(ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr);
-            IfStmt(ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr);
+        class IfStmt : public Stmt {
+        public:
+            using ElifVec = std::vector<std::tuple<ExprPtr, ExprPtr>>;
+
+            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr);
+            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs);
+            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr);
+            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr);
 
             bool hasElseExpr() const;
             bool hasElifExprs() const;
@@ -129,7 +140,7 @@ namespace Snowda {
             const ElifVec &elifExprs() const;
             const ExprPtr &elseExpr() const;
 
-            virtual void accept(Visitor &visitor) const;
+            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const ExprPtr cond_;
@@ -139,7 +150,5 @@ namespace Snowda {
         };
     }
 }
-
-*/
 
 #endif // SNW_ASt_NODE_H

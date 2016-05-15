@@ -130,7 +130,7 @@ namespace Snowda {
 		// FIXME: Variable alignment
 		__declspec(align(8)) uint8_t buffer_[sizeof(T) * capacity_];
 #else
-		alignof(alignas(T)) uint8_t buffer_[sizeof(T) * capacity_];
+        alignas(alignof(T)) uint8_t buffer_[sizeof(T) * capacity_];
 #endif
     };
 
