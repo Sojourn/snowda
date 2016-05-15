@@ -37,8 +37,8 @@ namespace Snowda {
             virtual void visit(const AnchorExpr &expr) {}
             virtual void visit(const DerefExpr &stmt) {}
             virtual void visit(const RootStmt &stmt) {}
-            virtual void visit(const ModuleStmt &stmt) {}
             virtual void visit(const BlockStmt &stmt) {}
+            virtual void visit(const ModuleStmt &stmt) {}
             virtual void visit(const DeclStmt &stmt) {}
             virtual void visit(const IfStmt &stmt) {}
             virtual void visit(const ForStmt &stmt) {}
@@ -61,8 +61,9 @@ namespace Snowda {
 
             StmtBegin,
             Stmt,
-            BlockStmt,
             RootStmt,
+            BlockStmt,
+            ModuleStmt,
             DeclStmt,
             IfStmt,
             ForStmt,
@@ -70,6 +71,7 @@ namespace Snowda {
             StmtEnd,
         };
 
+        // FIXME: Start row/col, end row/col?
         struct NodeContent {
             StringView str;
             size_t row;
@@ -95,59 +97,6 @@ namespace Snowda {
         };
         using NodePtr = std::unique_ptr<Node>;
 
-        struct Type {};
-        using TypePtr = std::unique_ptr<Type>;
-
-        class Expr : public Node {
-        public:
-            Expr(NodeType type, NodeContent content);
-
-            virtual const TypePtr &type() const = 0;
-        };
-        using ExprPtr = std::unique_ptr<Expr>;
-
-        class NumberExpr : public Expr {
-        public:
-            NumberExpr(NodeContent content, int value);
-
-            int value() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
-
-        private:
-            const int value_;
-        };
-
-        class Stmt : public Node {
-        public:
-            Stmt(NodeType type, NodeContent content);
-        };
-
-        class IfStmt : public Stmt {
-        public:
-            using ElifVec = std::vector<std::tuple<ExprPtr, ExprPtr>>;
-
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr);
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs);
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr);
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr);
-
-            bool hasElseExpr() const;
-            bool hasElifExprs() const;
-
-            const ExprPtr &condExpr() const;
-            const ExprPtr &thenExpr() const;
-            const ElifVec &elifExprs() const;
-            const ExprPtr &elseExpr() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
-
-        private:
-            const ExprPtr cond_;
-            const ExprPtr then_;
-            const ElifVec elifs_;
-            const ExprPtr else_;
-        };
     }
 }
 

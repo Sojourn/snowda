@@ -19,6 +19,8 @@
 #include "snw_token_stream.h"
 #include "ast/snw_ast.h"
 #include "ast/snw_ast_node.h"
+#include "ast/snw_ast_expr.h"
+#include "ast/snw_ast_stmt.h"
 #include "ast/snw_ast_visitor.h"
 #include "snw_parser_result.h"
 #include "snw_grammar.h"

@@ -10,6 +10,7 @@ namespace Snowda {
         bool finished();
         ParserResult parseExpression(int bp);
         ParserResult parseStatement();
+        ParserResult parseRootStatement();
 
         int row();
         int col();
@@ -24,6 +25,7 @@ namespace Snowda {
     private:
         TokenStream stream_;
         const Grammar grammar_;
+        size_t depth_;
     };
 
 }
