@@ -5,12 +5,12 @@ namespace Snowda {
     namespace Ast {
         class Expr : public Node {
         public:
-            Expr(NodeContent nodeContent, NodeType type);
+            Expr(NodeType type, NodeContent nodeContent);
         };
         using ExprPtr = std::unique_ptr<Expr>;
         using ExprVec = std::vector<ExprPtr>;
 
-        class NumberExpr : public Node {
+        class NumberExpr : public Expr {
         public:
             NumberExpr(NodeContent nodeContent, int value);
 
@@ -99,6 +99,8 @@ namespace Snowda {
             const ExprPtr &lhsExpr() const;
             const ExprPtr &rhsExpr() const;
 
+            virtual void visit(NodeVisitor &visitor) const override;
+
         private:
             const Operator op_;
             const ExprPtr lhsExpr_;
@@ -108,7 +110,31 @@ namespace Snowda {
 
         class CallExpr : public Expr {
         public:
-            // TODO
+            CallExpr(NodeContent nodeContent, IdentifierExprPtr ident, ExprVec args);
+
+            const IdentifierExprPtr &ident() const;
+            const ExprVec &args() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const IdentifierExprPtr ident_;
+            const ExprVec args_;
+        };
+
+        class DerefExpr : public Expr {
+        public:
+            DerefExpr(NodeContent nodeContent, IdentifierExprPtr rhsIdent);
+            DerefExpr(NodeContent nodeContent, IdentifierExprPtr lhsIdent, IdentifierExprPtr rhsIdent);
+
+            const IdentifierExprPtr &rhsIdent() const;
+            const IdentifierExprPtr &lhsIdent() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const IdentifierExprPtr lhsIdent_;
+            const IdentifierExprPtr rhsIdent_;
         };
     }
 }

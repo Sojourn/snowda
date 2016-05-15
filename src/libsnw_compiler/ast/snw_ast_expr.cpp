@@ -3,8 +3,8 @@
 using namespace Snowda;
 using namespace Snowda::Ast;
 
-Expr::Expr(NodeContent nodeContent, NodeType type)
-    : Node(nodeContent, type)
+Expr::Expr(NodeType type, NodeContent nodeContent)
+    : Node(type, nodeContent)
 {
 }
 
@@ -75,7 +75,7 @@ void IdentifierExpr::visit(NodeVisitor &visitor) const
 UnaryExpr::UnaryExpr(NodeContent nodeContent, Operator op, ExprPtr expr)
     : Expr(NodeType::UnaryExpr, nodeContent)
     , op_(op)
-    , expr_(expr)
+    , expr_(std::move(expr))
 {
 }
 
@@ -137,4 +137,59 @@ const ExprPtr &BinaryExpr::lhsExpr() const
 const ExprPtr &BinaryExpr::rhsExpr() const
 {
     return rhsExpr_;
+}
+
+void BinaryExpr::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
+CallExpr::CallExpr(NodeContent nodeContent, IdentifierExprPtr ident, ExprVec args)
+    : Expr(NodeType::CallExpr, nodeContent)
+    , ident_(std::move(ident))
+    , args_(std::move(args))
+{
+}
+
+const IdentifierExprPtr &CallExpr::ident() const
+{
+    return ident_;
+}
+
+const ExprVec &CallExpr::args() const
+{
+    return args_;
+}
+
+void CallExpr::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
+DerefExpr::DerefExpr(NodeContent nodeContent, IdentifierExprPtr rhsIdent)
+    : Expr(NodeType::DerefExpr, nodeContent)
+    , rhsIdent_(std::move(rhsIdent))
+{
+}
+
+DerefExpr::DerefExpr(NodeContent nodeContent, IdentifierExprPtr lhsIdent, IdentifierExprPtr rhsIdent)
+    : Expr(NodeType::DerefExpr, nodeContent)
+    , lhsIdent_(std::move(lhsIdent))
+    , rhsIdent_(std::move(rhsIdent))
+{
+}
+
+const IdentifierExprPtr &DerefExpr::lhsIdent() const
+{
+    return lhsIdent_;
+}
+
+const IdentifierExprPtr &DerefExpr::rhsIdent() const
+{
+    return rhsIdent_;
+}
+
+void DerefExpr::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
 }

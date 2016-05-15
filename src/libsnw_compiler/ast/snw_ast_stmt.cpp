@@ -40,7 +40,7 @@ void BlockStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, BlockStmtPtr block)
+ModuleStmt::ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, BlockStmtPtr block)
     : Stmt(NodeType::ModuleStmt, nodeContent)
     , name_(name)
     , args_(std::move(args))
@@ -85,7 +85,7 @@ const ExprPtr &DeclStmt::expr() const
     return expr_;
 }
 
-void ExprStmt::visit(NodeVisitor &visitor) const
+void DeclStmt::visit(NodeVisitor &visitor) const
 {
     visitor.visit(*this);
 }
@@ -153,6 +153,22 @@ ForStmt::ForStmt(NodeContent nodeContent)
 }
 
 void ForStmt::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
+ExprStmt::ExprStmt(NodeContent nodeContent, ExprPtr expr)
+    : Stmt(NodeType::ExprStmt, nodeContent)
+    , expr_(std::move(expr))
+{
+}
+
+const ExprPtr &ExprStmt::expr() const
+{
+    return expr_;
+}
+
+void ExprStmt::visit(NodeVisitor &visitor) const
 {
     visitor.visit(*this);
 }

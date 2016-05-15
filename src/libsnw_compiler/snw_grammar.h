@@ -7,7 +7,7 @@ namespace Snowda {
 
     class Grammar {
     public:
-        using Expr = Ast::ExpressionPtr;
+        using Expr = Ast::ExprPtr;
         using Std = ParserResult(*)(Parser &, Token);
         using Nud = ParserResult(*)(Parser &, Token);
         using Led = ParserResult(*)(Parser &, Expr, Token);

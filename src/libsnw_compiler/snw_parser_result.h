@@ -20,7 +20,7 @@ namespace Snowda {
         const size_t row_;
     };
 
-    using ParserResult = Result<Ast::ExpressionPtr, ParserError>;
+    using ParserResult = Result<Ast::NodePtr, ParserError>;
 }
 
 #endif // SNW_PARSER_RESULT_H

@@ -17,6 +17,9 @@ namespace Snowda {
             const StmtVec &stmts() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const StmtVec stmts_;
         };
         using RootStmtPtr = std::unique_ptr<RootStmt>;
 
@@ -101,6 +104,19 @@ namespace Snowda {
             virtual void visit(NodeVisitor &visitor) const override;
         };
         using ForStmtPtr = std::unique_ptr<ForStmt>;
+
+        class ExprStmt : public Stmt {
+        public:
+            ExprStmt(NodeContent nodeContent, ExprPtr expr);
+
+            const ExprPtr &expr() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const ExprPtr expr_;
+        };
+        using ExprStmtPtr = std::unique_ptr<ExprStmt>;
     }
 }
 

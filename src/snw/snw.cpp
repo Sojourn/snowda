@@ -52,122 +52,6 @@ void testTokenStream()
     checkpoint();
 }
 
-struct Printer : public Visitor {
-public:
-    Printer()
-        : depth_(0)
-    {
-    }
-
-    virtual void visit(const NumberExpression &node)
-    {
-        pad();
-        std::cout << "NumberExpression value:" << node.value() << std::endl;
-    }
-
-	virtual void visit(const CharacterExpression &node)
-	{
-		pad();
-		std::cout << "CharacterExpression value:" << node.value() << std::endl;
-	}
-
-	virtual void visit(const StringExpression &node)
-	{
-		pad();
-		std::cout << "StringExpression value:" << node.value() << std::endl;
-	}
-
-    virtual void visit(const UnaryExpression &node)
-    {
-        pad();
-        std::cout << "UnaryExpression op:" << str(node.op()) << std::endl;
-        depth_ += 1;
-        node.expr()->accept(*this);
-        depth_ -= 1;
-    }
-
-    virtual void visit(const BinaryExpression &node)
-    {
-        pad();
-        std::cout << "BinaryExpression op:" << str(node.op()) << std::endl;
-        depth_ += 1;
-        node.lhs()->accept(*this);
-        node.rhs()->accept(*this);
-        depth_ -= 1;
-    }
-
-    virtual void visit(const IdentifierExpression &node)
-    {
-        pad();
-        std::cout << "IdentifierExpression name:" << node.name() << std::endl;
-    }
-
-    virtual void visit(const ConditionalExpression &node)
-    {
-        pad();
-        std::cout << "ConditionalExpression" << std::endl;
-        depth_ += 1;
-        node.condExpr()->accept(*this);
-        node.thenExpr()->accept(*this);
-        if (node.elseExpr()) {
-            node.elseExpr()->accept(*this);
-        }
-        depth_ -= 1;
-    }
-
-	virtual void visit(const DerefExpression &node)
-	{
-		pad();
-		std::cout << "DerefExpression name:" << node.name() << std::endl;
-		depth_ += 1;
-		node.parent()->accept(*this);
-		node.child()->accept(*this);
-		depth_ -= 1;
-	}
-
-	virtual void visit(const CallExpression &node)
-	{
-		pad();
-		std::cout << "CallExpression" << std::endl;
-		depth_ += 1;
-		node.ident()->accept(*this);
-		for (auto &arg : node.args()) {
-			arg->accept(*this);
-		}
-		depth_ -= 1;
-	}
-
-    virtual void visit(const StatementExpression &node)
-    {
-        pad();
-        std::cout << "StatementExpression" << std::endl;
-        depth_ += 1;
-        node.expr()->accept(*this);
-        depth_ -= 1;
-    }
-
-    virtual void visit(const BlockExpression &node)
-    {
-        pad();
-        std::cout << "BlockExpression" << std::endl;
-        depth_ += 1;
-        for (auto &expr: node.exprs()) {
-            expr->accept(*this);
-        }
-        depth_ -= 1;
-    }
-
-private:
-    void pad() const
-    {
-        for (size_t i = 0; i < depth_; ++i) {
-            std::cout << "  ";
-        }
-    }
-
-    size_t depth_;
-};
-
 void testParser()
 {
 	Lexer lexer(
@@ -183,8 +67,8 @@ void testParser()
     while (!parser.finished()) {
         ParserResult result = parser.parseStatement();
         if (result.hasValue()) {
-            Printer printer;
-            result.value()->accept(printer);
+            Ast::Printer printer;
+            result.value()->visit(printer);
         }
         else {
             ParserError error = result.error();

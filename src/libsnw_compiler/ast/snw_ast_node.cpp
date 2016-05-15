@@ -14,6 +14,17 @@ NodeType Node::nodeType() const
     return nodeType_;
 }
 
+StringView Node::nodeTypeName() const
+{
+    switch (nodeType_) {
+#define X(xType) case NodeType::xType: return StringView(#xType);
+        SNW_AST_NODE_TYPES
+#undef X
+    default:
+        abort();
+    }
+}
+
 NodeContent Node::nodeContent() const
 {
     return nodeContent_;
@@ -29,61 +40,4 @@ bool Node::isExpr() const
 {
     return (NodeType::ExprBegin < nodeType()) &&
            (nodeType() < NodeType::ExprEnd);
-}
-
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr)
-    : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
-{
-}
-
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs)
-    : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
-    , elifs_(std::move(elifs))
-{
-}
-
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr)
-    : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
-    , else_(std::move(elseExpr))
-{
-}
-
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr)
-    : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
-    , elifs_(std::move(elifs))
-    , else_(std::move(elseExpr))
-{
-}
-
-const ExprPtr &IfStmt::condExpr() const
-{
-    return cond_;
-}
-
-const ExprPtr &IfStmt::thenExpr() const
-{
-    return then_;
-}
-
-const IfStmt::ElifVec &IfStmt::elifExprs() const
-{
-    return elifs_;
-}
-
-const ExprPtr &IfStmt::elseExpr() const
-{
-    return else_;
-}
-
-void IfStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }

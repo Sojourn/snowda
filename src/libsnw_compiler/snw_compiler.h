@@ -21,7 +21,7 @@
 #include "ast/snw_ast_node.h"
 #include "ast/snw_ast_expr.h"
 #include "ast/snw_ast_stmt.h"
-#include "ast/snw_ast_visitor.h"
+#include "ast/snw_ast_printer.h"
 #include "snw_parser_result.h"
 #include "snw_grammar.h"
 #include "snw_parser.h"

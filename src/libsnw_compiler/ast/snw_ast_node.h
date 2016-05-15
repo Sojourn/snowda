@@ -1,73 +1,59 @@
 #ifndef SNW_AST_NODE_H
 #define SNW_AST_NODE_H
 
+#define SNW_AST_EXPR_TYPES \
+    X(NumberExpr) \
+    X(CharacterExpr) \
+    X(StringExpr) \
+    X(IdentifierExpr) \
+    X(BinaryExpr) \
+    X(UnaryExpr) \
+    X(CallExpr) \
+    X(DerefExpr)
+
+#define SNW_AST_STMT_TYPES \
+    X(RootStmt) \
+    X(ModuleStmt) \
+    X(BlockStmt) \
+    X(DeclStmt) \
+    X(IfStmt) \
+    X(ForStmt) \
+    X(ExprStmt)
+
+#define SNW_AST_NODE_TYPES \
+    SNW_AST_EXPR_TYPES \
+    SNW_AST_STMT_TYPES
+
 namespace Snowda {
     namespace Ast {
         class NodeVisitor;
         class Node;
-        class Expr;
-        class NumberExpr;
-        class CharacterExpr;
-        class StringExpr;
-        class IdentifierExpr;
-        class BinaryExpr;
-        class UnaryExpr;
-        class CallExpr;
-        class AnchorExpr;
-        class DerefExpr;
         class Stmt;
-        class RootStmt;
-        class ModuleStmt;
-        class BlockStmt;
-        class DeclStmt;
-        class IfStmt;
-        class ForStmt;
-        class ExprStmt;
+
+#define X(xType) class xType;
+        SNW_AST_NODE_TYPES
+#undef X
 
         class NodeVisitor {
         public:
             virtual ~NodeVisitor() {}
-            virtual void visit(const NumberExpr &expr) {}
-            virtual void visit(const CharacterExpr &expr) {}
-            virtual void visit(const StringExpr &expr) {}
-            virtual void visit(const IdentifierExpr &expr) {}
-            virtual void visit(const UnaryExpr &expr) {}
-            virtual void visit(const BinaryExpr &expr) {}
-            virtual void visit(const CallExpr &expr) {}
-            virtual void visit(const AnchorExpr &expr) {}
-            virtual void visit(const DerefExpr &stmt) {}
-            virtual void visit(const RootStmt &stmt) {}
-            virtual void visit(const BlockStmt &stmt) {}
-            virtual void visit(const ModuleStmt &stmt) {}
-            virtual void visit(const DeclStmt &stmt) {}
-            virtual void visit(const IfStmt &stmt) {}
-            virtual void visit(const ForStmt &stmt) {}
-            virtual void visit(const ExprStmt &stmt) {}
+
+#define X(xType) virtual void visit(const xType &node) = 0;
+        SNW_AST_NODE_TYPES
+#undef X
         };
 
         enum class NodeType {
             ExprBegin,
-            Expr,
-            NumberExpr,
-            CharacterExpr,
-            StringExpr,
-            IdentifierExpr,
-            UnaryExpr,
-            BinaryExpr,
-            CallExpr,
-            AnchorExpr,
-            DerefExpr,
+#define X(xType) xType,
+        SNW_AST_EXPR_TYPES
+#undef X
             ExprEnd,
 
             StmtBegin,
-            Stmt,
-            RootStmt,
-            BlockStmt,
-            ModuleStmt,
-            DeclStmt,
-            IfStmt,
-            ForStmt,
-            ExprStmt,
+#define X(xType) xType,
+        SNW_AST_STMT_TYPES
+#undef X
             StmtEnd,
         };
 
@@ -84,6 +70,7 @@ namespace Snowda {
             virtual ~Node() {}
 
             NodeType nodeType() const;
+            StringView nodeTypeName() const;
             NodeContent nodeContent() const;
 
             bool isStmt() const;
