@@ -31,8 +31,8 @@ namespace Snowda {
             virtual void visit(const CharacterExpr &expr) {}
             virtual void visit(const StringExpr &expr) {}
             virtual void visit(const IdentifierExpr &expr) {}
-            virtual void visit(const BinaryExpr &expr) {}
             virtual void visit(const UnaryExpr &expr) {}
+            virtual void visit(const BinaryExpr &expr) {}
             virtual void visit(const CallExpr &expr) {}
             virtual void visit(const AnchorExpr &expr) {}
             virtual void visit(const DerefExpr &stmt) {}
@@ -52,8 +52,8 @@ namespace Snowda {
             CharacterExpr,
             StringExpr,
             IdentifierExpr,
-            BinaryExpr,
             UnaryExpr,
+            BinaryExpr,
             CallExpr,
             AnchorExpr,
             DerefExpr,

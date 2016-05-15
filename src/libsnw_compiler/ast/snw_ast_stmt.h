@@ -3,7 +3,6 @@
 
 namespace Snowda {
     namespace Ast {
-
         class Stmt : public Node {
         public:
             Stmt(NodeType nodeType, NodeContent nodeContent);
@@ -49,18 +48,36 @@ namespace Snowda {
             const ExprVec args_;
             const BlockStmtPtr block_;
         };
+        using ModuleStmtPtr = std::unique_ptr<ModuleStmt>;
+
+        class DeclStmt : public Stmt {
+        public:
+            DeclStmt(NodeContent nodeContent, StringView name, ExprPtr expr);
+
+            const StringView &name() const;
+            const ExprPtr &expr() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const StringView name_;
+            const ExprPtr expr_;
+        };
+        using DeclStmtPtr = std::unique_ptr<DeclStmt>;
 
         class IfStmt : public Stmt {
         public:
-            using ElifVec = std::vector<std::tuple<ExprPtr, ExprPtr>>;
+            struct Elif {
+                const ExprPtr cond;
+                const ExprPtr then;
+            };
+
+            using ElifVec = std::vector<Elif>;
 
             IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr);
             IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs);
             IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr);
             IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr);
-
-            bool hasElseExpr() const;
-            bool hasElifExprs() const;
 
             const ExprPtr &condExpr() const;
             const ExprPtr &thenExpr() const;
@@ -75,7 +92,15 @@ namespace Snowda {
             const ElifVec elifs_;
             const ExprPtr else_;
         };
+        using IfStmtPtr = std::unique_ptr<IfStmt>;
 
+        class ForStmt : public Stmt {
+        public:
+            ForStmt(NodeContent nodeContent);
+
+            virtual void visit(NodeVisitor &visitor) const override;
+        };
+        using ForStmtPtr = std::unique_ptr<ForStmt>;
     }
 }
 

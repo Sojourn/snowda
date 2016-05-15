@@ -9,7 +9,7 @@ namespace {
     class ParserFrame {
     public:
         ParserFrame(size_t &depth)
-            : depth_(depth);
+            : depth_(depth)
         {
             depth_ += 1;
         }
