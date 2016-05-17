@@ -57,11 +57,10 @@ namespace Snowda {
             StmtEnd,
         };
 
-        // FIXME: Start row/col, end row/col?
         struct NodeContent {
-            StringView str;
-            size_t row;
-            size_t col;
+            // size_t row;
+            // size_t col;
+            // size_t len;
         };
 
         class Node {
@@ -82,7 +81,6 @@ namespace Snowda {
             const NodeType nodeType_;
             const NodeContent nodeContent_;
         };
-        using NodePtr = std::unique_ptr<Node>;
 
     }
 }

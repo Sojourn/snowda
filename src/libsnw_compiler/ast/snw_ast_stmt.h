@@ -7,8 +7,7 @@ namespace Snowda {
         public:
             Stmt(NodeType nodeType, NodeContent nodeContent);
         };
-        using StmtPtr = std::unique_ptr<Stmt>;
-        using StmtVec = std::vector<StmtPtr>;
+        using StmtVec = std::vector<const Stmt *>;
 
         class RootStmt : public Stmt {
         public:
@@ -21,7 +20,6 @@ namespace Snowda {
         private:
             const StmtVec stmts_;
         };
-        using RootStmtPtr = std::unique_ptr<RootStmt>;
 
         class BlockStmt : public Stmt {
         public:
@@ -34,7 +32,6 @@ namespace Snowda {
         private:
             const StmtVec stmts_;
         };
-        using BlockStmtPtr = std::unique_ptr<BlockStmt>;
 
         class ModuleStmt : public Stmt {
         public:
@@ -51,7 +48,6 @@ namespace Snowda {
             const ExprVec args_;
             const BlockStmtPtr block_;
         };
-        using ModuleStmtPtr = std::unique_ptr<ModuleStmt>;
 
         class DeclStmt : public Stmt {
         public:
@@ -66,13 +62,12 @@ namespace Snowda {
             const StringView name_;
             const ExprPtr expr_;
         };
-        using DeclStmtPtr = std::unique_ptr<DeclStmt>;
 
         class IfStmt : public Stmt {
         public:
             struct Elif {
-                const ExprPtr cond;
-                const ExprPtr then;
+                const Expr *cond;
+                const Expr *then;
             };
 
             using ElifVec = std::vector<Elif>;
@@ -95,7 +90,6 @@ namespace Snowda {
             const ElifVec elifs_;
             const ExprPtr else_;
         };
-        using IfStmtPtr = std::unique_ptr<IfStmt>;
 
         class ForStmt : public Stmt {
         public:
@@ -103,7 +97,6 @@ namespace Snowda {
 
             virtual void visit(NodeVisitor &visitor) const override;
         };
-        using ForStmtPtr = std::unique_ptr<ForStmt>;
 
         class ExprStmt : public Stmt {
         public:
@@ -116,7 +109,6 @@ namespace Snowda {
         private:
             const ExprPtr expr_;
         };
-        using ExprStmtPtr = std::unique_ptr<ExprStmt>;
     }
 }
 

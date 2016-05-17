@@ -4,7 +4,6 @@ using namespace Snowda;
 using namespace Snowda::Ast;
 
 namespace {
-    using Expr = Grammar::Expr;
     using Nud = Grammar::Nud;
     using Led = Grammar::Led;
 
@@ -21,19 +20,45 @@ namespace {
         };
     }
 
+    // class NodeContentBuilder {
+    // public:
+    //     NodeContentBuilder(Parser &parser, Token token)
+    //         : parser_(parser)
+    //         , pos_(start.pos)
+    //         , row_(start.row)
+    //         , col_(start.col)
+    //     {
+    //     }
+
+    //     NodeContent nodeContent()
+    //     {
+    //         NodeContent rval;
+    //         rval.row = row_;
+    //         rval.col = col_;
+    //         rval.len = parser_.currentToken().pos - pos_;
+    //         return rval;
+    //     }
+
+    // private:
+    //     Parser &parser_;
+    //     const size_t pos_;
+    //     const size_t row_;
+    //     const size_t col_;
+    // };
+
     ParserResult defaultNud(Parser &parser, Token token)
     {
         return ParserError(token, "default nud");
     }
 
-    ParserResult defaultLed(Parser &parser, Expr expr, Token token)
+    ParserResult defaultLed(Parser &parser, NodePtr node, Token token)
     {
         return ParserError(token, "default led");
     }
 
     ParserResult identifierNud(Parser &parser, Token token)
     {
-        return Expr(new IdentifierExpression(token.content));
+        return NodePtr(new IdentifierExpr(token.content));
     }
 
     ParserResult numberNud(Parser &parser, Token token)
@@ -45,7 +70,7 @@ namespace {
             number += (c - '0');
         }
 
-        return Expr(new NumberExpression(number));
+        return NodePtr(new NumberExpr(NodeContent(), number));
     }
 
     ParserResult characterNud(Parser &parser, Token token)
@@ -53,12 +78,12 @@ namespace {
         assert(token.content.size() == 1);
         char value = token.content[0];
 
-        return Expr(new CharacterExpression(value));
+        return NodePtr(new CharacterExpr(NodeContent(), value));
     }
 
     ParserResult stringNud(Parser &parser, Token token)
     {
-        return Expr(new StringExpression(token.content));
+        return NodePtr(new StringExpr(NodeContent(), token.content));
     }
 
     ParserResult groupNud(Parser &parser, Token token)
@@ -75,9 +100,9 @@ namespace {
         return std::move(result.value());
     }
 
-    ParserResult derefLed(Parser &parser, Expr left, Token token)
+    ParserResult derefLed(Parser &parser, NodePtr left, Token token)
     {
-        if (dynamic_cast<const IdentifierExpression *>(left.get()) == nullptr) {
+        if (dynamic_cast<const IdentifierExpr *>(left.get()) == nullptr) {
             return ParserError(token, "Expected an identifier (lhs)");
         }
 
@@ -86,23 +111,23 @@ namespace {
             return std::move(result);
         }
 
-        Expr right = std::move(result.value());
-        if (dynamic_cast<const IdentifierExpression *>(right.get()) == nullptr) {
+        NodePtr right = std::move(result.value());
+        if (dynamic_cast<const IdentifierExpr *>(right.get()) == nullptr) {
             return ParserError(token, "Expected an identifier (rhs)");
         }
 
-        return Expr(new DerefExpression(std::move(left), std::move(right)));
+        return NodePtr(new DerefExpr(NodeContent(), std::move(left), std::move(right)));
     }
 
-    ParserResult callLed(Parser &parser, Expr left, Token token)
+    ExprResult callLed(Parser &parser, NodePtr left, Token token)
     {
-        if (dynamic_cast<const IdentifierExpression *>(left.get()) == nullptr) {
+        if (left->nodeType() != NodeType::IdentifierExpr) {
             return ParserError(token, "Expected an identifier (lhs)");
         }
 
-        std::vector<ExpressionPtr> args;
+        ExprVec args;
         while (parser.currentToken().type != TokenType::RParen) {
-            ParserResult result = parser.parseExpression(0);
+            ExprResult result = parser.parseExpression(0);
             if (result.hasError()) {
                 return std::move(result);
             }
@@ -123,7 +148,7 @@ namespace {
             return ParserError(parser.currentToken(), "Internal parser error matching ')'");
         }
 
-        return Expr(new CallExpression(std::move(left), std::move(args)));
+        return NodePtr(new CallExpr(NodeContent(), std::move(identExpr), std::move(args)));
     }
 
     ParserResult expressionStd(Parser &parser, Token token)
@@ -137,19 +162,19 @@ namespace {
             return ParserError(parser.currentToken(), "Expected statement expression to end with a ';'");
         }
 
-        return Expr(new StatementExpression(std::move(result.value())));
+        return NodePtr(new ExprStmt(NodeContent(), std::move(result.value())));
     }
 
     ParserResult blockStd(Parser &parser, Token token)
     {
-        std::vector<ExpressionPtr> exprs;
+        StmtVec stmts;
         while (parser.currentToken().type != TokenType::RCBrace) {
             ParserResult result = parser.parseStatement();
             if (result.hasError()) {
                 return std::move(result);
             }
             else {
-                exprs.push_back(std::move(result.value()));
+                stmts.push_back(std::move(result.value()));
             }
         }
 
@@ -157,16 +182,16 @@ namespace {
             return ParserError(parser.currentToken(), "Internal parser error matching '}'");
         }
 
-        return Expr(new BlockExpression(std::move(exprs)));
+        return NodePtr(new BlockStmt(NodeContent(), std::move(stmts)));
     }
 
     ParserResult ifStd(Parser &parser, Token token)
     {
 		ParserResult result(ParserError(token, ""));
-        Expr condExpr;
-        Expr thenExpr;
+        NodePtr condExpr;
+        NodePtr thenExpr;
         // std::vector<std::tuple(Expr, Expr)> elifExprs;
-        Expr elseExpr;
+        NodePtr elseExpr;
 
         if (!parser.advanceToken(TokenType::LParen)) {
             return ParserError(parser.currentToken(), "Expected LParen");
@@ -191,7 +216,7 @@ namespace {
         thenExpr = std::move(result.value());
 
         if (parser.currentToken().type != TokenType::Else) {
-            return Expr(new ConditionalExpression(std::move(condExpr), std::move(thenExpr)));
+            return NodePtr(new IfStmt(NodeContent(), std::move(condExpr), std::move(thenExpr)));
         }
 
 		parser.consumeToken();
@@ -201,7 +226,7 @@ namespace {
         }
 
         elseExpr = std::move(result.value());
-        return Expr(new ConditionalExpression(std::move(condExpr), std::move(thenExpr), std::move(elseExpr)));
+        return NodePtr(new IfStmt(NodeContent(), std::move(condExpr), std::move(thenExpr), std::move(elseExpr)));
     }
 
     ParserResult errorNud(Parser &parser, Token token)
@@ -209,12 +234,12 @@ namespace {
         return ParserError(token, token.content);
     }
 
-    ParserResult errorLed(Parser &parser, Expr expr, Token token)
+    ParserResult errorLed(Parser &parser, NodePtr node, Token token)
     {
         return ParserError(token, token.content);
     }
 
-    template<UnaryOperator op>
+    template<UnaryExpr::Operator op>
     ParserResult unaryNud(Parser &parser, Token token) {
         ParserResult result = parser.parseExpression(BindingPower::Unary);
         if (result.hasError()) {
@@ -222,19 +247,19 @@ namespace {
         }
         else {
             Expr expr = std::move(result.value());
-            return Expr(new UnaryExpression(op, std::move(expr)));
+            return NodeExpr(new UnaryExpr(NodeContent(), op, std::move(expr)));
         }
     }
 
-    template<BinaryOperator op>
-    ParserResult binaryLed(Parser &parser, Expr left, Token token) {
+    template<BinaryExpr::Operator op>
+    ParserResult binaryLed(Parser &parser, NodePtr left, Token token) {
         ParserResult result = parser.parseExpression(parser.grammar().bp(token));
         if (result.hasError()) {
             return result;
         }
         else {
             Expr right = std::move(result.value());
-            return Expr(new BinaryExpression(op, std::move(left), std::move(right)));
+            return NodePtr(new BinaryExpr(NodeContent(), op, std::move(left), std::move(right)));
         }
     }
 }
@@ -253,15 +278,15 @@ Grammar::Grammar()
     stmt(TokenType::LCBrace, &blockStd);
     stmt(TokenType::If, &ifStd);
 
-    prefix(TokenType::Plus, &unaryNud<UnaryOperator::Plus>);
-    prefix(TokenType::Minus, &unaryNud<UnaryOperator::Minus>);
-    prefix(TokenType::Tilde, &unaryNud<UnaryOperator::Tilde>);
-    prefix(TokenType::Bang, &unaryNud<UnaryOperator::Bang>);
+    prefix(TokenType::Plus, &unaryNud<UnaryExpr::Operator::Plus>);
+    prefix(TokenType::Minus, &unaryNud<UnaryExpr::Operator::Minus>);
+    prefix(TokenType::Tilde, &unaryNud<UnaryExpr::Operator::Tilde>);
+    prefix(TokenType::Bang, &unaryNud<UnaryExpr::Operator::Bang>);
 
-    infix(TokenType::Plus, BindingPower::Sum, &binaryLed<BinaryOperator::Add>);
-    infix(TokenType::Minus, BindingPower::Sum, &binaryLed<BinaryOperator::Sub>);
-    infix(TokenType::Mult, BindingPower::Product, &binaryLed<BinaryOperator::Mul>);
-    infix(TokenType::Div, BindingPower::Product, &binaryLed<BinaryOperator::Div>);
+    infix(TokenType::Plus, BindingPower::Sum, &binaryLed<BinaryExpr::Operator::Add>);
+    infix(TokenType::Minus, BindingPower::Sum, &binaryLed<BinaryExpr::Operator::Sub>);
+    infix(TokenType::Mult, BindingPower::Product, &binaryLed<BinaryExpr::Operator::Mul>);
+    infix(TokenType::Div, BindingPower::Product, &binaryLed<BinaryExpr::Operator::Div>);
 
     prefix(TokenType::Error, &errorNud);
     infix(TokenType::Error, BindingPower::None, &errorLed);
@@ -291,10 +316,10 @@ ParserResult Grammar::nud(Parser &parser, Token token) const
     return getRule(token.type).nud(parser, token);
 }
 
-ParserResult Grammar::led(Parser &parser, Expr expr, Token token) const
+ParserResult Grammar::led(Parser &parser, NodePtr node, Token token) const
 {
     parser.consumeToken();
-    return getRule(token.type).led(parser, std::move(expr), token);
+    return getRule(token.type).led(parser, std::move(node), token);
 }
 
 Grammar::Rule &Grammar::getRule(TokenType type)

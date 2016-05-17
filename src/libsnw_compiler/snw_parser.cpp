@@ -48,7 +48,7 @@ ParserResult Parser::parseExpression(int bp)
         return std::move(result);
     }
     else {
-        ExpressionPtr expr = std::move(result.value());
+        NodePtr expr = std::move(result.value());
         while (bp < grammar_.bp(currentToken())) {
             token = currentToken();
             result = grammar_.led(*this, std::move(expr), token);

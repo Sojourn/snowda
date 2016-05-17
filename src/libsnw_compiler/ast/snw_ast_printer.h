@@ -24,6 +24,8 @@ namespace Snowda {
             virtual void visit(const ExprStmt &stmt) override;
 
         private:
+            void pad() const;
+
             size_t depth_;
         };
     }

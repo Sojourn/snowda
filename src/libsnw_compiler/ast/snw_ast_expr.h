@@ -7,8 +7,7 @@ namespace Snowda {
         public:
             Expr(NodeType type, NodeContent nodeContent);
         };
-        using ExprPtr = std::unique_ptr<Expr>;
-        using ExprVec = std::vector<ExprPtr>;
+        using ExprVec = std::vector<const ExprPtr *>;
 
         class NumberExpr : public Expr {
         public:
@@ -21,7 +20,6 @@ namespace Snowda {
         private:
             const int value_;
         };
-        using NumberExprPtr = std::unique_ptr<NumberExpr>;
 
         class CharacterExpr : public Expr {
         public:
@@ -34,7 +32,6 @@ namespace Snowda {
         private:
             const char value_;
         };
-        using CharacterExprPtr = std::unique_ptr<CharacterExpr>;
 
         class StringExpr : public Expr {
         public:
@@ -47,7 +44,6 @@ namespace Snowda {
         private:
             const StringView value_;
         };
-        using StringExprPtr = std::unique_ptr<StringExpr>;
 
         class IdentifierExpr : public Expr {
         public:
@@ -60,7 +56,6 @@ namespace Snowda {
         private:
             const StringView name_;
         };
-        using IdentifierExprPtr = std::unique_ptr<IdentifierExpr>;
 
         class UnaryExpr : public Expr {
         public:
@@ -82,7 +77,6 @@ namespace Snowda {
             const Operator op_;
             const ExprPtr expr_;
         };
-        using UnaryExprPtr = std::unique_ptr<UnaryExpr>;
 
         class BinaryExpr : public Expr {
         public:
@@ -106,7 +100,6 @@ namespace Snowda {
             const ExprPtr lhsExpr_;
             const ExprPtr rhsExpr_;
         };
-        using BinaryExprPtr = std::unique_ptr<BinaryExpr>;
 
         class CallExpr : public Expr {
         public:

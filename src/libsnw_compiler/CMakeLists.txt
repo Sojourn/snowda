@@ -7,7 +7,7 @@ set(SNW_HDRS
     snw_token.h
     snw_lexer.h
     snw_token_stream.h
-    snw_parser_result.h
+    snw_parser_error.h
     snw_grammar.h
     snw_parser.h
     ast/snw_ast.h
@@ -21,7 +21,7 @@ set(SNW_SRCS
     snw_token.cpp
     snw_lexer.cpp
     snw_token_stream.cpp
-    snw_parser_result.cpp
+    snw_parser_error.cpp
     snw_grammar.cpp
     snw_parser.cpp
     ast/snw_ast.cpp

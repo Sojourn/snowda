@@ -1,9 +1,7 @@
-#ifndef SNW_PARSER_RESULT_H
-#define SNW_PARSER_RESULT_H
+#ifndef SNW_PARSER_ERROR_H
+#define SNW_PARSER_ERROR_H
 
 namespace Snowda {
-
-    class Parser;
 
     class ParserError {
     public:
@@ -20,7 +18,6 @@ namespace Snowda {
         const size_t row_;
     };
 
-    using ParserResult = Result<Ast::NodePtr, ParserError>;
 }
 
-#endif // SNW_PARSER_RESULT_H
+#endif // SNW_PARSER_ERROR_H
