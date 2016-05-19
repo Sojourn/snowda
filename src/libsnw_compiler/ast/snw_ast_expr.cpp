@@ -72,7 +72,7 @@ void IdentifierExpr::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-UnaryExpr::UnaryExpr(NodeContent nodeContent, Operator op, ExprPtr expr)
+UnaryExpr::UnaryExpr(NodeContent nodeContent, Operator op, const Expr *expr)
     : Expr(NodeType::UnaryExpr, nodeContent)
     , op_(op)
     , expr_(std::move(expr))
@@ -86,7 +86,7 @@ UnaryExpr::Operator UnaryExpr::op() const
 
 StringView UnaryExpr::opName() const
 {
-    switch (op) {
+    switch (op_) {
 #define X(xType, xName) case Operator::xType: return StringView(xName);
     SNW_AST_UNARY_OPERATORS
 #undef X
@@ -95,7 +95,7 @@ StringView UnaryExpr::opName() const
     }
 }
 
-const ExprPtr &UnaryExpr::expr() const
+const Expr *UnaryExpr::expr() const
 {
     return expr_;
 }
@@ -105,7 +105,7 @@ void UnaryExpr::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-BinaryExpr::BinaryExpr(NodeContent nodeContent, Operator op, ExprPtr lhsExpr, ExprPtr rhsExpr)
+BinaryExpr::BinaryExpr(NodeContent nodeContent, Operator op, const Expr *lhsExpr, const Expr *rhsExpr)
     : Expr(NodeType::BinaryExpr, nodeContent)
     , op_(op)
     , lhsExpr_(std::move(lhsExpr))
@@ -120,7 +120,7 @@ BinaryExpr::Operator BinaryExpr::op() const
 
 StringView BinaryExpr::opName() const
 {
-    switch (op) {
+    switch (op_) {
 #define X(xType, xName) case Operator::xType: return StringView(xName);
     SNW_AST_BINARY_OPERATORS
 #undef X
@@ -129,12 +129,12 @@ StringView BinaryExpr::opName() const
     }
 }
 
-const ExprPtr &BinaryExpr::lhsExpr() const
+const Expr *BinaryExpr::lhsExpr() const
 {
     return lhsExpr_;
 }
 
-const ExprPtr &BinaryExpr::rhsExpr() const
+const Expr *BinaryExpr::rhsExpr() const
 {
     return rhsExpr_;
 }
@@ -144,14 +144,14 @@ void BinaryExpr::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-CallExpr::CallExpr(NodeContent nodeContent, IdentifierExprPtr ident, ExprVec args)
+CallExpr::CallExpr(NodeContent nodeContent, const IdentifierExpr *ident, ExprVec args)
     : Expr(NodeType::CallExpr, nodeContent)
     , ident_(std::move(ident))
     , args_(std::move(args))
 {
 }
 
-const IdentifierExprPtr &CallExpr::ident() const
+const IdentifierExpr *CallExpr::ident() const
 {
     return ident_;
 }
@@ -166,25 +166,25 @@ void CallExpr::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-DerefExpr::DerefExpr(NodeContent nodeContent, IdentifierExprPtr rhsIdent)
+DerefExpr::DerefExpr(NodeContent nodeContent, const IdentifierExpr *rhsIdent)
     : Expr(NodeType::DerefExpr, nodeContent)
     , rhsIdent_(std::move(rhsIdent))
 {
 }
 
-DerefExpr::DerefExpr(NodeContent nodeContent, IdentifierExprPtr lhsIdent, IdentifierExprPtr rhsIdent)
+DerefExpr::DerefExpr(NodeContent nodeContent, const IdentifierExpr *lhsIdent, const IdentifierExpr *rhsIdent)
     : Expr(NodeType::DerefExpr, nodeContent)
     , lhsIdent_(std::move(lhsIdent))
     , rhsIdent_(std::move(rhsIdent))
 {
 }
 
-const IdentifierExprPtr &DerefExpr::lhsIdent() const
+const IdentifierExpr *DerefExpr::lhsIdent() const
 {
     return lhsIdent_;
 }
 
-const IdentifierExprPtr &DerefExpr::rhsIdent() const
+const IdentifierExpr *DerefExpr::rhsIdent() const
 {
     return rhsIdent_;
 }

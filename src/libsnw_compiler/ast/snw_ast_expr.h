@@ -7,7 +7,6 @@ namespace Snowda {
         public:
             Expr(NodeType type, NodeContent nodeContent);
         };
-        using ExprVec = std::vector<const ExprPtr *>;
 
         class NumberExpr : public Expr {
         public:
@@ -65,17 +64,17 @@ namespace Snowda {
 #undef X
             };
 
-            UnaryExpr(NodeContent nodeContent, Operator op, ExprPtr expr);
+            UnaryExpr(NodeContent nodeContent, Operator op, const Expr *expr);
 
             Operator op() const;
             StringView opName() const;
-            const ExprPtr &expr() const;
+            const Expr *expr() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const Operator op_;
-            const ExprPtr expr_;
+            const Expr *expr_;
         };
 
         class BinaryExpr : public Expr {
@@ -86,48 +85,48 @@ namespace Snowda {
 #undef X
             };
 
-            BinaryExpr(NodeContent nodeContent, Operator op, ExprPtr lhsExpr, ExprPtr rhsExpr);
+            BinaryExpr(NodeContent nodeContent, Operator op, const Expr *lhsExpr, const Expr *rhsExpr);
 
             Operator op() const;
             StringView opName() const;
-            const ExprPtr &lhsExpr() const;
-            const ExprPtr &rhsExpr() const;
+            const Expr *lhsExpr() const;
+            const Expr *rhsExpr() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const Operator op_;
-            const ExprPtr lhsExpr_;
-            const ExprPtr rhsExpr_;
+            const Expr *lhsExpr_;
+            const Expr *rhsExpr_;
         };
 
         class CallExpr : public Expr {
         public:
-            CallExpr(NodeContent nodeContent, IdentifierExprPtr ident, ExprVec args);
+            CallExpr(NodeContent nodeContent, const IdentifierExpr *ident, ExprVec args);
 
-            const IdentifierExprPtr &ident() const;
+            const IdentifierExpr *ident() const;
             const ExprVec &args() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
-            const IdentifierExprPtr ident_;
+            const IdentifierExpr *ident_;
             const ExprVec args_;
         };
 
         class DerefExpr : public Expr {
         public:
-            DerefExpr(NodeContent nodeContent, IdentifierExprPtr rhsIdent);
-            DerefExpr(NodeContent nodeContent, IdentifierExprPtr lhsIdent, IdentifierExprPtr rhsIdent);
+            DerefExpr(NodeContent nodeContent, const IdentifierExpr *rhsIdent);
+            DerefExpr(NodeContent nodeContent, const IdentifierExpr *lhsIdent, const IdentifierExpr *rhsIdent);
 
-            const IdentifierExprPtr &rhsIdent() const;
-            const IdentifierExprPtr &lhsIdent() const;
+            const IdentifierExpr *rhsIdent() const;
+            const IdentifierExpr *lhsIdent() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
-            const IdentifierExprPtr lhsIdent_;
-            const IdentifierExprPtr rhsIdent_;
+            const IdentifierExpr *lhsIdent_;
+            const IdentifierExpr *rhsIdent_;
         };
     }
 }

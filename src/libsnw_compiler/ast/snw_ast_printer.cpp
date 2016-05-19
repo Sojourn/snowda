@@ -61,7 +61,7 @@ void Printer::visit(const CallExpr &expr)
 {
     depth_ += 1;
     std::cout << '(' << expr.nodeTypeName() << std::endl;
-    pad(); std::cout << " ident: " << expr.ident()->visit(*this);
+	pad(); std::cout << " ident: "; expr.ident()->visit(*this);
     for (size_t i = 0; i < expr.args().size(); ++i) {
         pad(); std::cout << "arg" << i << ": "; expr.args()[i]->visit(*this);
     }
@@ -128,14 +128,14 @@ void Printer::visit(const IfStmt &stmt)
     depth_ += 1;
     std::cout << '(' << stmt.nodeTypeName() << std::endl;
     pad(); std::cout << "cond: "; stmt.condExpr()->visit(*this);
-    pad(); std::cout << "then: "; stmt.thenExpr()->visit(*this);
-    for (size_t i = 0; i < stmt.elifExprs().size(); ++i) {
-        auto &elif = stmt.elifExprs()[i];
+    pad(); std::cout << "then: "; stmt.thenStmt()->visit(*this);
+    for (size_t i = 0; i < stmt.elifs().size(); ++i) {
+        auto &elif = stmt.elifs()[i];
         pad(); std::cout << "elif-cond" << i << ": "; elif.cond->visit(*this);
         pad(); std::cout << "elif-then" << i << ": "; elif.then->visit(*this);
     }
-    if (stmt.elseExpr()) {
-        pad(); std::cout << "else: "; stmt.elseExpr()->visit(*this);
+    if (stmt.elseStmt()) {
+        pad(); std::cout << "else: "; stmt.elseStmt()->visit(*this);
     }
     pad(); std::cout << ')' << std::endl;
     depth_ -= 1;

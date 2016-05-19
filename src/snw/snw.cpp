@@ -65,7 +65,7 @@ void testParser()
         );
     Parser parser(lexer);
     while (!parser.finished()) {
-        ParserResult result = parser.parseStatement();
+        StmtResult result = parser.parseStatement();
         if (result.hasValue()) {
             Ast::Printer printer;
             result.value()->visit(printer);

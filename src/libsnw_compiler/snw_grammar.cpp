@@ -20,48 +20,22 @@ namespace {
         };
     }
 
-    // class NodeContentBuilder {
-    // public:
-    //     NodeContentBuilder(Parser &parser, Token token)
-    //         : parser_(parser)
-    //         , pos_(start.pos)
-    //         , row_(start.row)
-    //         , col_(start.col)
-    //     {
-    //     }
-
-    //     NodeContent nodeContent()
-    //     {
-    //         NodeContent rval;
-    //         rval.row = row_;
-    //         rval.col = col_;
-    //         rval.len = parser_.currentToken().pos - pos_;
-    //         return rval;
-    //     }
-
-    // private:
-    //     Parser &parser_;
-    //     const size_t pos_;
-    //     const size_t row_;
-    //     const size_t col_;
-    // };
-
-    ParserResult defaultNud(Parser &parser, Token token)
+    ExprResult defaultNud(Parser &parser, Token token)
     {
         return ParserError(token, "default nud");
     }
 
-    ParserResult defaultLed(Parser &parser, NodePtr node, Token token)
+    ExprResult defaultLed(Parser &parser, const Expr *node, Token token)
     {
         return ParserError(token, "default led");
     }
 
-    ParserResult identifierNud(Parser &parser, Token token)
+    ExprResult identifierNud(Parser &parser, Token token)
     {
-        return NodePtr(new IdentifierExpr(token.content));
+        return parser.create<IdentifierExpr>(token.content);
     }
 
-    ParserResult numberNud(Parser &parser, Token token)
+    ExprResult numberNud(Parser &parser, Token token)
     {
         // FIXME: Get an actual number hierarchy
         int number = 0;
@@ -70,25 +44,22 @@ namespace {
             number += (c - '0');
         }
 
-        return NodePtr(new NumberExpr(NodeContent(), number));
+        return parser.create<NumberExpr>(number);
     }
 
-    ParserResult characterNud(Parser &parser, Token token)
+    ExprResult characterNud(Parser &parser, Token token)
     {
-        assert(token.content.size() == 1);
-        char value = token.content[0];
-
-        return NodePtr(new CharacterExpr(NodeContent(), value));
+        return parser.create<CharacterExpr>(token.content[0]);
     }
 
-    ParserResult stringNud(Parser &parser, Token token)
+    ExprResult stringNud(Parser &parser, Token token)
     {
-        return NodePtr(new StringExpr(NodeContent(), token.content));
+        return parser.create<StringExpr>(token.content);
     }
 
-    ParserResult groupNud(Parser &parser, Token token)
+    ExprResult groupNud(Parser &parser, Token token)
     {
-        ParserResult result = parser.parseExpression(0);
+        ExprResult result = parser.parseExpression(0);
         if (result.hasError()) {
             return std::move(result);
         }
@@ -97,29 +68,30 @@ namespace {
             return ParserError(parser.currentToken(), "Expected left paren");
         }
 
-        return std::move(result.value());
+        return result.value();
     }
 
-    ParserResult derefLed(Parser &parser, NodePtr left, Token token)
+    ExprResult derefLed(Parser &parser, const Expr *left, Token token)
     {
-        if (dynamic_cast<const IdentifierExpr *>(left.get()) == nullptr) {
+        if (left->nodeType() != NodeType::IdentifierExpr) {
             return ParserError(token, "Expected an identifier (lhs)");
         }
 
-        ParserResult result = parser.parseExpression(BindingPower::Call);
+        ExprResult result = parser.parseExpression(BindingPower::Call);
         if (result.hasError()) {
             return std::move(result);
         }
 
-        NodePtr right = std::move(result.value());
-        if (dynamic_cast<const IdentifierExpr *>(right.get()) == nullptr) {
+        const Expr *right = result.value();
+        if (right->nodeType() != NodeType::IdentifierExpr) {
             return ParserError(token, "Expected an identifier (rhs)");
         }
 
-        return NodePtr(new DerefExpr(NodeContent(), std::move(left), std::move(right)));
+        return parser.create<DerefExpr>(static_cast<const IdentifierExpr *>(left),
+            static_cast<const IdentifierExpr *>(right));
     }
 
-    ExprResult callLed(Parser &parser, NodePtr left, Token token)
+    ExprResult callLed(Parser &parser, const Expr *left, Token token)
     {
         if (left->nodeType() != NodeType::IdentifierExpr) {
             return ParserError(token, "Expected an identifier (lhs)");
@@ -132,7 +104,7 @@ namespace {
                 return std::move(result);
             }
             else {
-                args.push_back(std::move(result.value()));
+                args.push_back(result.value());
                 if (parser.currentToken().type == TokenType::Comma) {
                     if (parser.nextToken().type == TokenType::RParen) {
                         return ParserError(parser.currentToken(), "Comma trailing argument list");
@@ -148,33 +120,33 @@ namespace {
             return ParserError(parser.currentToken(), "Internal parser error matching ')'");
         }
 
-        return NodePtr(new CallExpr(NodeContent(), std::move(identExpr), std::move(args)));
+        return parser.create<CallExpr>(static_cast<const IdentifierExpr *>(left), std::move(args));
     }
 
-    ParserResult expressionStd(Parser &parser, Token token)
+    StmtResult expressionStd(Parser &parser, Token token)
     {
-        ParserResult result = parser.parseExpression(0);
+        ExprResult result = parser.parseExpression(0);
         if (result.hasError()) {
-            return std::move(result);
+            return result.error();
         }
 
         if (!parser.advanceToken(TokenType::Semi)) {
             return ParserError(parser.currentToken(), "Expected statement expression to end with a ';'");
         }
 
-        return NodePtr(new ExprStmt(NodeContent(), std::move(result.value())));
+        return parser.create<ExprStmt>(result.value());
     }
 
-    ParserResult blockStd(Parser &parser, Token token)
+    StmtResult blockStd(Parser &parser, Token token)
     {
         StmtVec stmts;
         while (parser.currentToken().type != TokenType::RCBrace) {
-            ParserResult result = parser.parseStatement();
+            StmtResult result = parser.parseStatement();
             if (result.hasError()) {
-                return std::move(result);
+				return result.error();
             }
             else {
-                stmts.push_back(std::move(result.value()));
+                stmts.push_back(result.value());
             }
         }
 
@@ -182,84 +154,89 @@ namespace {
             return ParserError(parser.currentToken(), "Internal parser error matching '}'");
         }
 
-        return NodePtr(new BlockStmt(NodeContent(), std::move(stmts)));
+        return parser.create<BlockStmt>(std::move(stmts));
     }
 
-    ParserResult ifStd(Parser &parser, Token token)
+    StmtResult ifStd(Parser &parser, Token token)
     {
-		ParserResult result(ParserError(token, ""));
-        NodePtr condExpr;
-        NodePtr thenExpr;
-        // std::vector<std::tuple(Expr, Expr)> elifExprs;
-        NodePtr elseExpr;
+        ExprResult exprResult(ParserError(token, ""));
+        StmtResult stmtResult(ParserError(token, ""));
+        const Expr *condExpr = nullptr;
+        const Stmt *thenStmt = nullptr;
+        const Stmt *elseStmt = nullptr;
 
         if (!parser.advanceToken(TokenType::LParen)) {
             return ParserError(parser.currentToken(), "Expected LParen");
         }
 
-        result = parser.parseExpression(0);
-        if (result.hasError()) {
-            return std::move(result);
+        exprResult = parser.parseExpression(0);
+        if (exprResult.hasError()) {
+            return std::move(exprResult.error());
         }
 
-        condExpr = std::move(result.value());
+        condExpr = exprResult.value();
 
         if (!parser.advanceToken(TokenType::RParen)) {
             return ParserError(parser.currentToken(), "Expected RParen");
         }
 
-		result = parser.parseStatement();
-        if (result.hasError()) {
-            return std::move(result);
+		stmtResult = parser.parseStatement();
+        if (stmtResult.hasError()) {
+            return std::move(stmtResult);
         }
 
-        thenExpr = std::move(result.value());
+        thenStmt = stmtResult.value();
+        if (thenStmt->nodeType() != NodeType::BlockStmt) {
+            return ParserError(parser.currentToken(), "Expected block stmt");
+        }
 
         if (parser.currentToken().type != TokenType::Else) {
-            return NodePtr(new IfStmt(NodeContent(), std::move(condExpr), std::move(thenExpr)));
+            return parser.create<IfStmt>(condExpr, thenStmt);
         }
 
 		parser.consumeToken();
-		result = parser.parseStatement();
-        if (result.hasError()) {
-            return std::move(result);
+		stmtResult = parser.parseStatement();
+        if (stmtResult.hasError()) {
+            return std::move(stmtResult);
         }
 
-        elseExpr = std::move(result.value());
-        return NodePtr(new IfStmt(NodeContent(), std::move(condExpr), std::move(thenExpr), std::move(elseExpr)));
+        elseStmt = stmtResult.value();
+        if (elseStmt->nodeType() != NodeType::BlockStmt) {
+            return ParserError(parser.currentToken(), "Expected block stmt");
+        }
+
+        return parser.create<IfStmt>(condExpr, thenStmt, elseStmt);
     }
 
-    ParserResult errorNud(Parser &parser, Token token)
+    ExprResult errorNud(Parser &parser, Token token)
     {
         return ParserError(token, token.content);
     }
 
-    ParserResult errorLed(Parser &parser, NodePtr node, Token token)
+    ExprResult errorLed(Parser &parser, const Expr *left, Token token)
     {
         return ParserError(token, token.content);
     }
 
     template<UnaryExpr::Operator op>
-    ParserResult unaryNud(Parser &parser, Token token) {
-        ParserResult result = parser.parseExpression(BindingPower::Unary);
+    ExprResult unaryNud(Parser &parser, Token token) {
+        ExprResult result = parser.parseExpression(BindingPower::Unary);
         if (result.hasError()) {
             return result;
         }
         else {
-            Expr expr = std::move(result.value());
-            return NodeExpr(new UnaryExpr(NodeContent(), op, std::move(expr)));
+            return parser.create<UnaryExpr>(op, result.value());
         }
     }
 
     template<BinaryExpr::Operator op>
-    ParserResult binaryLed(Parser &parser, NodePtr left, Token token) {
-        ParserResult result = parser.parseExpression(parser.grammar().bp(token));
+    ExprResult binaryLed(Parser &parser, const Expr *left, Token token) {
+        ExprResult result = parser.parseExpression(parser.grammar().bp(token));
         if (result.hasError()) {
             return result;
         }
         else {
-            Expr right = std::move(result.value());
-            return NodePtr(new BinaryExpr(NodeContent(), op, std::move(left), std::move(right)));
+            return parser.create<BinaryExpr>(op, left, result.value());
         }
     }
 }
@@ -297,7 +274,7 @@ int Grammar::bp(Token token) const
     return getRule(token.type).bp;
 }
 
-ParserResult Grammar::std(Parser &parser, Token token) const
+StmtResult Grammar::std(Parser &parser, Token token) const
 {
     const Rule &rule = getRule(token.type);
     if (rule.std) {
@@ -310,16 +287,16 @@ ParserResult Grammar::std(Parser &parser, Token token) const
     }
 }
 
-ParserResult Grammar::nud(Parser &parser, Token token) const
+ExprResult Grammar::nud(Parser &parser, Token token) const
 {
     parser.consumeToken();
     return getRule(token.type).nud(parser, token);
 }
 
-ParserResult Grammar::led(Parser &parser, NodePtr node, Token token) const
+ExprResult Grammar::led(Parser &parser, const Expr *expr, Token token) const
 {
     parser.consumeToken();
-    return getRule(token.type).led(parser, std::move(node), token);
+    return getRule(token.type).led(parser, expr, token);
 }
 
 Grammar::Rule &Grammar::getRule(TokenType type)

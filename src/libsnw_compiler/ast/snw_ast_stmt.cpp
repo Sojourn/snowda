@@ -40,11 +40,11 @@ void BlockStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-ModuleStmt::ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, BlockStmtPtr block)
+ModuleStmt::ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, const BlockStmt *block)
     : Stmt(NodeType::ModuleStmt, nodeContent)
     , name_(name)
     , args_(std::move(args))
-    , block_(std::move(block))
+    , block_(block)
 {
 }
 
@@ -58,7 +58,7 @@ const ExprVec &ModuleStmt::args() const
     return args_;
 }
 
-const BlockStmtPtr &ModuleStmt::block() const
+const BlockStmt *ModuleStmt::block() const
 {
     return block_;
 }
@@ -68,10 +68,10 @@ void ModuleStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-DeclStmt::DeclStmt(NodeContent nodeContent, StringView name, ExprPtr expr)
+DeclStmt::DeclStmt(NodeContent nodeContent, StringView name, const Expr *expr)
     : Stmt(NodeType::DeclStmt, nodeContent)
     , name_(name)
-    , expr_(std::move(expr))
+    , expr_(expr)
 {
 }
 
@@ -80,7 +80,7 @@ const StringView &DeclStmt::name() const
     return name_;
 }
 
-const ExprPtr &DeclStmt::expr() const
+const Expr *DeclStmt::expr() const
 {
     return expr_;
 }
@@ -90,54 +90,54 @@ void DeclStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr)
+IfStmt::IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt)
     : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
+    , cond_(condExpr)
+    , then_(thenStmt)
 {
 }
 
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs)
+IfStmt::IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt, ElifVec elifs)
     : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
+    , cond_(condExpr)
+    , then_(thenStmt)
     , elifs_(std::move(elifs))
 {
 }
 
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr)
+IfStmt::IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt, const Stmt *elseStmt)
     : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
-    , else_(std::move(elseExpr))
+    , cond_(condExpr)
+    , then_(thenStmt)
+    , else_(elseStmt)
 {
 }
 
-IfStmt::IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr)
+IfStmt::IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt, ElifVec elifs, const Stmt *elseStmt)
     : Stmt(NodeType::IfStmt, nodeContent)
-    , cond_(std::move(condExpr))
-    , then_(std::move(thenExpr))
+    , cond_(condExpr)
+    , then_(thenStmt)
     , elifs_(std::move(elifs))
-    , else_(std::move(elseExpr))
+    , else_(elseStmt)
 {
 }
 
-const ExprPtr &IfStmt::condExpr() const
+const Expr *IfStmt::condExpr() const
 {
     return cond_;
 }
 
-const ExprPtr &IfStmt::thenExpr() const
+const Stmt *IfStmt::thenStmt() const
 {
     return then_;
 }
 
-const IfStmt::ElifVec &IfStmt::elifExprs() const
+const IfStmt::ElifVec &IfStmt::elifs() const
 {
     return elifs_;
 }
 
-const ExprPtr &IfStmt::elseExpr() const
+const Stmt *IfStmt::elseStmt() const
 {
     return else_;
 }
@@ -157,13 +157,13 @@ void ForStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-ExprStmt::ExprStmt(NodeContent nodeContent, ExprPtr expr)
+ExprStmt::ExprStmt(NodeContent nodeContent, const Expr *expr)
     : Stmt(NodeType::ExprStmt, nodeContent)
-    , expr_(std::move(expr))
+    , expr_(expr)
 {
 }
 
-const ExprPtr &ExprStmt::expr() const
+const Expr *ExprStmt::expr() const
 {
     return expr_;
 }

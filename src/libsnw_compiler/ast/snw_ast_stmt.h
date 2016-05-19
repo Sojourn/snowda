@@ -7,7 +7,6 @@ namespace Snowda {
         public:
             Stmt(NodeType nodeType, NodeContent nodeContent);
         };
-        using StmtVec = std::vector<const Stmt *>;
 
         class RootStmt : public Stmt {
         public:
@@ -35,60 +34,60 @@ namespace Snowda {
 
         class ModuleStmt : public Stmt {
         public:
-            ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, BlockStmtPtr block);
+            ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, const BlockStmt *block);
 
             const StringView &name() const;
             const ExprVec &args() const;
-            const BlockStmtPtr &block() const;
+            const BlockStmt *block() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const StringView name_;
             const ExprVec args_;
-            const BlockStmtPtr block_;
+            const BlockStmt *block_;
         };
 
         class DeclStmt : public Stmt {
         public:
-            DeclStmt(NodeContent nodeContent, StringView name, ExprPtr expr);
+            DeclStmt(NodeContent nodeContent, StringView name, const Expr *expr);
 
             const StringView &name() const;
-            const ExprPtr &expr() const;
+            const Expr *expr() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const StringView name_;
-            const ExprPtr expr_;
+            const Expr *expr_;
         };
 
         class IfStmt : public Stmt {
         public:
             struct Elif {
                 const Expr *cond;
-                const Expr *then;
+                const Stmt *then;
             };
 
             using ElifVec = std::vector<Elif>;
 
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr);
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs);
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ExprPtr elseExpr);
-            IfStmt(NodeContent nodeContent, ExprPtr condExpr, ExprPtr thenExpr, ElifVec elifs, ExprPtr elseExpr);
+            IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt);
+            IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt, ElifVec elifs);
+            IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt, const Stmt *elseStmt);
+            IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt, ElifVec elifs, const Stmt *elseStmt);
 
-            const ExprPtr &condExpr() const;
-            const ExprPtr &thenExpr() const;
-            const ElifVec &elifExprs() const;
-            const ExprPtr &elseExpr() const;
+            const Expr *condExpr() const;
+            const Stmt *thenStmt() const;
+            const ElifVec &elifs() const;
+            const Stmt *elseStmt() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
-            const ExprPtr cond_;
-            const ExprPtr then_;
+            const Expr *cond_;
+            const Stmt *then_;
             const ElifVec elifs_;
-            const ExprPtr else_;
+            const Stmt *else_;
         };
 
         class ForStmt : public Stmt {
@@ -100,14 +99,14 @@ namespace Snowda {
 
         class ExprStmt : public Stmt {
         public:
-            ExprStmt(NodeContent nodeContent, ExprPtr expr);
+            ExprStmt(NodeContent nodeContent, const Expr *expr);
 
-            const ExprPtr &expr() const;
+            const Expr *expr() const;
 
             virtual void visit(NodeVisitor &visitor) const override;
 
         private:
-            const ExprPtr expr_;
+            const Expr *expr_;
         };
     }
 }

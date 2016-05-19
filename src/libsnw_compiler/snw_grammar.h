@@ -4,10 +4,10 @@
 namespace Snowda {
 
     class Parser;
-
-    using RootResult = Result<const Ast::Root *, ParserError>;
+    
     using ExprResult = Result<const Ast::Expr *, ParserError>;
     using StmtResult = Result<const Ast::Stmt *, ParserError>;
+	using RootResult = Result<const Ast::RootStmt *, ParserError>;
 
     class Grammar {
     public:
@@ -18,9 +18,9 @@ namespace Snowda {
         Grammar();
 
         int bp(Token token) const;
-        ParserResult std(Parser &parser, Token token) const;
-        ParserResult nud(Parser &parser, Token token) const;
-        ParserResult led(Parser &parser, Ast::NodePtr node, Token token) const;
+        StmtResult std(Parser &parser, Token token) const;
+        ExprResult nud(Parser &parser, Token token) const;
+        ExprResult led(Parser &parser, const Ast::Expr *expr, Token token) const;
 
     private:
         struct Rule {

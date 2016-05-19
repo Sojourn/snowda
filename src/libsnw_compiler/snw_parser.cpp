@@ -30,12 +30,19 @@ Parser::Parser(Lexer &lexer)
 {
 }
 
+Parser::~Parser()
+{
+    for (const Node *node: nodes_) {
+        delete node;
+    }
+}
+
 bool Parser::finished()
 {
     return currentToken().type == TokenType::Finished;
 }
 
-ParserResult Parser::parseExpression(int bp)
+ExprResult Parser::parseExpression(int bp)
 {
     ParserFrame frame(depth_);
     if (depth_ >= maxParserDepth) {
@@ -43,20 +50,20 @@ ParserResult Parser::parseExpression(int bp)
     }
 
     Token token = currentToken();
-    ParserResult result = grammar_.nud(*this, token);
+    ExprResult result = grammar_.nud(*this, token);
     if (result.hasError()) {
         return std::move(result);
     }
     else {
-        NodePtr expr = std::move(result.value());
+        const Expr *expr = result.value();
         while (bp < grammar_.bp(currentToken())) {
             token = currentToken();
-            result = grammar_.led(*this, std::move(expr), token);
+            result = grammar_.led(*this, expr, token);
             if (result.hasError()) {
                 return std::move(result);
             }
             else {
-                expr = std::move(result.value());
+				expr = result.value();
             }
         }
 
@@ -64,7 +71,7 @@ ParserResult Parser::parseExpression(int bp)
     }
 }
 
-ParserResult Parser::parseStatement()
+StmtResult Parser::parseStatement()
 {
     ParserFrame frame(depth_);
     if (depth_ >= maxParserDepth) {
@@ -74,7 +81,7 @@ ParserResult Parser::parseStatement()
     return grammar_.std(*this, currentToken());
 }
 
-ParserResult Parser::parseRootStatement()
+RootResult Parser::parseRootStatement()
 {
     assert(depth_ == 0);
 
@@ -85,16 +92,16 @@ ParserResult Parser::parseRootStatement()
 
     StmtVec stmts;
     while (!finished()) {
-        ParserResult result = parseStatement();
+        StmtResult result = parseStatement();
         if (result.hasError()) {
-            return result;
+            return result.error();
         }
         else {
-            stmts.push_back(std::move(result.value()));
+            stmts.push_back(result.value());
         }
     }
 
-    return NodePtr(new RootStmt(NodeContent(), std::move(stmts)));
+    return create<RootStmt>(std::move(stmts));
 }
 
 int Parser::row()

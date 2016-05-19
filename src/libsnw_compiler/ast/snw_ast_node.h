@@ -28,7 +28,12 @@ namespace Snowda {
     namespace Ast {
         class NodeVisitor;
         class Node;
+        class Expr;
         class Stmt;
+
+        using NodeVec = std::vector<const Node *>;
+        using ExprVec = std::vector<const Expr *>;
+        using StmtVec = std::vector<const Stmt *>;
 
 #define X(xType) class xType;
         SNW_AST_NODE_TYPES
@@ -81,7 +86,6 @@ namespace Snowda {
             const NodeType nodeType_;
             const NodeContent nodeContent_;
         };
-
     }
 }
 

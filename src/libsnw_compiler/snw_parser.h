@@ -6,11 +6,12 @@ namespace Snowda {
     class Parser {
     public:
         explicit Parser(Lexer &lexer);
+        ~Parser();
 
         bool finished();
-        ParserResult parseExpression(int bp);
-        ParserResult parseStatement();
-        ParserResult parseRootStatement();
+        ExprResult parseExpression(int bp);
+        StmtResult parseStatement();
+        RootResult parseRootStatement();
 
         int row();
         int col();
@@ -22,10 +23,19 @@ namespace Snowda {
 
         const Grammar &grammar() const;
 
+        template<typename T, typename... Args>
+        const T *create(Args&&... args)
+        {
+            const T *node = new T(NodeContent(), std::forward<Args>(args)...);
+            nodes_.push_back(node);
+            return node;
+        }
+
     private:
         TokenStream stream_;
         const Grammar grammar_;
         size_t depth_;
+		Ast::NodeVec nodes_;
     };
 
 }
