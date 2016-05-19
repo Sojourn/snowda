@@ -63,9 +63,9 @@ namespace Snowda {
         };
 
         struct NodeContent {
-            // size_t row;
-            // size_t col;
-            // size_t len;
+            size_t row;
+            size_t col;
+            size_t len;
         };
 
         class Node {

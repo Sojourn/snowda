@@ -5,28 +5,40 @@ using namespace Snowda::Ast;
 
 namespace {
     static const size_t maxParserDepth = 4096;
+}
 
-    class ParserFrame {
-    public:
-        ParserFrame(size_t &depth)
-            : depth_(depth)
-        {
-            depth_ += 1;
-        }
+ParserFrame::ParserFrame(Parser &parser)
+    : parser_(parser)
+    , prev_(parser.frame_)
+    // , pos_(parser.currentToken().pos)
+	, pos_(0)
+    , row_(parser.currentToken().row)
+    , col_(parser.currentToken().col)
+{
+    parser_.depth_ += 1;
+    parser_.frame_ = this;
+}
 
-        ~ParserFrame()
-        {
-            depth_ -= 1;
-        }
+ParserFrame::~ParserFrame()
+{
+    parser_.depth_ -= 1;
+    parser_.frame_ = prev_;
+}
 
-    private:
-        size_t &depth_;
-    };
+NodeContent ParserFrame::nodeContent()
+{
+    Ast::NodeContent nodeContent;
+    nodeContent.row = row_;
+    nodeContent.col = col_;
+    // content.len = parser_.currentToken().pos - pos_;
+    nodeContent.len = 0;
+    return nodeContent;
 }
 
 Parser::Parser(Lexer &lexer)
     : stream_(lexer)
     , depth_(0)
+    , frame_(nullptr)
 {
 }
 
@@ -44,7 +56,7 @@ bool Parser::finished()
 
 ExprResult Parser::parseExpression(int bp)
 {
-    ParserFrame frame(depth_);
+    ParserFrame frame(*this);
     if (depth_ >= maxParserDepth) {
         return ParserError(currentToken(), "Max parse depth reached");
     }
@@ -73,7 +85,7 @@ ExprResult Parser::parseExpression(int bp)
 
 StmtResult Parser::parseStatement()
 {
-    ParserFrame frame(depth_);
+    ParserFrame frame(*this);
     if (depth_ >= maxParserDepth) {
         return ParserError(currentToken(), "Max parse depth reached");
     }
@@ -85,7 +97,7 @@ RootResult Parser::parseRootStatement()
 {
     assert(depth_ == 0);
 
-    ParserFrame frame(depth_);
+    ParserFrame frame(*this);
     if (depth_ >= maxParserDepth) {
         return ParserError(currentToken(), "Max parse depth reached");
     }
