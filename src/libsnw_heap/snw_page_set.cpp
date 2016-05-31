@@ -4,49 +4,55 @@ using namespace Snowda;
 
 PageSet::PageSet()
 {
-    index_[0] = 0;
-    index_[1] = 0;
+    memset(index_.data(), 0, index_.size());
 }
 
 bool PageSet::empty() const
 {
-    return (index_[0] == 0) && (index_[1] == 0);
-}
-
-bool PageSet::test(size_t index) const
-{
-    return (index_[index / 64] & (uint64_t(1) << index % 64)) != 0;
-}
-
-void PageSet::set(size_t index)
-{
-    index_[index / 64] |= (uint64_t(1) << (index % 64));
-}
-
-void PageSet::clear(size_t index)
-{
-    index_[index / 64] &= ~(uint64_t(1) << (index % 64));
-}
-
-size_t PageSet::first() const
-{
-    // FIXME: Use intrinsics
-    for (size_t j = 0; j < 2; ++j) {
-        for (size_t i = 0; i < 64; ++i) {
-            size_t index = (j * 64) + i;
-            if (test(index)) {
-                return index;
-            }
+    for (uint64_t value: index_) {
+        if (value > 0) {
+            return false;
         }
     }
 
-    abort();
+    return true;
 }
 
-PageSet PageSet::operator |(const PageSet &rhs) const
+bool PageSet::test(uint8_t pos) const
 {
-    PageSet result;
-    result.index_[0] = index_[0] | rhs.index_[0];
-    result.index_[1] = index_[1] | rhs.index_[1];
-    return result;
+    return (index_[pos >> 2] & (pos & (64 - 1))) != 0;
+}
+
+void PageSet::set(uint8_t pos)
+{
+    index_[pos >> 2] |= (pos & (64 - 1));
+}
+
+void PageSet::clear(uint8_t pos)
+{
+    index_[pos >> 2] &= ~(pos & (64 - 1));
+}
+
+std::tuple<uint8_t, bool> PageSet::firstSet() const
+{
+    // FIXME: Replace with intrinsic
+    for (uint8_t pos = 0; pos < std::numeric_limits<uint8_t>::max(); ++pos) {
+        if (test(pos)) {
+            return std::make_tuple(pos, true);
+        }
+    }
+
+    return std::make_tuple(static_cast<uint8_t>(0), false);
+}
+
+std::tuple<uint8_t, bool> PageSet::firstCleared() const
+{
+    // FIXME: Replace with intrinsic
+    for (uint8_t pos = 0; pos < std::numeric_limits<uint8_t>::max(); ++pos) {
+        if (!test(pos)) {
+            return std::make_tuple(pos, true);
+        }
+    }
+
+    return std::make_tuple(static_cast<uint8_t>(0), false);
 }

@@ -16,10 +16,16 @@
 #include "snw_page_set.h"
 
 namespace Snowda {
+
     class Heap {
     public:
         Heap();
+
+    private:
+        std::vector<Page> pages_;
+        PageSet pageSet_;
     };
+
 }
 
 #endif // SNW_HEAP_H
