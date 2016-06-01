@@ -2,8 +2,8 @@
 
 using namespace Snowda;
 
-Heap::Heap(PagePool &pagePool)
-    : pagePool_(pagePool)
+Heap::Heap(PageAllocator &pageAllocator)
+    : pageAllocator_(pageAllocator)
     , currentPageIndex_(0)
 {
     pages_.push_back(pagePool_.allocate());

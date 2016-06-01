@@ -13,14 +13,18 @@
 #include "snw_util.h"
 
 #include "snw_page.h"
+#include "snw_block_page.h"
+#include "snw_free_page.h"
+#include "snw_buffer_page.h"
+#include "snw_allocator_page.h"
 #include "snw_page_set.h"
-#include "snw_page_pool.h"
+#include "snw_page_allocator.h"
 
 namespace Snowda {
 
     class Heap {
     public:
-        Heap(PagePool &pagePool);
+        Heap(PageAllocator &pageAllocator);
         Heap(const Heap &) = delete;
         Heap(Heap &&) = delete;
         Heap &operator=(const Heap &) = delete;
@@ -35,7 +39,7 @@ namespace Snowda {
         VirtualAddress translate(PhysicalAddress paddr) const;
 
     private:
-        PagePool &pagePool_;
+        PageAllocator &pageAllocator_;
         std::vector<Page *> pages_;
         size_t currentPageIndex_;
         PageSet pageSet_;
