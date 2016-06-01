@@ -4,7 +4,16 @@ using namespace Snowda;
 
 Heap::Heap(PagePool &pagePool)
     : pagePool_(pagePool)
+    , currentPageIndex_(0)
 {
+    pages_.push_back(pagePool_.allocate());
+}
+
+Heap::~Heap()
+{
+    for (Page *page: pages_) {
+        pagePool_.deallocate(page);
+    }
 }
 
 std::tuple<PhysicalAddress, VirtualAddress, bool> allocate(uint8_t size)
@@ -22,7 +31,7 @@ void Heap::deallocate(VirtualAddress vaddr)
 
 PhysicalAddress Heap::translate(VirtualAddress vaddr) const
 {
-    Page *page = pages_[vaddr >> 8].get();
+    Page *page = pages_[vaddr >> 8];
     uint8_t *pageAddr = reinterpret_cast<uint8_t *>(page);
     return pageAddr + ((vaddr & 255) << 9);
 }

@@ -21,6 +21,11 @@ namespace Snowda {
     class Heap {
     public:
         Heap(PagePool &pagePool);
+        Heap(const Heap &) = delete;
+        Heap(Heap &&) = delete;
+        Heap &operator=(const Heap &) = delete;
+        Heap &operator=(Heap &&) = delete;
+        ~Heap();
 
         std::tuple<PhysicalAddress, VirtualAddress, bool> allocate(uint8_t size);
         void deallocate(PhysicalAddress paddr);
@@ -31,7 +36,8 @@ namespace Snowda {
 
     private:
         PagePool &pagePool_;
-        std::vector<PagePtr> pages_;
+        std::vector<Page *> pages_;
+        size_t currentPageIndex_;
         PageSet pageSet_;
     };
 

@@ -5,27 +5,19 @@ namespace Snowda {
 
     class PagePool {
     public:
-        struct PageDeleter {
-            void operator()(Page *page);
-        };
-
-        using PagePtr = std::unique_ptr<Page, PageDeleter>;
-
-    public:
         PagePool();
         ~PagePool();
 
-        std::tuple<PagePtr, bool> acquire();
-        void release(PagePtr page);
+        Page *allocate();
+        void deallocate(Page *page);
 
     private:
         void grow();
 
     private:
-        std::vector<PagePtr> pages_;
+        std::vector<Page *> pages_;
         size_t pagesOutstanding_;
     };
-    using PagePtr = PagePool::PagePtr;
 
 }
 

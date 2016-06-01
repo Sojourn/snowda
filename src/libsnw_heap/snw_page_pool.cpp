@@ -3,11 +3,6 @@
 using namespace Snowda;
 
 
-void PagePool::PageDeleter::operator()(Page *page)
-{
-    void *addr = reinterpret_cast<void *>(page);
-}
-
 PagePool::PagePool()
 {
 }
@@ -15,14 +10,16 @@ PagePool::PagePool()
 PagePool::~PagePool()
 {
     assert(pagesOutstanding_ == 0);
+
+    // FIXME: Delete all pages
 }
 
-std::tuple<PagePtr, bool> PagePool::acquire()
+Page *PagePool::allocate()
 {
-    return std::make_tuple(nullptr, false);
+    return nullptr;
 }
 
-void PagePool::release(PagePtr page)
+void PagePool::deallocate(Page *page)
 {
 }
 
