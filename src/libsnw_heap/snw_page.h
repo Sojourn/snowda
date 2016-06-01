@@ -3,6 +3,16 @@
 
 namespace Snowda {
 
+    using PhysicalAddress = uint8_t *;
+    using VirtualAddress = uint16_t;
+
+    struct ObjectHeader {
+        uint8_t size;
+        uint8_t flags;
+        uint16_t reserved;
+        uint32_t type;
+    };
+
     struct PageHeader {
         uint8_t index;
         uint8_t live;
@@ -17,6 +27,7 @@ namespace Snowda {
         uint8_t data[4096 - sizeof(PageHeader)];
     };
     static_assert(sizeof(Page) == 4096, "Bad page layout");
+
 }
 
 #endif // SNW_PAGE_H

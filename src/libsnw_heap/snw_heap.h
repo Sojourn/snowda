@@ -18,16 +18,6 @@
 
 namespace Snowda {
 
-    using PhysicalAddress = uint8_t *;
-    using VirtualAddress = uint16_t;
-
-    struct ObjectHeader {
-        uint8_t size;
-        uint8_t flags;
-        uint16_t reserved;
-        uint32_t type;
-    };
-
     class Heap {
     public:
         Heap(PagePool &pagePool);
@@ -41,7 +31,7 @@ namespace Snowda {
 
     private:
         PagePool &pagePool_;
-        std::vector<Page> pages_;
+        std::vector<PagePtr> pages_;
         PageSet pageSet_;
     };
 
