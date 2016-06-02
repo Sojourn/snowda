@@ -14,7 +14,7 @@ namespace Snowda {
 
         void deallocateBufferPage(BufferPage *bufferPage);
         void deallocateAllocatorPage(AllocatorPage *allocatorPage);
-        void deallocatePage(Page *page);
+        void deallocatePage(PageType pageType, Page *page);
 
     private:
         Block *findBlock(Page *page) const;

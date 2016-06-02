@@ -6,13 +6,13 @@ Heap::Heap(PageAllocator &pageAllocator)
     : pageAllocator_(pageAllocator)
     , currentPageIndex_(0)
 {
-    pages_.push_back(pagePool_.allocate());
+    pages_.push_back(pageAllocator_.allocatePage());
 }
 
 Heap::~Heap()
 {
     for (Page *page: pages_) {
-        pagePool_.deallocate(page);
+        pageAllocator_.deallocatePage(page);
     }
 }
 
@@ -40,7 +40,10 @@ VirtualAddress Heap::translate(PhysicalAddress paddr) const
 {
     uintptr_t addr = reinterpret_cast<uintptr_t>(paddr);
     uintptr_t pageAddr = addr & (sizeof(Page) - 1);
+
     Page *page = reinterpret_cast<Page *>(pageAddr);
-    VirtualAddress shiftedPageIndex = static_cast<VirtualAddress>(page->header.index) << 8;
+    AllocatorPage &allocatorPage = page->allocatorPage;
+
+    VirtualAddress shiftedPageIndex = static_cast<VirtualAddress>(allocatorPage.header.index) << 8;
     return shiftedPageIndex + ((addr >> 9) & 255);
 }

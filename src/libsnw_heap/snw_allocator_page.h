@@ -20,7 +20,7 @@ namespace Snowda {
     static_assert(sizeof(AllocatorPageHeader) == 16, "Bad allocator page header layout");
 
     struct AllocatorPage {
-        PageHeader header;
+        AllocatorPageHeader header;
         uint8_t data[4096 - sizeof(AllocatorPageHeader)];
     };
     static_assert(sizeof(AllocatorPage) == 4096, "Bad allocator page layout");

@@ -7,6 +7,7 @@ namespace Snowda {
     using VirtualAddress = uint16_t;
 
     union Page {
+        FreePage freePage;
         BlockPage blockPage;
         BufferPage bufferPage;
         AllocatorPage allocatorPage;

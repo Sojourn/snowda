@@ -32,7 +32,7 @@ namespace Snowda {
 
     struct Block {
         BlockPage blockPage;
-        std::array<Page, ((2 << 20) - sizeof(Block)) / sizeof(Page)> pages;
+        std::array<Page, ((2 << 20) - sizeof(BlockPage)) / sizeof(Page)> pages;
     };
     static_assert(sizeof(Block) == (2 << 20), "Bad block layout");
 }

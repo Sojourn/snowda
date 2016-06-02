@@ -12,11 +12,11 @@
 
 #include "snw_util.h"
 
-#include "snw_page.h"
 #include "snw_block_page.h"
 #include "snw_free_page.h"
 #include "snw_buffer_page.h"
 #include "snw_allocator_page.h"
+#include "snw_page.h"
 #include "snw_page_set.h"
 #include "snw_page_allocator.h"
 

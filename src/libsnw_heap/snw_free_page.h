@@ -4,7 +4,7 @@
 namespace Snowda {
 
     struct FreePage {
-        BlockPage *block;
+        BlockPage *blockPage;
     };
     static_assert(sizeof(FreePage) == 4096, "Bad free page layout");
 }

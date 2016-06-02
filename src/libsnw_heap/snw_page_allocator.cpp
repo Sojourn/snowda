@@ -9,7 +9,7 @@ PageAllocator::PageAllocator()
 PageAllocator::~PageAllocator()
 {
     assert(pagesOutstanding_ == 0);
-    
+
     for (Block *block: blocks_) {
         delete block;
     }
@@ -45,12 +45,9 @@ void PageAllocator::deallocateAllocatorPage(AllocatorPage *allocatorPage)
     abort();
 }
 
-void PageAllocator::deallocatePage(Page *page, PageType type)
+void PageAllocator::deallocatePage(PageType pageType, Page *page)
 {
-    switch (type) {
-    case PageType::BlockPage:
-        deallocate(&page->blockPage);
-        break;
+    switch (pageType) {
     case PageType::BufferPage:
         deallocate(&page->bufferPage);
         break;
@@ -73,7 +70,7 @@ void PageAllocator::grow()
     // FIXME: block needs to be page aligned
     Block *block = new Block;
     BlockPage &blockPage = block->blockPage;
-    for (BlockPageEntry &blockPageEntry: blockPage) {
+    for (BlockPageEntry &blockPageEntry: blocks_) {
         blockPageEntry.pageType = PageType::FreePage;
     }
     for (Page &page: block->pages) {
