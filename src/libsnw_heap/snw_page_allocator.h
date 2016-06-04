@@ -8,22 +8,17 @@ namespace Snowda {
         PageAllocator();
         ~PageAllocator();
 
-        Page *allocateBufferPage(PageOwnerType ownerType, PageOwner owner);
-        Page *allocateAllocatorPage(PageOwnerType ownerType, PageOwner owner);
-        Page *allocatePage(PageType pageType, PageOwnerType ownerType, PageOwner owner);
-
-        void deallocateBufferPage(BufferPage *bufferPage);
-        void deallocateAllocatorPage(AllocatorPage *allocatorPage);
-        void deallocatePage(PageType pageType, Page *page);
+        // Page *allocatePage(PageOwnerType ownerType, uint32_t ownerKey);
+        // void deallocatePage(Page *page);
 
     private:
-        Block *findBlock(Page *page) const;
-        void grow();
+        // Block *findBlock(Page *page) const;
+        // void grow();
 
     private:
-        std::vector<FreePage *> freePages_;
-        std::vector<Block *> blocks_;
-        size_t pagesOutstanding_;
+        // std::vector<FreePage *> freePages_;
+        // std::vector<Block *> blocks_;
+        // size_t pagesOutstanding_;
     };
 
 }

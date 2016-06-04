@@ -3,15 +3,7 @@
 
 namespace Snowda {
 
-    using PhysicalAddress = uint8_t *;
-    using VirtualAddress = uint16_t;
-
-    union Page {
-        FreePage freePage;
-        BlockPage blockPage;
-        BufferPage bufferPage;
-        AllocatorPage allocatorPage;
-    };
+    using Page = std::array<uint8_t, 4096>;
 
 }
 

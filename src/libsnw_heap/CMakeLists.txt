@@ -5,10 +5,6 @@ set(SNW_LIBS
 set(SNW_HDRS
     snw_heap.h
     snw_page.h
-    snw_block_page.h
-    snw_free_page.h
-    snw_buffer_page.h
-    snw_allocator_page.h
     snw_page_set.h
     snw_page_allocator.h
 )
