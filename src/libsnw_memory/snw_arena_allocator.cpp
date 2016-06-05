@@ -1,9 +1,10 @@
-#include "snw_heap.h"
+#include "snw_memory.h"
 
 using namespace Snowda;
 
-ArenaAllocator::ArenaAllocator()
-    : capacity_(0)
+ArenaAllocator::ArenaAllocator(MemoryManager &manager)
+    : manager_(manager)
+    , capacity_(0)
     , bufferIndex_(0)
     , bufferTop_(0)
 {
@@ -19,7 +20,7 @@ size_t ArenaAllocator::capacity() const
     return capacity_;
 }
 
-void ArenaAllocator::addCapacity(Buffer buffer)
+void ArenaAllocator::addBuffer(Buffer buffer)
 {
     assert(buffer);
 
@@ -27,7 +28,7 @@ void ArenaAllocator::addCapacity(Buffer buffer)
     capacity_ += buffer.size();
 }
 
-Buffer ArenaAllocator::removeCapacity()
+Buffer ArenaAllocator::removeBuffer()
 {
     if (bufferIndex_ < buffers_.size()) {
         Buffer result = std::move(buffers_.back());
@@ -40,8 +41,7 @@ Buffer ArenaAllocator::removeCapacity()
 
 uint8_t *ArenaAllocator::allocate(size_t size)
 {
-    size_t alignedSize = (size + sizeof(uint64_t) - 1) & ~(sizeof(uint64_t) - 1);
-    assert((alignedSize > 0) && ((alignedSize & (sizeof(uint64_t) - 1)) == 0));
+    size_t alignedSize = align(size, sizeof(uint64_t));
 
     for (;;) {
         if (bufferIndex_ == buffers_.size()) {

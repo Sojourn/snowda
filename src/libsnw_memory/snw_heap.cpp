@@ -1,4 +1,4 @@
-#include "snw_heap.h"
+#include "snw_memory.h"
 
 using namespace Snowda;
 

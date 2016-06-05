@@ -1,4 +1,4 @@
-#include "snw_heap.h"
+#include "snw_memory.h"
 
 #if defined(SNW_OS_WIN32)
 #include "Windows.h"
@@ -33,27 +33,73 @@ namespace {
 #elif defined(SNW_OS_UNIX)
 #error "Not implemented"
 #endif
-
-	static const size_t regionAlignment = 4096;
-	static const size_t regionSize = 2 << 20;
 }
 
-Region::Region()
+Region::Region(size_t size)
     : base_(nullptr)
+    , size_(size)
+    , committed_(0)
 {
-    base_ = allocateVirtualMemory(regionSize);
-    assert(base_ != nullptr);
+    assert(size > 0);
+    assert((size & (sizeof(Page) - 1)) == 0);
 
-    bool sts = modifyVirtualMemory(base_, regionSize);
-    assert(sts);
+    base_ = allocateVirtualMemory(size);
+    assert(base_ != nullptr);
+}
+
+Region::Region(Region &&other)
+    : base_(other.base_)
+    , size_(other.size_)
+    , committed_(other.committed_)
+{
+    other.base_ = nullptr;
+    other.size_ = 0;
+    other.committed_ = 0;
 }
 
 Region::~Region()
 {
     if (base_) {
-        freeVirtualMemory(base_, 2 << 20);
+        freeVirtualMemory(base_, size_);
         base_ = nullptr;
     }
+}
+
+Region &Region::operator=(Region &&rhs)
+{
+    if (this != &rhs) {
+        if (*this) {
+            this->~Region();
+        }
+
+        base_ = rhs.base_;
+        size_ = rhs.size_;
+        committed_ = rhs.committed_;
+
+        rhs.base_ = nullptr;
+        rhs.size_ = 0;
+        rhs.committed_ = 0;
+    }
+
+    return *this;
+}
+
+void Region::commit(size_t size)
+{
+    assert(*this);
+    assert(size > 0);
+    assert((size & (sizeof(Page) - 1)) == 0);
+    assert((committed_ + size) <= size_);
+
+    bool sts = modifyVirtualMemory(base_ + committed_, size);
+    assert(sts);
+
+    committed_ += size;
+}
+
+size_t Region::committed() const
+{
+    return committed_;
 }
 
 uint8_t *Region::data()
@@ -68,7 +114,7 @@ const uint8_t *Region::data() const
 
 size_t Region::size() const
 {
-	return regionSize;
+	return size_;
 }
 
 Region::operator bool() const

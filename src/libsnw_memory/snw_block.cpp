@@ -1,13 +1,35 @@
-#include "snw_heap.h"
+#include "snw_memory.h"
 
 using namespace Snowda;
 
-void Block::clear()
+BlockEntry::BlockEntry()
+    : owner_(0)
+    , use_(PageUse::None)
 {
-    for (BlockEntry &entry: entries_) {
-        entry.owner = 0;
-        entry.flags = 0;
-    }
+}
+
+uint32_t BlockEntry::owner() const
+{
+    return owner_;
+}
+
+void BlockEntry::setOwner(uint32_t owner)
+{
+    owner_ = owner;
+}
+
+PageUse BlockEntry::use() const
+{
+    return use_;
+}
+
+void BlockEntry::setUse(PageUse use)
+{
+    use_ = use;
+}
+
+Block::Block()
+{
 }
 
 BlockEntry &Block::entry(size_t index)

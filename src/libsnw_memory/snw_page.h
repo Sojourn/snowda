@@ -3,9 +3,6 @@
 
 namespace Snowda {
 
-    class Block;
-    struct BlockEntry;
-
     class Page {
     public:
         Block &block();

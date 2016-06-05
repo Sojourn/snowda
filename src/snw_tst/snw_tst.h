@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "snw_util.h"
+#include "snw_memory.h"
 #include "snw_compiler.h"
 
 namespace Snowda {

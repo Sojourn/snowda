@@ -3,14 +3,33 @@
 
 namespace Snowda {
 
-    struct BlockEntry {
-        uint32_t owner;
-        uint32_t flags;
+    enum class PageUse : uint8_t {
+        None,
+        Heap,
+        Arena,
     };
+
+    class BlockEntry {
+    public:
+        BlockEntry();
+
+        uint32_t owner() const;
+        void setOwner(uint32_t owner);
+
+        PageUse use() const;
+        void setUse(PageUse use);
+
+    private:
+        uint32_t owner_;
+        PageUse use_;
+        uint8_t pad1_;
+        uint16_t pad2_;
+    };
+    static_assert(sizeof(BlockEntry) == sizeof(uint64_t), "Bad block entry layout");
 
     class Block {
     public:
-        void clear();
+        Block();
 
         BlockEntry &entry(size_t index);
         const BlockEntry &entry(size_t index) const;

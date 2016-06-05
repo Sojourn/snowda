@@ -5,7 +5,7 @@ namespace Snowda {
 
     class ArenaAllocator {
     public:
-        ArenaAllocator();
+        ArenaAllocator(MemoryManager &manager);
         ArenaAllocator(const ArenaAllocator &) = delete;
         ArenaAllocator(ArenaAllocator &&) = delete;
         ~ArenaAllocator();
@@ -15,13 +15,14 @@ namespace Snowda {
 
         size_t capacity() const;
 
-        void addCapacity(Buffer buffer);
-        Buffer removeCapacity();
+        void addBuffer(Buffer buffer);
+        Buffer removeBuffer();
 
         uint8_t *allocate(size_t size);
         void clear();
 
     private:
+        MemoryManager &manager_;
         std::vector<Buffer> buffers_;
         std::vector<uint8_t *> slop_;
         size_t capacity_;
