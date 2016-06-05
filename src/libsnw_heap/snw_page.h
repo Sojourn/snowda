@@ -3,7 +3,23 @@
 
 namespace Snowda {
 
-    using Page = std::array<uint8_t, 4096>;
+    class Block;
+    struct BlockEntry;
+
+    class Page {
+    public:
+        Block &block();
+        const Block &block() const;
+        BlockEntry &blockEntry();
+        const BlockEntry &blockEntry() const;
+
+        size_t size() const;
+        uint8_t *data();
+        const uint8_t *data() const;
+
+    private:
+        std::array<uint8_t, 4096> data_;
+    };
 
 }
 

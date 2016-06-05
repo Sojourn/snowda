@@ -10,11 +10,16 @@
 #include <cstdint>
 #include <cassert>
 
+
 #include "snw_util.h"
 
+#include "snw_buffer.h"
 #include "snw_page.h"
+#include "snw_block.h"
+#include "snw_region.h"
 #include "snw_page_set.h"
 #include "snw_page_allocator.h"
+#include "snw_arena_allocator.h"
 
 namespace Snowda {
 
