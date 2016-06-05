@@ -3,7 +3,26 @@
 
 namespace Snowda {
 
+    class ArenaFrame {
+        friend class ArenaAllocator;
+    public:
+        ArenaFrame(ArenaAllocator &arena);
+        ArenaFrame(const ArenaFrame &) = delete;
+        ArenaFrame(ArenaFrame &&) = delete;
+        ~ArenaFrame();
+
+        ArenaFrame &operator=(const ArenaFrame &) = delete;
+        ArenaFrame &operator=(ArenaFrame &&) = delete;
+
+    private:
+        ArenaAllocator &arena_;
+        ArenaFrame *prev_;
+        size_t bufferIndex_;
+        size_t bufferTop_;
+    };
+
     class ArenaAllocator {
+        friend class ArenaFrame;
     public:
         ArenaAllocator(MemoryManager &manager);
         ArenaAllocator(const ArenaAllocator &) = delete;
@@ -22,9 +41,13 @@ namespace Snowda {
         void clear();
 
     private:
+        void pushFrame(ArenaFrame *frame);
+        void popFrame(ArenaFrame *frame);
+
+    private:
         MemoryManager &manager_;
         std::vector<Buffer> buffers_;
-        std::vector<uint8_t *> slop_;
+        ArenaFrame *topFrame_;
         size_t capacity_;
         size_t bufferIndex_;
         size_t bufferTop_;
