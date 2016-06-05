@@ -6,7 +6,6 @@ namespace Snowda {
     class PageAllocator {
     public:
         PageAllocator(MemoryManager &manager);
-        ~PageAllocator();
 
         Page *allocatePage();
         void deallocatePage(Page *page);

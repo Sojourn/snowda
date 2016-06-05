@@ -9,6 +9,9 @@ int main(int argc, char **argv) {
     *value = 4;
     std::cout << *value << std::endl;
 
+	Page *page = memoryManager.pageAllocator().allocatePage();
+	memset(page->data(), 7, page->size());
+
 	std::system("pause");
     return 0;
 }
