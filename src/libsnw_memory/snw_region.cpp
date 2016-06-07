@@ -2,8 +2,8 @@
 
 #if defined(SNW_OS_WIN32)
 #include "Windows.h"
-#elif defined(SNW_OS_UNIX)
-#error "Not implemented"
+#elif defined(SNW_OS_POSIX)
+#include <sys/mman.h>
 #endif
 
 using namespace Snowda;
@@ -48,8 +48,45 @@ namespace {
         auto result = VirtualAlloc(addr, size, MEM_COMMIT, translatedProtection);
         return reinterpret_cast<uint8_t *>(result) == addr;
     }
-#elif defined(SNW_OS_UNIX)
-#error "Not implemented"
+#elif defined(SNW_OS_POSIX)
+    uint8_t *allocateVirtualMemory(size_t size)
+    {
+        auto result = mmap(nullptr, size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        if (result == MAP_FAILED) {
+            return nullptr;
+        }
+        else {
+            return reinterpret_cast<uint8_t *>(result);
+        }
+    }
+
+    bool freeVirtualMemory(uint8_t *addr, size_t size)
+    {
+        return munmap(addr, size) >= 0;
+    }
+
+    bool modifyVirtualMemory(uint8_t *addr, size_t size, RegionProtection protection)
+    {
+        int translatedProtection = 0;
+        switch (protection) {
+        case RegionProtection::None:
+            translatedProtection = PROT_NONE;
+            break;
+        case RegionProtection::Read:
+            translatedProtection = PROT_READ;
+            break;
+        case RegionProtection::ReadWrite:
+            translatedProtection = PROT_READ | PROT_WRITE;
+            break;
+        case RegionProtection::ReadExecute:
+            translatedProtection = PROT_READ | PROT_EXEC;
+            break;
+        default:
+            abort();
+        }
+
+        return mprotect(addr, size, translatedProtection) >= 0;
+    }
 #endif
 }
 
