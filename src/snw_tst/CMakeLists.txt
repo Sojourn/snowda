@@ -6,10 +6,16 @@ set(SNW_LIBS
 
 set(SNW_HDRS
     snw_tst.h
+    snw_tst_util.h
+    snw_tst_memory.h
+    snw_tst_compiler.h
 )
 
 set(SNW_SRCS
     snw_tst.cpp
+    snw_tst_util.cpp
+    snw_tst_memory.cpp
+    snw_tst_compiler.cpp
 )
 
 add_executable(snw_tst ${SNW_HDRS} ${SNW_SRCS})

@@ -2,16 +2,35 @@
 
 using namespace Snowda;
 
+TestModule::TestModule(const char *name)
+{
+    assert(name);
+    printf("%s\n", name);
+}
+
+TestModule::~TestModule()
+{
+    printf("\n");
+}
+
+TestCase::TestCase(const char *name)
+{
+    assert(name);
+    printf("  %s: ", name);
+}
+
+TestCase::~TestCase()
+{
+    printf(" passed\n");
+}
+
 int main(int argc, char **argv) {
-    MemoryManager memoryManager;
-    ArenaAllocator &arena = memoryManager.arenaAllocator();
-    uint32_t *value = new(arena.allocate(sizeof(uint32_t))) uint32_t;
-    *value = 4;
-    std::cout << *value << std::endl;
+    tstUtil();
+    tstMemory();
+    tstCompiler();
 
-	Page *page = memoryManager.pageAllocator().allocatePage();
-	memset(page->data(), 7, page->size());
-
+#ifdef SNW_OS_WIN32
 	std::system("pause");
+#endif
     return 0;
 }
