@@ -24,7 +24,7 @@ namespace Snowda {
         void modify(RegionProtection protection);
         void modify(size_t offset, size_t size, RegionProtection protection);
 
-		uint8_t *data();
+        uint8_t *data();
         const uint8_t *data() const;
         size_t size() const;
 
