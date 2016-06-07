@@ -11,6 +11,23 @@ namespace Snowda {
         return alignedValue;
     }
 
+    template<typename T>
+	bool isAligned(T value, size_t alignment);
+
+    template<typename T>
+    bool isAligned(T *value, size_t alignment)
+    {
+        assert(alignment > 0);
+        return (reinterpret_cast<uintptr_t>(value) & (alignment - 1)) == 0;
+    }
+
+    template<typename T>
+    bool isAligned(T value, size_t alignment)
+    {
+        assert(alignment > 0);
+        return (value & (alignment - 1)) == 0;
+    }
+
 }
 
 #endif // SNW_MEMORY_UTIL_H

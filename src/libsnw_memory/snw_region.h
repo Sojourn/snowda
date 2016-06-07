@@ -3,8 +3,16 @@
 
 namespace Snowda {
 
+    enum class RegionProtection {
+        None,
+        Read,
+        ReadWrite,
+        ReadExecute,
+    };
+
     class Region {
     public:
+        Region();
 		Region(size_t size);
         Region(const Region &) = delete;
         Region(Region &&);
@@ -13,8 +21,8 @@ namespace Snowda {
         Region &operator=(const Region &) = delete;
         Region &operator=(Region &&);
 
-        void commit(size_t size);
-        size_t committed() const;
+        void modify(RegionProtection protection);
+        void modify(size_t offset, size_t size, RegionProtection protection);
 
 		uint8_t *data();
         const uint8_t *data() const;
@@ -25,7 +33,6 @@ namespace Snowda {
     private:
         uint8_t *base_;
         size_t size_;
-        size_t committed_;
     };
 
 }

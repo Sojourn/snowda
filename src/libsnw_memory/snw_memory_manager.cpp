@@ -11,6 +11,7 @@ namespace {
 MemoryManager::MemoryManager()
     : pageAllocator_(*this)
     , arenaAllocator_(*this)
+    , currentRegionCommitted_(0)
 {
 	allocateRegion();
 }
@@ -43,7 +44,9 @@ void MemoryManager::allocateRegion()
     uintptr_t baseAddr = reinterpret_cast<uintptr_t>(region.data());
     uintptr_t blockAddr = align(baseAddr, blockAlign);
 
-    region.commit((blockAddr - baseAddr) + blockSize);
+    size_t commitSize = (blockAddr - baseAddr) + blockSize;
+    region.modify(0, commitSize, RegionProtection::ReadWrite);
+    currentRegionCommitted_ = commitSize;
 
     Buffer buffer(reinterpret_cast<uint8_t *>(baseAddr), blockAddr - baseAddr);
     if (buffer) {
@@ -59,13 +62,14 @@ void MemoryManager::growPageAllocator()
 {
     regions_.push_back(Region(regionSize));
     Region &region = regions_.back();
-    if (region.committed() == region.size()) {
+    if (currentRegionCommitted_ == region.size()) {
         allocateRegion();
     }
     else {
         uintptr_t baseAddr = reinterpret_cast<uintptr_t>(region.data());
-        uintptr_t blockAddr = baseAddr + region.committed();
-        region.commit(blockSize);
+        uintptr_t blockAddr = baseAddr + currentRegionCommitted_;
+        region.modify(currentRegionCommitted_, blockSize, RegionProtection::ReadWrite);
+        currentRegionCommitted_ = blockSize;
 
         Block *block = reinterpret_cast<Block *>(blockAddr);
         new (block) Block;
