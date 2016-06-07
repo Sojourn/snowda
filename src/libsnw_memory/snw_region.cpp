@@ -111,7 +111,7 @@ void Region::modify(RegionProtection protection)
 
 void Region::modify(size_t offset, size_t size, RegionProtection protection)
 {
-    assert(*base_);
+    assert(*this);
     assert(isAligned(offset, sizeof(Page)));
     assert(size > 0);
     assert(isAligned(size, sizeof(Page)));
