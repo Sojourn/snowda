@@ -29,8 +29,8 @@ namespace Snowda {
         StmtResult parseStatement();
         RootResult parseRootStatement();
 
-        int row();
-        int col();
+        size_t row();
+        size_t col();
 
         Token currentToken();
 		Token nextToken();

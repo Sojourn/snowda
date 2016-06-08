@@ -116,12 +116,12 @@ RootResult Parser::parseRootStatement()
     return create<RootStmt>(std::move(stmts));
 }
 
-int Parser::row()
+size_t Parser::row()
 {
     return currentToken().row;
 }
 
-int Parser::col()
+size_t Parser::col()
 {
     return currentToken().col;
 }

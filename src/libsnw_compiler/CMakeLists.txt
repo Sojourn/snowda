@@ -24,7 +24,6 @@ set(SNW_SRCS
     snw_parser_error.cpp
     snw_grammar.cpp
     snw_parser.cpp
-    ast/snw_ast.cpp
     ast/snw_ast_node.cpp
     ast/snw_ast_expr.cpp
     ast/snw_ast_stmt.cpp
