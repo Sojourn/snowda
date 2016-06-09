@@ -35,18 +35,13 @@ NodeContent ParserFrame::nodeContent()
     return nodeContent;
 }
 
-Parser::Parser(Lexer &lexer)
-    : stream_(lexer)
+Parser::Parser(MemoryManager &memoryManager, Lexer &lexer)
+    : memoryManager_(memoryManager)
+    , arenaFrame_(memoryManager.arenaAllocator())
+    , stream_(lexer)
     , depth_(0)
     , frame_(nullptr)
 {
-}
-
-Parser::~Parser()
-{
-    for (const Node *node: nodes_) {
-        delete node;
-    }
 }
 
 bool Parser::finished()

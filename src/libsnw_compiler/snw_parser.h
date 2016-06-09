@@ -21,8 +21,7 @@ namespace Snowda {
     class Parser {
         friend class ParserFrame;
     public:
-        explicit Parser(Lexer &lexer);
-        ~Parser();
+        explicit Parser(MemoryManager &memoryManager, Lexer &lexer);
 
         bool finished();
         ExprResult parseExpression(int bp);
@@ -42,16 +41,17 @@ namespace Snowda {
         template<typename T, typename... Args>
         const T *create(Args&&... args)
         {
-            const T *node = new T(frame_->nodeContent(), std::forward<Args>(args)...);
-            nodes_.push_back(node);
-            return node;
+            ArenaAllocator &arena = memoryManager_.arenaAllocator();
+            uint8_t *addr = arena.allocate(sizeof(T));
+            return new(addr) T(frame_->nodeContent(), std::forward<Args>(args)...);
         }
 
     private:
+        MemoryManager &memoryManager_;
+        ArenaFrame arenaFrame_;
         TokenStream stream_;
         const Grammar grammar_;
         size_t depth_;
-		Ast::NodeVec nodes_;
         ParserFrame *frame_;
     };
 

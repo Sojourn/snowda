@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "snw_util.h"
+#include "snw_memory.h"
 
 #include "snw_token.h"
 #include "snw_lexer.h"

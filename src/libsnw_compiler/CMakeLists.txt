@@ -1,5 +1,6 @@
 set(SNW_LIBS
     snw_util
+    snw_memory
 )
 
 set(SNW_HDRS

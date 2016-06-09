@@ -54,6 +54,8 @@ void testTokenStream()
 
 void testParser()
 {
+	MemoryManager memoryManager;
+
 	Lexer lexer(
         "{" \
         "    if (a + b) {" \
@@ -63,7 +65,7 @@ void testParser()
         "    1 + 2 / (3 + 4);" \
         "}"
         );
-    Parser parser(lexer);
+    Parser parser(memoryManager, lexer);
     while (!parser.finished()) {
         StmtResult result = parser.parseStatement();
         if (result.hasValue()) {
