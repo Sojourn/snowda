@@ -119,7 +119,7 @@ namespace Snowda {
         {
             return operator=(StringView(str));
         }
-
+        
         bool operator==(StringView rhs) const
         {
             if (size() != rhs.size()) {

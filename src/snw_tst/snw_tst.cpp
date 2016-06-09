@@ -29,6 +29,10 @@ int main(int argc, char **argv) {
     tstMemory();
     tstCompiler();
 
+	std::cout << String().begin() << std::endl;
+    std::cout << String("Hello").begin() << std::endl;
+    std::cout << String("Hello, World!").begin() << std::endl;
+
 #ifdef SNW_OS_WIN32
 	std::system("pause");
 #endif
