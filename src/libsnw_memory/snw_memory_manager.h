@@ -23,6 +23,7 @@ namespace Snowda {
     private:
         PageAllocator pageAllocator_;
         ArenaAllocator arenaAllocator_;
+        ChunkAllocator chunkAllocator_;
         std::vector<Region> regions_;
         size_t currentRegionCommitted_;
     };

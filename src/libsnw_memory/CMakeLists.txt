@@ -12,6 +12,7 @@ set(SNW_HDRS
     snw_page_set.h
     snw_page_allocator.h
     snw_arena_allocator.h
+    snw_chunk_allocator.h
     snw_memory_manager.h
 )
 
@@ -24,6 +25,7 @@ set(SNW_SRCS
     snw_page_set.cpp
     snw_page_allocator.cpp
     snw_arena_allocator.cpp
+    snw_chunk_allocator.cpp
     snw_memory_manager.cpp
 )
 

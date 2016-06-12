@@ -11,6 +11,7 @@ namespace {
 MemoryManager::MemoryManager()
     : pageAllocator_(*this)
     , arenaAllocator_(*this)
+    , chunkAllocator_(*this)
     , currentRegionCommitted_(0)
 {
 	allocateRegion();
