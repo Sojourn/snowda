@@ -51,6 +51,7 @@ void ChunkAllocator::deallocate(uint8_t *addr, size_t size)
 
 size_t ChunkAllocator::findChunkList(size_t size) const
 {
+    // FIXME: Make this more efficient
     for (size_t i = minChunkShift; i <= maxChunkShift; ++i) {
         if (size <= (static_cast<size_t>(1) << i)) {
             return i - minChunkShift;
