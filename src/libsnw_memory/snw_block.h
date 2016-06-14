@@ -31,6 +31,10 @@ namespace Snowda {
     public:
         Block();
 
+        // FIXME: Make this a u64 that users of the page can
+        //        set as desired. In particular, the chunk
+        //        allocator could make use of this to implement
+        //        a buddy allocation algorithm.
         BlockEntry &entry(size_t index);
         const BlockEntry &entry(size_t index) const;
         BlockEntry &entry(Page &page);
