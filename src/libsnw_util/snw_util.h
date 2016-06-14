@@ -4,6 +4,7 @@
 #include <limits>
 #include <utility>
 #include <type_traits>
+#include <array>
 #include <iostream>
 
 #include <cstring>
@@ -20,5 +21,7 @@
 #include "snw_fixed_vector.h"
 #include "snw_result.h"
 #include "snw_view.h"
+#include "snw_bit_tree.h"
+#include "snw_bit_tree_inline.h"
 
 #endif // SNW_UTIL_H
