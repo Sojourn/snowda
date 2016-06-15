@@ -6,10 +6,12 @@ set(SNW_HDRS
     snw_fixed_vector.h
     snw_result.h
     snw_view.h
+    snw_bit_tree.h
+    snw_bit_tree_inline.h
 )
 
 set(SNW_SRCS
-    snw_util.cpp
+    snw_bit_tree.cpp
 )
 
 add_library(snw_util ${SNW_HDRS} ${SNW_SRCS})

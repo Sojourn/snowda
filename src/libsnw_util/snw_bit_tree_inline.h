@@ -73,7 +73,7 @@ bool Snowda::BitTreeNode<capacity>::value() const
     size_t bitIndex;
     std::tie(byteIndex, bitIndex) = valuePosition();
 
-    return (tree_->bits_[byteIndex] & (1 << bitIndex)) != 0;
+    return (tree_->bits()[byteIndex] & (1 << bitIndex)) != 0;
 }
 
 template<size_t capacity>
@@ -83,7 +83,7 @@ void Snowda::BitTreeNode<capacity>::setValue()
     size_t bitIndex;
     std::tie(byteIndex, bitIndex) = valuePosition();
 
-    tree_->bits_[byteIndex] |= (1 << bitIndex);
+    tree_->bits()[byteIndex] |= (1 << bitIndex);
 }
 
 template<size_t capacity>
@@ -93,7 +93,7 @@ void Snowda::BitTreeNode<capacity>::clearValue()
     size_t bitIndex;
     std::tie(byteIndex, bitIndex) = valuePosition();
 
-    tree_->bits_[byteIndex] &= ~(1 << bitIndex);
+    tree_->bits()[byteIndex] &= ~(1 << bitIndex);
 }
 
 template<size_t capacity>
@@ -117,6 +117,13 @@ Snowda::BitTree<capacity>::BitTree()
 }
 
 template<size_t capacity>
+Snowda::BitTree<capacity>::BitTree(BitArray bits)
+    : bits_(bits)
+{
+    memset(bits_.data(), 0, bits_.size());
+}
+
+template<size_t capacity>
 Snowda::BitTreeNode<capacity> Snowda::BitTree<capacity>::root()
 {
     return node(0);
@@ -128,6 +135,18 @@ Snowda::BitTreeNode<capacity> Snowda::BitTree<capacity>::node(size_t index)
     assert(index < capacity);
 
     return BitTreeNode<capacity>(this, index);
+}
+
+template<size_t capacity>
+const typename Snowda::BitTree<capacity>::BitArray &Snowda::BitTree<capacity>::bits() const
+{
+    return bits_;
+}
+
+template<size_t capacity>
+typename Snowda::BitTree<capacity>::BitArray &Snowda::BitTree<capacity>::bits()
+{
+    return bits_;
 }
 
 #endif // SNW_BIT_TREE_INLINE_H
