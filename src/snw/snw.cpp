@@ -3,92 +3,93 @@
 using namespace Snowda;
 using namespace Snowda::Ast;
 
-void testLexer()
-{
-    {
-        Lexer lexer("(a bb ccc)\n"
-                    "(\"stuff\")\n"
-                    "var a.type = bb;");
+class Type {
+};
 
-        for (;;) {
-            Token token = lexer.next();
-            std::cout << token << std::endl;
-            if (token.type == TokenType::Finished || token.type == TokenType::Error) {
-                break;
-            }
-        }
-    }
-}
+class Method {
+    Method(uint32_t x, View<Instruction>, View<Constants> constants);
+};
 
-void testTokenStream()
-{
-    Lexer lexer("(a b c);");
-    TokenStream stream(lexer);
+class Frame {
+public:
+    Frame(uint32_t type, uint32_t method, uint16_t self);
 
-    size_t index = 0;
-    auto checkNext = [&](TokenType expectedType) {
-        Token token = stream[index++];
-        assert(token.type == expectedType);
+    uint32_t type() const;
+    uint32_t method() const;
+    uint16_t self() const;
+
+private:
+    union {
+        struct {
+            uint32_t type;
+            uint32_t method;
+            uint16_t self;
+            uint16_t instructionPointer;
+        };
+
+        uint16_t slots[1];
     };
+};
 
-    auto checkpoint = [&]() {
-        stream.advance(index);
-        index = 0;
-    };
+class Heap {
+public:
+    Heap(MemoryManager &manager);
 
-    checkpoint();
-    checkNext(TokenType::LParen);
-    checkNext(TokenType::Identifier);
-    checkpoint();
-    checkNext(TokenType::Identifier);
-    checkNext(TokenType::Identifier);
-    checkNext(TokenType::RParen);
-    checkpoint();
-    checkNext(TokenType::Semi);
-    checkNext(TokenType::Finished);
-    checkpoint();
-    checkNext(TokenType::Finished);
-    checkpoint();
-    checkpoint();
-}
+    Frame *pushFrame(uint32_t type, uint32_t method, uint32_t self);
+    void popFrame();
+};
 
-void testParser()
+int run(Instruction *instructions, size_t count)
 {
-	MemoryManager memoryManager;
-
-	Lexer lexer(
-        "{" \
-        "    if (a + b) {" \
-        "        print(\"stuff\");" \
-        "    }" \
-        "    else {}" \
-        "    1 + 2 / (3 + 4);" \
-        "}"
-        );
-    Parser parser(memoryManager, lexer);
-    while (!parser.finished()) {
-        StmtResult result = parser.parseStatement();
-        if (result.hasValue()) {
-            Ast::Printer printer;
-            result.value()->visit(printer);
-        }
-        else {
-            ParserError error = result.error();
-            std::cout << "Parse failed: " << error.msg() << std::endl;
-            std::cout << "  row: " << error.row() << std::endl;
-            std::cout << "  col: " << error.col() << std::endl;
+    uint16_t frame[256];
+    size_t cursor = 0;
+    while (cursor < count) {
+        Instruction instruction = instructions[cursor++];
+        switch (instruction.opCode) {
+        case OpCode::Add:
+            frame[instruction.a.res] = frame[instruction.a.lhs] + frame[instruction.a.rhs];
             break;
+        case OpCode::Sub:
+            frame[instruction.a.res] = frame[instruction.a.lhs] - frame[instruction.a.rhs];
+            break;
+        case OpCode::Move:
+            frame[instruction.a.res] = frame[instruction.a.lhs];
+            break;
+        case OpCode::Load:
+            frame[instruction.b.res] = instruction.b.val;
+            break;
+        case OpCode::Print:
+            std::cout << frame[instruction.a.res] << std::endl;
+            break;
+        case OpCode::Halt:
+            return 0;
+        default:
+            return -1;
         }
     }
+
+	return -1;
 }
 
 int main(int argc, char **argv)
 {
-    testLexer();
-    testTokenStream();
-    testParser();
+    Instruction instructions[] = {
+       { OpCode::Load, { { 0, 15 } } },
+       { OpCode::Load, { { 1, 7 } } },
+       { OpCode::Add, { { 2, 0, 1 } } },
+       { OpCode::Print, { { 0, 0, 0 } } },
+       { OpCode::Print, { { 1, 0, 0 } } },
+       { OpCode::Print, { { 2, 0, 0 } } },
+       { OpCode::Halt, { { 0, 0, 0 } } },
+    };
 
+    run(instructions, 6);
+
+    // std::vector<Instruction> instructions = writer.instructions();
+    // run(instructions.data(), instructions.size());
+
+#ifdef SNW_OS_WIN32
     std::system("pause");
-
+#endif
     return 0;
 }

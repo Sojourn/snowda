@@ -1,5 +1,7 @@
 set(SNW_LIBS
     snw_util
+    snw_code
+    snw_memory
     snw_compiler
 )
 
