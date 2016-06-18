@@ -3,6 +3,7 @@
 
 namespace Snowda {
 
+    // FIXME: Rename to MemoryContext
     class MemoryManager {
         friend class PageAllocator;
         friend class ArenaAllocator;

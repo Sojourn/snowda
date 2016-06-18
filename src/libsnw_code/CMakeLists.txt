@@ -6,13 +6,13 @@ set(SNW_HDRS
     snw_code.h
     snw_type.h
     snw_instruction.h
-    snw_instruction_writer.h
-    snw_method.h
+    snw_instruction_util.h
+    snw_function.h
 )
 
 set(SNW_SRCS
-    snw_instruction.cpp
-    snw_instruction_writer.cpp
+    snw_function.cpp
+    snw_type.cpp
 )
 
 add_library(snw_code ${SNW_HDRS} ${SNW_SRCS})

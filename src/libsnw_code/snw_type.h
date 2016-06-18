@@ -3,19 +3,30 @@
 
 namespace Snowda {
 
-    struct Member {
-        uint32_t type;
-        uint32_t offset;
+    class Member {
+    public:
+        Member(StringView name, TypeId typeId);
+
+        StringView name() const;
+        TypeId typeId() const;
+
+    private:
+        StringView name_;
+        TypeId typeId_;
     };
 
-    struct Type {
-        uint32_t typeId;
-        uint32_t size;
-        uint16_t methodCount;
-        uint16_t memberCount;
-        uint32_t *methodIds;
-        Member *members;
+    class Type {
+    public:
+        Type(View<Function> functions, View<TypeMember> members);
+
+        View<Function> functions() const;
+        View<Member> members() const;
+
+    private:
+        View<Function> functions_;
+        View<Member> members_;
     };
+
 }
 
 #endif // SNW_TYPE_H
