@@ -16,6 +16,8 @@
     X(ModuleStmt) \
     X(BlockStmt) \
     X(DeclStmt) \
+    X(FunctionArgStmt) \
+    X(FunctionDeclStmt) \
     X(IfStmt) \
     X(ForStmt) \
     X(ExprStmt)
@@ -30,10 +32,12 @@ namespace Snowda {
         class Node;
         class Expr;
         class Stmt;
+        class FunctionArgStmt;
 
         using NodeVec = std::vector<const Node *>;
         using ExprVec = std::vector<const Expr *>;
         using StmtVec = std::vector<const Stmt *>;
+        using FunctionArgStmtVec = std::vector<const FunctionArgStmt *>;
 
 #define X(xType) class xType;
         SNW_AST_NODE_TYPES

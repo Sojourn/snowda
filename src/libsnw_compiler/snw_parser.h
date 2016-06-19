@@ -48,7 +48,6 @@ namespace Snowda {
 
     private:
         MemoryManager &memoryManager_;
-        ArenaFrame arenaFrame_;
         TokenStream stream_;
         const Grammar grammar_;
         size_t depth_;

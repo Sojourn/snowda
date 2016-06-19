@@ -19,6 +19,8 @@ namespace Snowda {
             virtual void visit(const BlockStmt &stmt) override;
             virtual void visit(const ModuleStmt &stmt) override;
             virtual void visit(const DeclStmt &stmt) override;
+            virtual void visit(const FunctionArgStmt &stmt) override;
+            virtual void visit(const FunctionDeclStmt &stmt) override;
             virtual void visit(const IfStmt &stmt) override;
             virtual void visit(const ForStmt &stmt) override;
             virtual void visit(const ExprStmt &stmt) override;

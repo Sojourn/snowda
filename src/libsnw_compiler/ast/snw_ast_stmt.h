@@ -62,6 +62,36 @@ namespace Snowda {
             const Expr *expr_;
         };
 
+        class FunctionArgStmt : public Stmt {
+        public:
+            FunctionArgStmt(NodeContent nodeContent, StringView name, StringView type);
+
+            const StringView &name() const;
+            const StringView &type() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const StringView name_;
+            const StringView type_;
+        };
+
+        class FunctionDeclStmt : public Stmt {
+        public:
+            FunctionDeclStmt(NodeContent nodeContent, StringView name, FunctionArgStmtVec args, const BlockStmt *block);
+
+            const StringView &name() const;
+            const FunctionArgStmtVec &args() const;
+            const BlockStmt *block() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const StringView name_;
+            const FunctionArgStmtVec args_;
+            const BlockStmt *block_;
+        };
+
         class IfStmt : public Stmt {
         public:
             struct Elif {

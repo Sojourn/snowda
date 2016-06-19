@@ -12,6 +12,8 @@ set(SNW_HDRS
     snw_parser_error.h
     snw_grammar.h
     snw_parser.h
+    snw_program.h
+    snw_code_generator.h
     ast/snw_ast.h
     ast/snw_ast_node.h
     ast/snw_ast_expr.h
@@ -26,6 +28,8 @@ set(SNW_SRCS
     snw_parser_error.cpp
     snw_grammar.cpp
     snw_parser.cpp
+    snw_program.cpp
+    snw_code_generator.cpp
     ast/snw_ast_node.cpp
     ast/snw_ast_expr.cpp
     ast/snw_ast_stmt.cpp

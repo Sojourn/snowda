@@ -37,7 +37,6 @@ NodeContent ParserFrame::nodeContent()
 
 Parser::Parser(MemoryManager &memoryManager, Lexer &lexer)
     : memoryManager_(memoryManager)
-    , arenaFrame_(memoryManager.arenaAllocator())
     , stream_(lexer)
     , depth_(0)
     , frame_(nullptr)

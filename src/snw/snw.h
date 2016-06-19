@@ -13,7 +13,6 @@
 #include "snw_memory.h"
 #include "snw_compiler.h"
 
-namespace Snowda {
-}
+#include "snw_virtual_machine.h"
 
 #endif // SNW_H

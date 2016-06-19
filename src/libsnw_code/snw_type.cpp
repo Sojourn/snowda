@@ -19,8 +19,18 @@ TypeId Member::typeId() const
 }
 
 
-Type(View<Function> functions, View<TypeMember> members);
+Type::Type(View<Function> functions, View<Member> members)
+    : functions_(functions)
+    , members_(members)
+{
+}
 
-View<Function> functions() const;
-View<Member> members() const;
+View<Function> Type::functions() const
+{
+    return functions_;
+}
 
+View<Member> Type::members() const
+{
+    return members_;
+}

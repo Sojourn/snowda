@@ -6,23 +6,8 @@ namespace {
     static const size_t minBufferSize = sizeof(Page);
 }
 
-ArenaFrame::ArenaFrame(ArenaAllocator &arena)
-    : arena_(arena)
-    , prev_(nullptr)
-    , bufferIndex_(0)
-    , bufferTop_(0)
-{
-    arena_.pushFrame(this);
-}
-
-ArenaFrame::~ArenaFrame()
-{
-    arena_.popFrame(this);
-}
-
 ArenaAllocator::ArenaAllocator(MemoryManager &manager)
     : manager_(manager)
-    , topFrame_(nullptr)
     , capacity_(0)
     , bufferIndex_(0)
     , bufferTop_(0)
@@ -84,19 +69,4 @@ void ArenaAllocator::clear()
 {
     bufferIndex_ = 0;
     bufferTop_ = 0;
-}
-
-void ArenaAllocator::pushFrame(ArenaFrame *frame)
-{
-    frame->prev_ = topFrame_;
-    frame->bufferIndex_ = bufferIndex_;
-    frame->bufferTop_ = bufferTop_;
-    topFrame_ = frame;
-}
-
-void ArenaAllocator::popFrame(ArenaFrame *frame)
-{
-    topFrame_ = frame->prev_;
-    bufferIndex_ = frame->bufferIndex_;
-    bufferTop_ = frame->bufferTop_;
 }

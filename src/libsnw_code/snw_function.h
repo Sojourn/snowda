@@ -39,7 +39,7 @@ namespace Snowda {
         View<Instruction> instructions_;
         View<Register> registers_;
     };
-    
+
 }
 
 #endif // SNW_FUNCTION_H

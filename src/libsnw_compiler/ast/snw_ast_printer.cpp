@@ -123,6 +123,27 @@ void Printer::visit(const DeclStmt &stmt)
     depth_ -= 1;
 }
 
+void Printer::visit(const FunctionArgStmt &stmt)
+{
+    depth_ += 1;
+    std::cout << '(' << stmt.nodeTypeName() << std::endl;
+    pad(); std::cout << "name: " << stmt.name() << std::endl;
+    pad(); std::cout << "type: " << stmt.type() << std::endl;
+    pad(); std::cout << ')' << std::endl;
+    depth_ -= 1;
+}
+
+void Printer::visit(const FunctionDeclStmt &stmt)
+{
+    depth_ += 1;
+    std::cout << '(' << stmt.nodeTypeName() << std::endl;
+    pad(); std::cout << "name: " << stmt.name() << std::endl;
+    pad(); std::cout << "args: " << "todo..." << std::endl;
+    pad(); std::cout << "block: "; stmt.block()->visit(*this);
+    pad(); std::cout << ')' << std::endl;
+    depth_ -= 1;
+}
+
 void Printer::visit(const IfStmt &stmt)
 {
     depth_ += 1;

@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "snw_util.h"
+#include "snw_code.h"
 #include "snw_memory.h"
 
 #include "snw_token.h"
@@ -26,5 +27,7 @@
 #include "snw_parser_error.h"
 #include "snw_grammar.h"
 #include "snw_parser.h"
+#include "snw_program.h"
+#include "snw_code_generator.h"
 
 #endif // SNW_COMPILER_H

@@ -17,7 +17,7 @@ namespace Snowda {
 
     class Type {
     public:
-        Type(View<Function> functions, View<TypeMember> members);
+        Type(View<Function> functions, View<Member> members);
 
         View<Function> functions() const;
         View<Member> members() const;

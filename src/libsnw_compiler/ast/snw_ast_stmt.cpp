@@ -90,6 +90,51 @@ void DeclStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
+FunctionArgStmt::FunctionArgStmt(NodeContent nodeContent, StringView name, StringView type)
+    : Stmt(NodeType::FunctionArgStmt, nodeContent)
+    , name_(name)
+    , type_(type)
+{
+}
+
+const StringView &FunctionArgStmt::name() const
+{
+    return name_;
+}
+
+const StringView &FunctionArgStmt::type() const
+{
+    return type_;
+}
+
+void FunctionArgStmt::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
+FunctionDeclStmt::FunctionDeclStmt(NodeContent nodeContent, StringView name, FunctionArgStmtVec args, const BlockStmt *block)
+    : Stmt(NodeType::FunctionDeclStmt, nodeContent)
+    , name_(name)
+    , args_(std::move(args))
+    , block_(block)
+{
+}
+
+const StringView &FunctionDeclStmt::name() const
+{
+    return name_;
+}
+
+const BlockStmt *FunctionDeclStmt::block() const
+{
+    return block_;
+}
+
+void FunctionDeclStmt::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
 IfStmt::IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt)
     : Stmt(NodeType::IfStmt, nodeContent)
     , cond_(condExpr)

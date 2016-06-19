@@ -3,7 +3,8 @@
 
 #define SNW_TOKENS_KEYWORDS \
     X(Import, "import") \
-    X(Def,    "def") \
+    X(Class,  "class") \
+    X(Fn,     "fn") \
     X(Var,    "var") \
     X(If,     "if") \
     X(Else,   "else")

@@ -19,7 +19,7 @@ namespace Snowda {
     private:
         void allocateRegion();
         void growPageAllocator();
-        void growArenaAllocator();
+        void growArenaAllocator(ArenaAllocator &arena);
 
     private:
         PageAllocator pageAllocator_;

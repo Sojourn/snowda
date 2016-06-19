@@ -78,11 +78,11 @@ void MemoryManager::growPageAllocator()
     }
 }
 
-void MemoryManager::growArenaAllocator()
+void MemoryManager::growArenaAllocator(ArenaAllocator &arena)
 {
     Page *page = pageAllocator_.allocatePage();
 	page->blockEntry().setUse(PageUse::Arena);
 
     Buffer buffer(page->data(), page->size());
-    arenaAllocator_.addBuffer(buffer);
+    arena.addBuffer(buffer);
 }
