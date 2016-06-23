@@ -99,11 +99,14 @@ namespace {
             return result.error();
         }
 
-        if (!parser.advanceToken(TokenType::Semi)) {
-            return ParserError(parser.currentToken(), "Expected statement expression to end with a ';'");
+        TokenType type = parser.nextToken().type;
+        if ((type == TokenType::Semi) || (type == TokenType::Newline) || (type == TokenType::Finished)) {
+			parser.consumeToken();
+            return parser.create<ExprStmt>(result.value());
         }
-
-        return parser.create<ExprStmt>(result.value());
+        else {
+            return ParserError(parser.currentToken(), "Expected Semi or Newline or Finished");
+        }
     }
 
     StmtResult blockStd(Parser &parser, Token token)

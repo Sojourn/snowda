@@ -16,7 +16,7 @@ namespace {
 
     bool whitespace(char c)
     {
-        return (c == ' ') || (c == '\t') || (c == '\r') || (c == '\n');
+        return (c == ' ') || (c == '\t');
     }
 }
 
@@ -141,6 +141,7 @@ Token Lexer::next()
         &Lexer::stringStage,
         &Lexer::characterStage,
         &Lexer::numberStage,
+        &Lexer::newlineStage,
     };
 
     for (auto stage: stages) {
@@ -315,4 +316,27 @@ bool Lexer::numberStage(LexerState &state, Token &token)
     }
 
     return false;
+}
+
+bool Lexer::newlineStage(LexerState &state, Token &token)
+{
+    assert(!state.done());
+
+    token.type = TokenType::Newline;
+    token.row = state.row();
+    token.col = state.col();
+    auto begin = state.begin();
+
+    char first = state.next();
+    if (first == '\n') {
+        token.content = StringView(begin, begin + 1);
+        return true;
+    }
+    else if ((first == '\r') && (state.next() == '\n')) {
+        token.content = StringView(begin, begin + 2);
+        return true;
+    }
+    else {
+        return false;
+    }
 }

@@ -98,6 +98,12 @@ RootResult Parser::parseRootStatement()
 
     StmtVec stmts;
     while (!finished()) {
+        Token token = currentToken();
+        if ((token.type == TokenType::Semi) || (token.type == TokenType::Newline)) {
+            consumeToken();
+            continue;
+        }
+
         StmtResult result = parseStatement();
         if (result.hasError()) {
             return result.error();

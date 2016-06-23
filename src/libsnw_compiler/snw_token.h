@@ -45,6 +45,7 @@
     X(Character,  "character") \
     X(String,     "string") \
     X(Identifier, "identifier") \
+    X(Newline,    "newline") \
     X(Finished,   "finished") \
     X(Error,      "error")
 

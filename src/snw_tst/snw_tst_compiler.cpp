@@ -1,6 +1,7 @@
 #include "snw_tst.h"
 
 using namespace Snowda;
+using namespace Snowda::Ast;
 
 namespace {
     void compare(Token lhs, Token rhs, bool pos = true)
@@ -24,8 +25,6 @@ void Snowda::tstCompiler()
 void Snowda::tstLexer()
 {
     TestCase test("Lexer");
-
-    // Test empty
     {
         Lexer lexer("");
         compare(lexer.next(), Token(TokenType::Finished, "", 0, 0));
@@ -41,8 +40,23 @@ void Snowda::tstLexer()
         Lexer lexer("a bb\nccc");
         compare(lexer.next(), Token(TokenType::Identifier, "a", 0, 0));
         compare(lexer.next(), Token(TokenType::Identifier, "bb", 0, 2));
+        compare(lexer.next(), Token(TokenType::Newline, "\n", 0, 4));
         compare(lexer.next(), Token(TokenType::Identifier, "ccc", 1, 0));
         compare(lexer.next(), Token(TokenType::Finished, "", 1, 3));
+    }
+    {
+        Lexer lexer("a bb\r\nccc");
+        compare(lexer.next(), Token(TokenType::Identifier, "a", 0, 0));
+        compare(lexer.next(), Token(TokenType::Identifier, "bb", 0, 2));
+        compare(lexer.next(), Token(TokenType::Newline, "\r\n", 0, 4));
+        compare(lexer.next(), Token(TokenType::Identifier, "ccc", 1, 0));
+        compare(lexer.next(), Token(TokenType::Finished, "", 1, 3));
+    }
+    {
+        Lexer lexer("\"1\n23\"\"abc\"");
+        compare(lexer.next(), Token(TokenType::String, "1\n23", 0, 0));
+        compare(lexer.next(), Token(TokenType::String, "abc", 1, 3));
+        compare(lexer.next(), Token(TokenType::Finished, "", 1, 8));
     }
     {
         Lexer lexer("\"123\"\"abc\"");
@@ -105,4 +119,55 @@ void Snowda::tstLexer()
 void Snowda::tstParser()
 {
     TestCase test("Parser");
+    {
+        MemoryManager manager;
+        Lexer lexer("(1 + 2) + 3");
+        Parser parser(manager, lexer);
+        RootResult result = parser.parseRootStatement();
+        assert(result.hasValue());
+        auto rootStmt = result.value();
+    }
+    {
+        MemoryManager manager;
+        Lexer lexer("(1 + 2) + 3\n");
+        Parser parser(manager, lexer);
+        RootResult result = parser.parseRootStatement();
+        assert(result.hasValue());
+        auto rootStmt = result.value();
+    }
+    {
+        MemoryManager manager;
+        Lexer lexer("(1 + 2) + 3\r\n");
+        Parser parser(manager, lexer);
+        RootResult result = parser.parseRootStatement();
+        assert(result.hasValue());
+        auto rootStmt = result.value();
+    }
+    {
+        MemoryManager manager;
+        Lexer lexer("(1 + 2) + 3;");
+        Parser parser(manager, lexer);
+        RootResult result = parser.parseRootStatement();
+        assert(result.hasValue());
+        auto rootStmt = result.value();
+    }
+    {
+        MemoryManager manager;
+		Lexer lexer("(1 + 2) + 3;(a + b)");
+        Parser parser(manager, lexer);
+        RootResult result = parser.parseRootStatement();
+        assert(result.hasValue());
+        auto rootStmt = result.value();
+        auto &stmts = rootStmt->stmts();
+
+        assert(stmts.size() == 2);
+        {
+            auto stmt = stmts[0];
+            assert(stmt->nodeType() == NodeType::ExprStmt);
+        }
+        {
+            auto stmt = stmts[1];
+            assert(stmt->nodeType() == NodeType::ExprStmt);
+        }
+    }
 }
