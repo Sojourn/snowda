@@ -20,6 +20,14 @@ Token::Token()
 {
 }
 
+Token::Token(TokenType type, StringView content, size_t row, size_t col)
+    : type(type)
+    , content(content)
+    , row(row)
+    , col(col)
+{
+}
+
 std::ostream &Snowda::operator<<(std::ostream &os, const Token &token)
 {
     os << "Token {\n";

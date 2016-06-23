@@ -5,7 +5,6 @@
     X(Import, "import") \
     X(Class,  "class") \
     X(Fn,     "fn") \
-    X(Var,    "var") \
     X(If,     "if") \
     X(Else,   "else")
 
@@ -70,6 +69,7 @@ namespace Snowda {
         size_t     col;
 
         Token();
+        Token(TokenType type, StringView content, size_t row, size_t col);
     };
 
 
