@@ -7,6 +7,19 @@ namespace Snowda {
     using StmtResult = Result<const Ast::Stmt *, ParserError>;
     using RootResult = Result<const Ast::RootStmt *, ParserError>;
 
+    namespace BindingPower {
+        enum {
+            None       = 0,
+            Assignment = 10,
+            Logical    = 20,
+            Relational = 30,
+            Sum        = 40,
+            Product    = 50,
+            Unary      = 60,
+            Call       = 70,
+        };
+    }
+
     class Grammar {
     public:
         using Std = StmtResult(*)(Parser &, Token);

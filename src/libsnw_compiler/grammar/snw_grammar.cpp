@@ -8,19 +8,6 @@ namespace {
     using Nud = Grammar::Nud;
     using Led = Grammar::Led;
 
-    namespace BindingPower {
-        enum {
-            None       = 0,
-            Assignment = 10,
-            Logical    = 20,
-            Relational = 30,
-            Sum        = 40,
-            Product    = 50,
-            Unary      = 60,
-            Call       = 70,
-        };
-    }
-
     ExprResult stringNud(Parser &parser, Token token)
     {
         return parser.create<StringExpr>(token.content);
