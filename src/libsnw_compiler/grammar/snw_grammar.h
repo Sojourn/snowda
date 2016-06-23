@@ -2,12 +2,10 @@
 #define SNW_GRAMMAR_H
 
 namespace Snowda {
-
-    class Parser;
     
     using ExprResult = Result<const Ast::Expr *, ParserError>;
     using StmtResult = Result<const Ast::Stmt *, ParserError>;
-	using RootResult = Result<const Ast::RootStmt *, ParserError>;
+    using RootResult = Result<const Ast::RootStmt *, ParserError>;
 
     class Grammar {
     public:

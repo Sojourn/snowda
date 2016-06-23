@@ -14,7 +14,8 @@ namespace Snowda {
 
     private:
         ArenaAllocator arena_;
-        View<Type> types_;
+        std::vector<Type> types_;
+        std::map<std::string, size_t> typeIndex_;
     };
 }
 

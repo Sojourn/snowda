@@ -1,9 +1,10 @@
-#include "snw_compiler.h"
+#include "../snw_compiler.h"
 
 using namespace Snowda;
 using namespace Snowda::Ast;
 
 namespace {
+    using Std = Grammar::Std;
     using Nud = Grammar::Nud;
     using Led = Grammar::Led;
 
@@ -18,38 +19,6 @@ namespace {
             Unary      = 60,
             Call       = 70,
         };
-    }
-
-    ExprResult defaultNud(Parser &parser, Token token)
-    {
-        return ParserError(token, "default nud");
-    }
-
-    ExprResult defaultLed(Parser &parser, const Expr *node, Token token)
-    {
-        return ParserError(token, "default led");
-    }
-
-    ExprResult identifierNud(Parser &parser, Token token)
-    {
-        return parser.create<IdentifierExpr>(token.content);
-    }
-
-    ExprResult numberNud(Parser &parser, Token token)
-    {
-        // FIXME: Get an actual number hierarchy
-        int number = 0;
-        for (char c: token.content) {
-            number *= 10;
-            number += (c - '0');
-        }
-
-        return parser.create<NumberExpr>(number);
-    }
-
-    ExprResult characterNud(Parser &parser, Token token)
-    {
-        return parser.create<CharacterExpr>(token.content[0]);
     }
 
     ExprResult stringNud(Parser &parser, Token token)
@@ -143,7 +112,7 @@ namespace {
         while (parser.currentToken().type != TokenType::RCBrace) {
             StmtResult result = parser.parseStatement();
             if (result.hasError()) {
-				return result.error();
+                return result.error();
             }
             else {
                 stmts.push_back(result.value());
@@ -155,61 +124,6 @@ namespace {
         }
 
         return parser.create<BlockStmt>(std::move(stmts));
-    }
-
-    StmtResult fnStd(Parser &parser, Token token)
-    {
-        token = parser.consumeToken();
-        if (token.type != TokenType::Identifier) {
-            return ParserError(token, "Expected Identifier");
-        }
-        StringView name = token.content;
-
-        if (!parser.advanceToken(TokenType::LParen)) {
-            return ParserError(parser.currentToken(), "Expected LParen");
-        }
-
-        FunctionArgStmtVec args;
-        while (parser.currentToken().type != TokenType::RParen) {
-            token = parser.consumeToken();
-            if (token.type != TokenType::Identifier) {
-                return ParserError(token, "Expected Identifier");
-            }
-            StringView argName = token.content;
-
-            if (!parser.advanceToken(TokenType::Colon)) {
-                return ParserError(parser.currentToken(), "Expected Colon");
-            }
-
-            token = parser.consumeToken();
-            if (token.type != TokenType::Identifier) {
-                return ParserError(token, "Expected Identifier");
-            }
-            StringView argType = token.content;
-
-            args.push_back(parser.create<FunctionArgStmt>(argName, argType));
-
-            if (parser.currentToken().type == TokenType::Comma && parser.nextToken().type == TokenType::Identifier) {
-                parser.consumeToken();
-            }
-        }
-
-        if (parser.currentToken().type != TokenType::LCBrace) {
-            return ParserError(parser.currentToken(), "Expected LCBrace");
-        }
-
-		StmtResult result = parser.parseStatement();
-        if (result.hasError()) {
-            return std::move(result.error());
-        }
-
-        const Stmt *stmt = result.value();
-        if (stmt->nodeType() != NodeType::BlockStmt) {
-            return ParserError(parser.currentToken(), "Expected BlockStmt");
-        }
-
-        const BlockStmt *blockStmt = static_cast<const BlockStmt *>(stmt);
-        return parser.create<FunctionDeclStmt>(name, std::move(args), blockStmt);
     }
 
     StmtResult ifStd(Parser &parser, Token token)
@@ -235,7 +149,7 @@ namespace {
             return ParserError(parser.currentToken(), "Expected RParen");
         }
 
-		stmtResult = parser.parseStatement();
+        stmtResult = parser.parseStatement();
         if (stmtResult.hasError()) {
             return std::move(stmtResult);
         }
@@ -249,8 +163,8 @@ namespace {
             return parser.create<IfStmt>(condExpr, thenStmt);
         }
 
-		parser.consumeToken();
-		stmtResult = parser.parseStatement();
+        parser.consumeToken();
+        stmtResult = parser.parseStatement();
         if (stmtResult.hasError()) {
             return std::move(stmtResult);
         }

@@ -10,7 +10,12 @@ set(SNW_HDRS
     snw_lexer.h
     snw_token_stream.h
     snw_parser_error.h
-    snw_grammar.h
+    grammar/snw_grammar.h
+    grammar/snw_default_rules.h
+    grammar/snw_identifier_rules.h
+    grammar/snw_number_rules.h
+    grammar/snw_character_rules.h
+    grammar/snw_fn_rules.h
     snw_parser.h
     snw_program.h
     snw_code_generator.h
@@ -26,7 +31,12 @@ set(SNW_SRCS
     snw_lexer.cpp
     snw_token_stream.cpp
     snw_parser_error.cpp
-    snw_grammar.cpp
+    grammar/snw_grammar.cpp
+    grammar/snw_default_rules.cpp
+    grammar/snw_identifier_rules.cpp
+    grammar/snw_number_rules.cpp
+    grammar/snw_character_rules.cpp
+    grammar/snw_fn_rules.cpp
     snw_parser.cpp
     snw_program.cpp
     snw_code_generator.cpp
