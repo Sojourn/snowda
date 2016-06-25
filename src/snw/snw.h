@@ -13,6 +13,8 @@
 #include "snw_memory.h"
 #include "snw_compiler.h"
 
+#include "snw_task.h"
+#include "snw_driver.h"
 #include "snw_virtual_machine.h"
 
 #endif // SNW_H
