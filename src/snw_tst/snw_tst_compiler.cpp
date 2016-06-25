@@ -156,6 +156,11 @@ void Snowda::tstParser()
 		Lexer lexer("(1 + 2) + 3;(a + b)");
         Parser parser(manager, lexer);
         RootResult result = parser.parseRootStatement();
+        if (result.hasError()) {
+            ParserError error = result.error();
+            std::cout << error << std::endl;
+        }
+
         assert(result.hasValue());
         auto rootStmt = result.value();
         auto &stmts = rootStmt->stmts();
@@ -164,10 +169,41 @@ void Snowda::tstParser()
         {
             auto stmt = stmts[0];
             assert(stmt->nodeType() == NodeType::ExprStmt);
+
+            auto exprStmt = static_cast<const ExprStmt *>(stmt);
+            {
+                auto expr = exprStmt->expr();
+                assert(expr->nodeType() == NodeType::BinaryExpr);
+
+                auto binaryExpr = static_cast<const BinaryExpr *>(expr);
+            }
         }
         {
             auto stmt = stmts[1];
             assert(stmt->nodeType() == NodeType::ExprStmt);
+
+            auto exprStmt = static_cast<const ExprStmt *>(stmt);
+            {
+                auto expr = exprStmt->expr();
+                assert(expr->nodeType() == NodeType::BinaryExpr);
+
+                auto binaryExpr = static_cast<const BinaryExpr *>(expr);
+                assert(binaryExpr->op() == BinaryExpr::Operator::Add);
+                {
+                    auto lhsExpr = binaryExpr->lhsExpr();
+                    assert(lhsExpr->nodeType() == NodeType::IdentifierExpr);
+                    
+                    auto identifierExpr = static_cast<const IdentifierExpr *>(lhsExpr);
+                    assert(identifierExpr->name() == "a");
+                }
+                {
+                    auto rhsExpr = binaryExpr->rhsExpr();
+                    assert(rhsExpr->nodeType() == NodeType::IdentifierExpr);
+
+                    auto identifierExpr = static_cast<const IdentifierExpr *>(rhsExpr);
+                    assert(identifierExpr->name() == "b");
+                }
+            }
         }
     }
 }
