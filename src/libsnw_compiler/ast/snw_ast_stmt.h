@@ -120,6 +120,18 @@ namespace Snowda {
             const Stmt *else_;
         };
 
+        class ReturnStmt : public Stmt {
+        public:
+            ReturnStmt(NodeContent nodeContent, const ExprStmt *exprStmt);
+
+            const ExprStmt *exprStmt() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const ExprStmt *exprStmt_;
+        };
+
         class ForStmt : public Stmt {
         public:
             ForStmt(NodeContent nodeContent);

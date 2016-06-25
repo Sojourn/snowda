@@ -19,6 +19,7 @@
     X(FunctionArgStmt) \
     X(FunctionDeclStmt) \
     X(IfStmt) \
+    X(ReturnStmt) \
     X(ForStmt) \
     X(ExprStmt)
 

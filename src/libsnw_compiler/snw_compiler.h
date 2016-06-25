@@ -27,19 +27,9 @@ namespace Snowda {
 #include "snw_lexer.h"
 #include "snw_token_stream.h"
 
-#include "ast/snw_ast.h"
-#include "ast/snw_ast_node.h"
-#include "ast/snw_ast_expr.h"
-#include "ast/snw_ast_stmt.h"
 #include "snw_parser_error.h"
-
+#include "ast/snw_ast.h"
 #include "grammar/snw_grammar.h"
-#include "grammar/snw_default_rules.h"
-#include "grammar/snw_identifier_rules.h"
-#include "grammar/snw_number_rules.h"
-#include "grammar/snw_character_rules.h"
-#include "grammar/snw_fn_rules.h"
-
 #include "snw_parser.h"
 #include "snw_program.h"
 #include "snw_code_generator.h"

@@ -88,12 +88,27 @@ namespace {
 
         token = parser.currentToken();
         TokenType type = token.type;
-        if ((type == TokenType::Semi) || (type == TokenType::Newline) || (type == TokenType::Finished)) {
+
+        bool foundTerminal = false;
+        TokenType terminalTypes[] = {
+            TokenType::Semi,
+            TokenType::Newline,
+            TokenType::RParen,
+            TokenType::RCBrace,
+            TokenType::Finished,
+        };
+        for (TokenType terminalType: terminalTypes) {
+            if (type == terminalType) {
+                foundTerminal = true;
+                break;
+            }
+        }
+        if (foundTerminal) {
             parser.consumeToken();
             return parser.create<ExprStmt>(result.value());
         }
         else {
-            return ParserError(parser.currentToken(), "Expected Semi or Newline or Finished");
+            return ParserError(parser.currentToken(), "Expected a terminal token type");
         }
     }
 
@@ -215,6 +230,7 @@ Grammar::Grammar()
     stmt(TokenType::LCBrace, &blockStd);
     stmt(TokenType::Fn, &fnStd);
     stmt(TokenType::If, &ifStd);
+    stmt(TokenType::Return, &returnStd);
 
     prefix(TokenType::Plus, &unaryNud<UnaryExpr::Operator::Plus>);
     prefix(TokenType::Minus, &unaryNud<UnaryExpr::Operator::Minus>);

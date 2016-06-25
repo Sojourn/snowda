@@ -197,6 +197,23 @@ void IfStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
+
+ReturnStmt::ReturnStmt(NodeContent nodeContent, const ExprStmt *exprStmt)
+    : Stmt(NodeType::ReturnStmt, nodeContent)
+    , exprStmt_(exprStmt)
+{
+}
+
+const ExprStmt *ReturnStmt::exprStmt() const
+{
+    return exprStmt_;
+}
+
+void ReturnStmt::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
+
 ForStmt::ForStmt(NodeContent nodeContent)
     : Stmt(NodeType::ForStmt, nodeContent)
 {

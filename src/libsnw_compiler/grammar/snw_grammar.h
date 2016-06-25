@@ -56,4 +56,11 @@ namespace Snowda {
 
 }
 
+#include "snw_default_rules.h"
+#include "snw_identifier_rules.h"
+#include "snw_number_rules.h"
+#include "snw_character_rules.h"
+#include "snw_fn_rules.h"
+#include "snw_return_rules.h"
+
 #endif // SNW_GRAMMAR_H
