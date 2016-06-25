@@ -12,11 +12,13 @@ set(SNW_HDRS
     snw_parser_error.h
     grammar/snw_grammar.h
     grammar/snw_default_rules.h
+    grammar/snw_error_rules.h
     grammar/snw_identifier_rules.h
     grammar/snw_number_rules.h
     grammar/snw_character_rules.h
     grammar/snw_fn_rules.h
     grammar/snw_return_rules.h
+    grammar/snw_operator_rules.h
     snw_parser.h
     snw_program.h
     snw_code_generator.h
@@ -33,6 +35,7 @@ set(SNW_SRCS
     snw_parser_error.cpp
     grammar/snw_grammar.cpp
     grammar/snw_default_rules.cpp
+    grammar/snw_error_rules.cpp
     grammar/snw_identifier_rules.cpp
     grammar/snw_number_rules.cpp
     grammar/snw_character_rules.cpp

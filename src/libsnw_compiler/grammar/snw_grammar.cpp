@@ -160,37 +160,6 @@ namespace {
         return parser.create<IfStmt>(condExpr, thenStmt, elseStmt);
     }
 
-    ExprResult errorNud(Parser &parser, Token token)
-    {
-        return ParserError(token, token.content);
-    }
-
-    ExprResult errorLed(Parser &parser, const Expr *left, Token token)
-    {
-        return ParserError(token, token.content);
-    }
-
-    template<UnaryExpr::Operator op>
-    ExprResult unaryNud(Parser &parser, Token token) {
-        ExprResult result = parser.parseExpression(BindingPower::Unary);
-        if (result.hasError()) {
-            return result;
-        }
-        else {
-            return parser.create<UnaryExpr>(op, result.value());
-        }
-    }
-
-    template<BinaryExpr::Operator op>
-    ExprResult binaryLed(Parser &parser, const Expr *left, Token token) {
-        ExprResult result = parser.parseExpression(parser.grammar().bp(token));
-        if (result.hasError()) {
-            return result;
-        }
-        else {
-            return parser.create<BinaryExpr>(op, left, result.value());
-        }
-    }
 }
 
 Grammar::Grammar()
