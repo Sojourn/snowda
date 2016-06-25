@@ -86,30 +86,7 @@ namespace {
             return result.error();
         }
 
-        token = parser.currentToken();
-        TokenType type = token.type;
-
-        bool foundTerminal = false;
-        TokenType terminalTypes[] = {
-            TokenType::Semi,
-            TokenType::Newline,
-            TokenType::RParen,
-            TokenType::RCBrace,
-            TokenType::Finished,
-        };
-        for (TokenType terminalType: terminalTypes) {
-            if (type == terminalType) {
-                foundTerminal = true;
-                break;
-            }
-        }
-        if (foundTerminal) {
-            parser.consumeToken();
-            return parser.create<ExprStmt>(result.value());
-        }
-        else {
-            return ParserError(parser.currentToken(), "Expected a terminal token type");
-        }
+        return parser.create<ExprStmt>(result.value());
     }
 
     StmtResult blockStd(Parser &parser, Token token)
