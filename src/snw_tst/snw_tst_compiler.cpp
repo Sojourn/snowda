@@ -72,12 +72,13 @@ void Snowda::tstLexer()
         compare(lexer.next(), Token(TokenType::Finished, "", 0, 0), false);
     }
     {
-        Lexer lexer("import class fn if else");
+        Lexer lexer("import class fn if else return");
         compare(lexer.next(), Token(TokenType::Import, "import", 0, 0), false);
         compare(lexer.next(), Token(TokenType::Class, "class", 0, 0), false);
         compare(lexer.next(), Token(TokenType::Fn, "fn", 0, 0), false);
         compare(lexer.next(), Token(TokenType::If, "if", 0, 0), false);
         compare(lexer.next(), Token(TokenType::Else, "else", 0, 0), false);
+        compare(lexer.next(), Token(TokenType::Return, "return", 0, 0), false);
         compare(lexer.next(), Token(TokenType::Finished, "", 0, 0), false);
     }
     {
@@ -118,7 +119,13 @@ void Snowda::tstLexer()
 
 void Snowda::tstParser()
 {
-    TestCase test("Parser");
+    tstParserRootStmt();
+    tstParserFnStmt();
+}
+
+void Snowda::tstParserRootStmt()
+{
+    TestCase test("ParserRootStmt");
     {
         MemoryManager manager;
         Lexer lexer("(1 + 2) + 3");
@@ -153,7 +160,7 @@ void Snowda::tstParser()
     }
     {
         MemoryManager manager;
-		Lexer lexer("(1 + 2) + 3;(a + b)");
+        Lexer lexer("(1 + 2) + 3;(a + b)");
         Parser parser(manager, lexer);
         RootResult result = parser.parseRootStatement();
         if (result.hasError()) {
@@ -205,5 +212,48 @@ void Snowda::tstParser()
                 }
             }
         }
+    }
+}
+
+void Snowda::tstParserFnStmt()
+{
+    TestCase test("ParserFnStmt");
+    {
+        MemoryManager manager;
+        Lexer lexer("fn foo() {}");
+        Parser parser(manager, lexer);
+
+        StmtResult result = parser.parseStatement();
+        if (result.hasError()) {
+            std::cout << result.error() << std::endl;
+            abort();
+        }
+
+        auto &stmt = *result.value();
+        assert(stmt.nodeType() == NodeType::FunctionDeclStmt);
+
+        auto &fnStmt = static_cast<const FunctionDeclStmt &>(stmt);
+        assert(fnStmt.name() == "foo");
+        assert(fnStmt.args().empty());
+        assert(fnStmt.block()->stmts().empty());
+    }
+    {
+        MemoryManager manager;
+        Lexer lexer("fn foo(a: Int32, b: Int64) { return a + b }");
+        Parser parser(manager, lexer);
+
+        StmtResult result = parser.parseStatement();
+        if (result.hasError()) {
+            std::cout << result.error() << std::endl;
+            abort();
+        }
+
+        auto &stmt = *result.value();
+        assert(stmt.nodeType() == NodeType::FunctionDeclStmt);
+
+        auto &fnStmt = static_cast<const FunctionDeclStmt &>(stmt);
+        assert(fnStmt.name() == "foo");
+        assert(fnStmt.args().empty());
+        assert(fnStmt.block()->stmts().empty());
     }
 }

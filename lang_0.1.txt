@@ -1,0 +1,8 @@
+enum ExitStatus {
+    Success = 0,
+    Failure = 1,
+}
+
+fn main(args: [String]): ExitStatus {
+    return ExitStatus.Sucess;
+}

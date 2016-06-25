@@ -6,7 +6,8 @@
     X(Class,  "class") \
     X(Fn,     "fn") \
     X(If,     "if") \
-    X(Else,   "else")
+    X(Else,   "else") \
+    X(Return, "return")
 
 #define SNW_TOKENS_PUNCTUATION \
     X(Equal   , "==") \

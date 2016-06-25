@@ -125,6 +125,11 @@ const StringView &FunctionDeclStmt::name() const
     return name_;
 }
 
+const FunctionArgStmtVec &FunctionDeclStmt::args() const
+{
+    return args_;
+}
+
 const BlockStmt *FunctionDeclStmt::block() const
 {
     return block_;

@@ -31,7 +31,6 @@ namespace Snowda {
 #include "ast/snw_ast_node.h"
 #include "ast/snw_ast_expr.h"
 #include "ast/snw_ast_stmt.h"
-#include "ast/snw_ast_printer.h"
 #include "snw_parser_error.h"
 
 #include "grammar/snw_grammar.h"

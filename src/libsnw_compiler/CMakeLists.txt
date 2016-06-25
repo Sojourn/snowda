@@ -23,7 +23,6 @@ set(SNW_HDRS
     ast/snw_ast_node.h
     ast/snw_ast_expr.h
     ast/snw_ast_stmt.h
-    ast/snw_ast_printer.h
 )
 
 set(SNW_SRCS
@@ -43,7 +42,6 @@ set(SNW_SRCS
     ast/snw_ast_node.cpp
     ast/snw_ast_expr.cpp
     ast/snw_ast_stmt.cpp
-    ast/snw_ast_printer.cpp
 )
 
 add_library(snw_compiler ${SNW_HDRS} ${SNW_SRCS})
