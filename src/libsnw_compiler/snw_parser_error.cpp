@@ -32,3 +32,13 @@ size_t ParserError::row() const
 {
     return row_;
 }
+
+std::ostream &Snowda::operator<<(std::ostream &out, const ParserError &error)
+{
+    out << "ParserError {" << std::endl;
+    out << "\tmsg: " << error.msg() << std::endl;
+    out << "\tcol: " << error.col() << std::endl;
+    out << "\trow: " << error.row() << std::endl;
+    out << "}" << std::endl;
+    return out;
+}

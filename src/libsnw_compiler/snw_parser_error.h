@@ -12,6 +12,8 @@ namespace Snowda {
         size_t col() const;
         size_t row() const;
 
+        friend std::ostream &operator<<(std::ostream &out, const ParserError &error);
+
     private:
         const StringView msg_;
         const size_t col_;

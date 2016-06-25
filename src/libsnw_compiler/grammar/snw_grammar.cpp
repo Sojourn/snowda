@@ -86,9 +86,10 @@ namespace {
             return result.error();
         }
 
-        TokenType type = parser.nextToken().type;
+        token = parser.currentToken();
+        TokenType type = token.type;
         if ((type == TokenType::Semi) || (type == TokenType::Newline) || (type == TokenType::Finished)) {
-			parser.consumeToken();
+            parser.consumeToken();
             return parser.create<ExprStmt>(result.value());
         }
         else {
