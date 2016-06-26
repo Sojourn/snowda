@@ -48,9 +48,9 @@ namespace Snowda {
             const BlockStmt *block_;
         };
 
-        class DeclStmt : public Stmt {
+        class AssignStmt : public Stmt {
         public:
-            DeclStmt(NodeContent nodeContent, StringView name, const Expr *expr);
+            AssignStmt(NodeContent nodeContent, StringView name, const Expr *expr);
 
             const StringView &name() const;
             const Expr *expr() const;

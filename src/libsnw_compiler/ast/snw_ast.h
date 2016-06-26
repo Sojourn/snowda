@@ -1,6 +1,32 @@
 #ifndef SNW_AST_H
 #define SNW_AST_H
 
+#define SNW_AST_EXPR_TYPES \
+    X(NumberExpr) \
+    X(CharacterExpr) \
+    X(StringExpr) \
+    X(IdentifierExpr) \
+    X(BinaryExpr) \
+    X(UnaryExpr) \
+    X(CallExpr) \
+    X(DerefExpr)
+
+#define SNW_AST_STMT_TYPES \
+    X(RootStmt) \
+    X(ModuleStmt) \
+    X(BlockStmt) \
+    X(AssignStmt) \
+    X(FunctionArgStmt) \
+    X(FunctionDeclStmt) \
+    X(IfStmt) \
+    X(ReturnStmt) \
+    X(ForStmt) \
+    X(ExprStmt)
+
+#define SNW_AST_NODE_TYPES \
+    SNW_AST_EXPR_TYPES \
+    SNW_AST_STMT_TYPES
+
 #define SNW_AST_UNARY_OPERATORS \
     X(Plus,  "+") \
     X(Minus, "-") \

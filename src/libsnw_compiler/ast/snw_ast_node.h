@@ -1,32 +1,6 @@
 #ifndef SNW_AST_NODE_H
 #define SNW_AST_NODE_H
 
-#define SNW_AST_EXPR_TYPES \
-    X(NumberExpr) \
-    X(CharacterExpr) \
-    X(StringExpr) \
-    X(IdentifierExpr) \
-    X(BinaryExpr) \
-    X(UnaryExpr) \
-    X(CallExpr) \
-    X(DerefExpr)
-
-#define SNW_AST_STMT_TYPES \
-    X(RootStmt) \
-    X(ModuleStmt) \
-    X(BlockStmt) \
-    X(DeclStmt) \
-    X(FunctionArgStmt) \
-    X(FunctionDeclStmt) \
-    X(IfStmt) \
-    X(ReturnStmt) \
-    X(ForStmt) \
-    X(ExprStmt)
-
-#define SNW_AST_NODE_TYPES \
-    SNW_AST_EXPR_TYPES \
-    SNW_AST_STMT_TYPES
-
 namespace Snowda {
     namespace Ast {
         class NodeVisitor;

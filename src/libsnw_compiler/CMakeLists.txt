@@ -21,7 +21,6 @@ set(SNW_HDRS
     grammar/snw_operator_rules.h
     snw_parser.h
     snw_program.h
-    snw_code_generator.h
     ast/snw_ast.h
     ast/snw_ast_node.h
     ast/snw_ast_expr.h
@@ -43,7 +42,6 @@ set(SNW_SRCS
     grammar/snw_return_rules.cpp
     snw_parser.cpp
     snw_program.cpp
-    snw_code_generator.cpp
     ast/snw_ast_node.cpp
     ast/snw_ast_expr.cpp
     ast/snw_ast_stmt.cpp

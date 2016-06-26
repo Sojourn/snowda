@@ -68,24 +68,24 @@ void ModuleStmt::visit(NodeVisitor &visitor) const
     visitor.visit(*this);
 }
 
-DeclStmt::DeclStmt(NodeContent nodeContent, StringView name, const Expr *expr)
-    : Stmt(NodeType::DeclStmt, nodeContent)
+AssignStmt::AssignStmt(NodeContent nodeContent, StringView name, const Expr *expr)
+    : Stmt(NodeType::AssignStmt, nodeContent)
     , name_(name)
     , expr_(expr)
 {
 }
 
-const StringView &DeclStmt::name() const
+const StringView &AssignStmt::name() const
 {
     return name_;
 }
 
-const Expr *DeclStmt::expr() const
+const Expr *AssignStmt::expr() const
 {
     return expr_;
 }
 
-void DeclStmt::visit(NodeVisitor &visitor) const
+void AssignStmt::visit(NodeVisitor &visitor) const
 {
     visitor.visit(*this);
 }
