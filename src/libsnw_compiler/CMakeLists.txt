@@ -17,6 +17,7 @@ set(SNW_HDRS
     grammar/snw_number_rules.h
     grammar/snw_character_rules.h
     grammar/snw_fn_rules.h
+    grammar/snw_assign_rules.h
     grammar/snw_return_rules.h
     grammar/snw_operator_rules.h
     snw_parser.h
@@ -39,6 +40,7 @@ set(SNW_SRCS
     grammar/snw_number_rules.cpp
     grammar/snw_character_rules.cpp
     grammar/snw_fn_rules.cpp
+    grammar/snw_assign_rules.cpp
     grammar/snw_return_rules.cpp
     snw_parser.cpp
     snw_program.cpp

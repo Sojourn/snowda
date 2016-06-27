@@ -9,13 +9,13 @@
     X(BinaryExpr) \
     X(UnaryExpr) \
     X(CallExpr) \
-    X(DerefExpr)
+    X(DerefExpr) \
+    X(AssignExpr)
 
 #define SNW_AST_STMT_TYPES \
     X(RootStmt) \
     X(ModuleStmt) \
     X(BlockStmt) \
-    X(AssignStmt) \
     X(FunctionArgStmt) \
     X(FunctionDeclStmt) \
     X(IfStmt) \

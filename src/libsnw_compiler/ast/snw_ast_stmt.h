@@ -48,20 +48,6 @@ namespace Snowda {
             const BlockStmt *block_;
         };
 
-        class AssignStmt : public Stmt {
-        public:
-            AssignStmt(NodeContent nodeContent, StringView name, const Expr *expr);
-
-            const StringView &name() const;
-            const Expr *expr() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
-
-        private:
-            const StringView name_;
-            const Expr *expr_;
-        };
-
         class FunctionArgStmt : public Stmt {
         public:
             FunctionArgStmt(NodeContent nodeContent, StringView name, StringView type);

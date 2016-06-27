@@ -128,6 +128,21 @@ namespace Snowda {
             const IdentifierExpr *lhsIdent_;
             const IdentifierExpr *rhsIdent_;
         };
+
+        // FIXME: This should be a statement. Need to extend parser to support infix statements
+        class AssignExpr : public Expr {
+        public:
+            AssignExpr(NodeContent nodeContent, const Expr *lhsExpr, const Expr *rhsExpr);
+
+            const Expr *lhsExpr() const;
+            const Expr *rhsExpr() const;
+
+            virtual void visit(NodeVisitor &visitor) const override;
+
+        private:
+            const Expr *lhsExpr_;
+            const Expr *rhsExpr_;
+        };
     }
 }
 

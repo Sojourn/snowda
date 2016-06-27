@@ -176,6 +176,7 @@ Grammar::Grammar()
     stmt(TokenType::LCBrace, &blockStd);
     stmt(TokenType::Fn, &fnStd);
     stmt(TokenType::If, &ifStd);
+    infix(TokenType::Assign, BindingPower::Assignment, &assignLed);
     stmt(TokenType::Return, &returnStd);
 
     prefix(TokenType::Plus, &unaryNud<UnaryExpr::Operator::Plus>);

@@ -62,6 +62,7 @@ namespace Snowda {
 #include "snw_number_rules.h"
 #include "snw_character_rules.h"
 #include "snw_fn_rules.h"
+#include "snw_assign_rules.h"
 #include "snw_return_rules.h"
 #include "snw_operator_rules.h"
 

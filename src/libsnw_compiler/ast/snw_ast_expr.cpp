@@ -193,3 +193,25 @@ void DerefExpr::visit(NodeVisitor &visitor) const
 {
     visitor.visit(*this);
 }
+
+AssignExpr::AssignExpr(NodeContent nodeContent, const Expr *lhsExpr, const Expr *rhsExpr)
+    : Expr(NodeType::AssignExpr, nodeContent)
+    , lhsExpr_(lhsExpr)
+    , rhsExpr_(rhsExpr)
+{
+}
+
+const Expr *AssignExpr::lhsExpr() const
+{
+    return lhsExpr_;
+}
+
+const Expr *AssignExpr::rhsExpr() const
+{
+    return rhsExpr_;
+}
+
+void AssignExpr::visit(NodeVisitor &visitor) const
+{
+    visitor.visit(*this);
+}
