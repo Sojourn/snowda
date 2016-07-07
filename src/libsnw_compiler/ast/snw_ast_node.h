@@ -18,15 +18,6 @@ namespace Snowda {
         SNW_AST_NODE_TYPES
 #undef X
 
-        class NodeVisitor {
-        public:
-            virtual ~NodeVisitor() {}
-
-#define X(xType) virtual void visit(const xType &node) = 0;
-        SNW_AST_NODE_TYPES
-#undef X
-        };
-
         enum class NodeType {
             ExprBegin,
 #define X(xType) xType,
@@ -59,12 +50,21 @@ namespace Snowda {
             bool isStmt() const;
             bool isExpr() const;
 
-            virtual void visit(NodeVisitor &visitor) const = 0;
-
         private:
             const NodeType nodeType_;
             const NodeContent nodeContent_;
         };
+
+        template<typename Result, typename Visitor>
+        Result dispatch(Visitor &visitor, const Node &node) {
+            switch (node.nodeType()) {
+#define X(xType) case NodeType::xType: return visitor.visit(static_cast<const xType &>(node));
+                SNW_AST_NODE_TYPES
+#undef X
+                default:
+                    abort();
+            }
+        }
     }
 }
 

@@ -19,11 +19,6 @@ int NumberExpr::value() const
     return value_;
 }
 
-void NumberExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 CharacterExpr::CharacterExpr(NodeContent nodeContent, char value)
     : Expr(NodeType::CharacterExpr, nodeContent)
     , value_(value)
@@ -33,11 +28,6 @@ CharacterExpr::CharacterExpr(NodeContent nodeContent, char value)
 char CharacterExpr::value() const
 {
     return value_;
-}
-
-void CharacterExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 StringExpr::StringExpr(NodeContent nodeContent, StringView value)
@@ -51,11 +41,6 @@ const StringView &StringExpr::value() const
     return value_;
 }
 
-void StringExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 IdentifierExpr::IdentifierExpr(NodeContent nodeContent, StringView name)
     : Expr(NodeType::IdentifierExpr, nodeContent)
     , name_(name)
@@ -65,11 +50,6 @@ IdentifierExpr::IdentifierExpr(NodeContent nodeContent, StringView name)
 const StringView &IdentifierExpr::name() const
 {
     return name_;
-}
-
-void IdentifierExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 UnaryExpr::UnaryExpr(NodeContent nodeContent, Operator op, const Expr *expr)
@@ -98,11 +78,6 @@ StringView UnaryExpr::opName() const
 const Expr *UnaryExpr::expr() const
 {
     return expr_;
-}
-
-void UnaryExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 BinaryExpr::BinaryExpr(NodeContent nodeContent, Operator op, const Expr *lhsExpr, const Expr *rhsExpr)
@@ -139,11 +114,6 @@ const Expr *BinaryExpr::rhsExpr() const
     return rhsExpr_;
 }
 
-void BinaryExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 CallExpr::CallExpr(NodeContent nodeContent, const IdentifierExpr *ident, ExprVec args)
     : Expr(NodeType::CallExpr, nodeContent)
     , ident_(std::move(ident))
@@ -159,11 +129,6 @@ const IdentifierExpr *CallExpr::ident() const
 const ExprVec &CallExpr::args() const
 {
     return args_;
-}
-
-void CallExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 DerefExpr::DerefExpr(NodeContent nodeContent, const IdentifierExpr *rhsIdent)
@@ -189,11 +154,6 @@ const IdentifierExpr *DerefExpr::rhsIdent() const
     return rhsIdent_;
 }
 
-void DerefExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 AssignExpr::AssignExpr(NodeContent nodeContent, const Expr *lhsExpr, const Expr *rhsExpr)
     : Expr(NodeType::AssignExpr, nodeContent)
     , lhsExpr_(lhsExpr)
@@ -209,9 +169,4 @@ const Expr *AssignExpr::lhsExpr() const
 const Expr *AssignExpr::rhsExpr() const
 {
     return rhsExpr_;
-}
-
-void AssignExpr::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }

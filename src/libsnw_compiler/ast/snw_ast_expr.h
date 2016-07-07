@@ -14,8 +14,6 @@ namespace Snowda {
 
             int value() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const int value_;
         };
@@ -25,8 +23,6 @@ namespace Snowda {
             CharacterExpr(NodeContent nodeContent, char value);
 
             char value() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const char value_;
@@ -38,8 +34,6 @@ namespace Snowda {
 
             const StringView &value() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const StringView value_;
         };
@@ -49,8 +43,6 @@ namespace Snowda {
             IdentifierExpr(NodeContent nodeContent, StringView name);
 
             const StringView &name() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const StringView name_;
@@ -69,8 +61,6 @@ namespace Snowda {
             Operator op() const;
             StringView opName() const;
             const Expr *expr() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const Operator op_;
@@ -92,8 +82,6 @@ namespace Snowda {
             const Expr *lhsExpr() const;
             const Expr *rhsExpr() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const Operator op_;
             const Expr *lhsExpr_;
@@ -106,8 +94,6 @@ namespace Snowda {
 
             const IdentifierExpr *ident() const;
             const ExprVec &args() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const IdentifierExpr *ident_;
@@ -122,8 +108,6 @@ namespace Snowda {
             const IdentifierExpr *rhsIdent() const;
             const IdentifierExpr *lhsIdent() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const IdentifierExpr *lhsIdent_;
             const IdentifierExpr *rhsIdent_;
@@ -136,8 +120,6 @@ namespace Snowda {
 
             const Expr *lhsExpr() const;
             const Expr *rhsExpr() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const Expr *lhsExpr_;

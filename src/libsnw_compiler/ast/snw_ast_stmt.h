@@ -14,8 +14,6 @@ namespace Snowda {
 
             const StmtVec &stmts() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const StmtVec stmts_;
         };
@@ -25,8 +23,6 @@ namespace Snowda {
             BlockStmt(NodeContent nodeContent, StmtVec stmts);
 
             const StmtVec &stmts() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const StmtVec stmts_;
@@ -39,8 +35,6 @@ namespace Snowda {
             const StringView &name() const;
             const ExprVec &args() const;
             const BlockStmt *block() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const StringView name_;
@@ -55,8 +49,6 @@ namespace Snowda {
             const StringView &name() const;
             const StringView &type() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const StringView name_;
             const StringView type_;
@@ -69,8 +61,6 @@ namespace Snowda {
             const StringView &name() const;
             const FunctionArgStmtVec &args() const;
             const BlockStmt *block() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const StringView name_;
@@ -97,8 +87,6 @@ namespace Snowda {
             const ElifVec &elifs() const;
             const Stmt *elseStmt() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const Expr *cond_;
             const Stmt *then_;
@@ -112,8 +100,6 @@ namespace Snowda {
 
             const ExprStmt *exprStmt() const;
 
-            virtual void visit(NodeVisitor &visitor) const override;
-
         private:
             const ExprStmt *exprStmt_;
         };
@@ -121,8 +107,6 @@ namespace Snowda {
         class ForStmt : public Stmt {
         public:
             ForStmt(NodeContent nodeContent);
-
-            virtual void visit(NodeVisitor &visitor) const override;
         };
 
         class ExprStmt : public Stmt {
@@ -130,8 +114,6 @@ namespace Snowda {
             ExprStmt(NodeContent nodeContent, const Expr *expr);
 
             const Expr *expr() const;
-
-            virtual void visit(NodeVisitor &visitor) const override;
 
         private:
             const Expr *expr_;

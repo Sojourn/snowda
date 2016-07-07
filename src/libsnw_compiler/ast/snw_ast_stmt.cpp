@@ -19,11 +19,6 @@ const StmtVec &RootStmt::stmts() const
     return stmts_;
 }
 
-void RootStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 BlockStmt::BlockStmt(NodeContent nodeContent, StmtVec stmts)
     : Stmt(NodeType::BlockStmt, nodeContent)
     , stmts_(std::move(stmts))
@@ -33,11 +28,6 @@ BlockStmt::BlockStmt(NodeContent nodeContent, StmtVec stmts)
 const StmtVec &BlockStmt::stmts() const
 {
     return stmts_;
-}
-
-void BlockStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 ModuleStmt::ModuleStmt(NodeContent nodeContent, StringView name, ExprVec args, const BlockStmt *block)
@@ -63,11 +53,6 @@ const BlockStmt *ModuleStmt::block() const
     return block_;
 }
 
-void ModuleStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 FunctionArgStmt::FunctionArgStmt(NodeContent nodeContent, StringView name, StringView type)
     : Stmt(NodeType::FunctionArgStmt, nodeContent)
     , name_(name)
@@ -83,11 +68,6 @@ const StringView &FunctionArgStmt::name() const
 const StringView &FunctionArgStmt::type() const
 {
     return type_;
-}
-
-void FunctionArgStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 FunctionDeclStmt::FunctionDeclStmt(NodeContent nodeContent, StringView name, FunctionArgStmtVec args, const BlockStmt *block)
@@ -111,11 +91,6 @@ const FunctionArgStmtVec &FunctionDeclStmt::args() const
 const BlockStmt *FunctionDeclStmt::block() const
 {
     return block_;
-}
-
-void FunctionDeclStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 IfStmt::IfStmt(NodeContent nodeContent, const Expr *condExpr, const Stmt *thenStmt)
@@ -170,12 +145,6 @@ const Stmt *IfStmt::elseStmt() const
     return else_;
 }
 
-void IfStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
-
 ReturnStmt::ReturnStmt(NodeContent nodeContent, const ExprStmt *exprStmt)
     : Stmt(NodeType::ReturnStmt, nodeContent)
     , exprStmt_(exprStmt)
@@ -187,19 +156,9 @@ const ExprStmt *ReturnStmt::exprStmt() const
     return exprStmt_;
 }
 
-void ReturnStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
-}
-
 ForStmt::ForStmt(NodeContent nodeContent)
     : Stmt(NodeType::ForStmt, nodeContent)
 {
-}
-
-void ForStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
 
 ExprStmt::ExprStmt(NodeContent nodeContent, const Expr *expr)
@@ -211,9 +170,4 @@ ExprStmt::ExprStmt(NodeContent nodeContent, const Expr *expr)
 const Expr *ExprStmt::expr() const
 {
     return expr_;
-}
-
-void ExprStmt::visit(NodeVisitor &visitor) const
-{
-    visitor.visit(*this);
 }
