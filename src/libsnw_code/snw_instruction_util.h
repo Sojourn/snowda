@@ -2,8 +2,9 @@
 #define SNW_INSTRUCTION_UTIL_H
 
 namespace Snowda {
-    static StringView instructionName(InstructionKind kind);
-    static size_t instructionSize(InstructionKind kind);
+    StringView instructionName(InstructionKind kind);
+    size_t instructionSize(InstructionKind kind);
+    InstructionLayout instructionLayout(InstructionKind kind);
 }
 
 #endif // SNW_INSTRUCTION_UTIL_H

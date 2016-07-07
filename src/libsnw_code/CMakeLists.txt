@@ -13,6 +13,7 @@ set(SNW_HDRS
 set(SNW_SRCS
     snw_function.cpp
     snw_type.cpp
+    snw_instruction_util.cpp
 )
 
 add_library(snw_code ${SNW_HDRS} ${SNW_SRCS})

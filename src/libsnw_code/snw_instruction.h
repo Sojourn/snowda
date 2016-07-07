@@ -2,21 +2,29 @@
 #define SNW_INSTRUCTION_H
 
 #define SNW_INSTRUCTION_KINDS \
-    X(Add,  D) \
-    X(Sub,  D) \
-    X(Mul,  D) \
-    X(Div,  D) \
-    X(Load, B) \
-    X(Move, C) \
-    X(Call, A) \
-    X(Ret,  A)
+    X(Add,   D) \
+    X(Sub,   D) \
+    X(Mul,   D) \
+    X(Div,   D) \
+    X(Load,  B) \
+    X(Store, B) \
+    X(Move,  C) \
+    X(Call,  A) \
+    X(Ret,   A)
 
 namespace Snowda {
 
     enum class InstructionKind : uint8_t {
-    #define X(name, form) name,
+    #define X(xName, xLayout) xName,
         SNW_INSTRUCTION_KINDS
     #undef X
+    };
+
+    enum class InstructionLayout : uint8_t {
+        A,
+        B,
+        C,
+        D,
     };
 
     union Instruction {
@@ -48,6 +56,7 @@ namespace Snowda {
 
     size_t instructionSize(InstructionKind kind);
     StringView instructionName(InstructionKind kind);
+    InstructionLayout instructionLayout(InstructionKind kind);
 
 }
 

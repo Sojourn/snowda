@@ -32,5 +32,6 @@ namespace Snowda {
 #include "grammar/snw_grammar.h"
 #include "snw_parser.h"
 #include "snw_program.h"
+#include "snw_function_translator.h"
 
 #endif // SNW_COMPILER_H

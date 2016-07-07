@@ -25,3 +25,15 @@ size_t Snowda::instructionSize(InstructionKind kind)
             abort();
     }
 }
+
+InstructionLayout Snowda::instructionLayout(InstructionKind kind)
+{
+    switch (kind) {
+#define X(xName, xLayout) case InstructionKind::xName: \
+        return InstructionLayout::xLayout;
+        SNW_INSTRUCTION_KINDS
+#undef X
+        default:
+            abort();
+    }
+}

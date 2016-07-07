@@ -3,42 +3,39 @@
 
 namespace Snowda {
 
-    class RegisterLifetime {
-		RegisterLifetime(InstructionIndex birth, InstructionIndex death);
+  //   class RegisterLifetime {
+		// RegisterLifetime(InstructionIndex birth, InstructionIndex death);
 
-        InstructionIndex birth() const;
-        InstructionIndex death() const;
+  //       InstructionIndex birth() const;
+  //       InstructionIndex death() const;
 
-    private:
-        InstructionIndex birth_;
-        InstructionIndex death_;
-    };
+  //   private:
+  //       InstructionIndex birth_;
+  //       InstructionIndex death_;
+  //   };
 
-    class Register {
-    public:
-        Register(StringView name, TypeId type, RegisterLifetime lifetime);
+  //   class Register {
+  //   public:
+  //       Register(StringView name, TypeId type, RegisterLifetime lifetime);
 
-        StringView name() const;
-        TypeId typeId() const;
-        RegisterLifetime lifetime() const;
+  //       StringView name() const;
+  //       TypeId typeId() const;
+  //       RegisterLifetime lifetime() const;
 
-    private:
-        StringView name_;
-		TypeId typeId_;
-        RegisterLifetime lifetime_;
-    };
+  //   private:
+  //       StringView name_;
+		// TypeId typeId_;
+  //       RegisterLifetime lifetime_;
+  //   };
 
-    class Function {
-    public:
-        Function(View<Instruction> instructions, View<Register> registers);
+  //   class Function {
+  //   public:
+  //       Function(View<Instruction> instructions, View<Register> registers);
 
-        View<Instruction> instructions() const;
-        View<Register> registers() const;
-
-    private:
-        View<Instruction> instructions_;
-        View<Register> registers_;
-    };
+  //   private:
+  //       View<Instruction> instructions_;
+  //       View<Register> registers_;
+  //   };
 
 }
 
