@@ -18,8 +18,65 @@ Result<Function, StringView> FunctionTranslator::result()
     }
 }
 
-void FunctionTranslator::emit(InstructionKind kind)
+uint8_t FunctionTranslator::visit(const NumberExpr &expr)
 {
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const CharacterExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const StringExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const IdentifierExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const BinaryExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const UnaryExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const CallExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const DerefExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const AssignExpr &expr)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const ExprStmt &stmt)
+{
+    return 0;
+}
+
+uint8_t FunctionTranslator::visit(const Node &node)
+{
+    // FIXME: Set error and return
+    abort();
+    return 0;
+}
+
+void FunctionTranslator::emit(InstructionKind kind)
+    {
     assert(instructionLayout(kind) == InstructionLayout::A);
 
     Instruction inst;

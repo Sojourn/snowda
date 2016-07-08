@@ -22,6 +22,19 @@ namespace Snowda {
 
         Result<Function, StringView> result();
 
+    public:
+        uint8_t visit(const Ast::NumberExpr &expr);
+        uint8_t visit(const Ast::CharacterExpr &expr);
+        uint8_t visit(const Ast::StringExpr &expr);
+        uint8_t visit(const Ast::IdentifierExpr &expr);
+        uint8_t visit(const Ast::BinaryExpr &expr);
+        uint8_t visit(const Ast::UnaryExpr &expr);
+        uint8_t visit(const Ast::CallExpr &expr);
+        uint8_t visit(const Ast::DerefExpr &expr);
+        uint8_t visit(const Ast::AssignExpr &expr);
+        uint8_t visit(const Ast::ExprStmt &stmt);
+        uint8_t visit(const Ast::Node &node);
+
     private:
         void emit(InstructionKind kind);
         void emit(InstructionKind kind, uint8_t dst, uint16_t src);
