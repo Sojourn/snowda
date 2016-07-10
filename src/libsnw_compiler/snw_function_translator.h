@@ -23,6 +23,7 @@ namespace Snowda {
         Result<Function, StringView> result();
 
     public:
+        uint8_t dispatch(const Ast::Node &node);
         uint8_t visit(const Ast::NumberExpr &expr);
         uint8_t visit(const Ast::CharacterExpr &expr);
         uint8_t visit(const Ast::StringExpr &expr);
@@ -40,6 +41,8 @@ namespace Snowda {
         void emit(InstructionKind kind, uint8_t dst, uint16_t src);
         void emit(InstructionKind kind, uint8_t dst, uint8_t src);
         void emit(InstructionKind kind, uint8_t dst, uint8_t lhs, uint8_t rhs);
+
+        uint8_t allocateRegister();
 
     private:
         Function function_;
