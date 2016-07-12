@@ -124,8 +124,7 @@ uint8_t FunctionTranslator::visit(const Node &node)
     return 0;
 }
 
-void FunctionTranslator::emit(InstructionKind kind)
-    {
+void FunctionTranslator::emit(InstructionKind kind) {
     assert(instructionLayout(kind) == InstructionLayout::A);
 
     Instruction inst;
@@ -188,6 +187,7 @@ uint8_t FunctionTranslator::allocateRegister()
     else {
         const uint8_t reg = freeRegisters_.back();
         freeRegisters_.pop_back();
+        return reg;
     }
 }
 
