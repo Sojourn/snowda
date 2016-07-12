@@ -11,7 +11,7 @@ void InstructionBuffer::freeze() {
     frozen_ = true;
 }
 
-Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind) {
+Result<InstructionIndex, StringView> InstructionBuffer::emit(InstructionKind kind) {
     assert(instructionLayout(kind) == InstructionLayout::A);
     assert(!frozen_);
 
@@ -20,12 +20,12 @@ Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind) {
 
     const uint8_t *begin = reinterpret_cast<const uint8_t *>(&inst);
     const uint8_t *end = begin + instructionSize(kind);
-    const uint16_t label = static_cast<uint16_t>(buffer_.size());
+    const uint16_t index = static_cast<uint16_t>(buffer_.size());
     buffer_.insert(buffer_.end(), begin, end);
-    return finishEmit(label);
+    return finishEmit(InstructionIndex{index});
 }
 
-Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind, uint8_t dst, uint16_t src) {
+Result<InstructionIndex, StringView> InstructionBuffer::emit(InstructionKind kind, uint8_t dst, uint16_t src) {
     assert(instructionLayout(kind) == InstructionLayout::B);
     assert(!frozen_);
 
@@ -36,12 +36,12 @@ Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind, uint8
 
     const uint8_t *begin = reinterpret_cast<const uint8_t *>(&inst);
     const uint8_t *end = begin + instructionSize(kind);
-    const uint16_t label = static_cast<uint16_t>(buffer_.size());
+    const uint16_t index = static_cast<uint16_t>(buffer_.size());
     buffer_.insert(buffer_.end(), begin, end);
-    return finishEmit(label);
+    return finishEmit(InstructionIndex{index});
 }
 
-Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind, uint8_t dst, uint8_t src) {
+Result<InstructionIndex, StringView> InstructionBuffer::emit(InstructionKind kind, uint8_t dst, uint8_t src) {
     assert(instructionLayout(kind) == InstructionLayout::C);
     assert(!frozen_);
 
@@ -52,12 +52,12 @@ Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind, uint8
 
     const uint8_t *begin = reinterpret_cast<const uint8_t *>(&inst);
     const uint8_t *end = begin + instructionSize(kind);
-    const uint16_t label = static_cast<uint16_t>(buffer_.size());
+    const uint16_t index = static_cast<uint16_t>(buffer_.size());
     buffer_.insert(buffer_.end(), begin, end);
-    return finishEmit(label);
+    return finishEmit(InstructionIndex{index});
 }
 
-Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind, uint8_t dst, uint8_t lhs, uint8_t rhs) {
+Result<InstructionIndex, StringView> InstructionBuffer::emit(InstructionKind kind, uint8_t dst, uint8_t lhs, uint8_t rhs) {
     assert(instructionLayout(kind) == InstructionLayout::D);
     assert(!frozen_);
 
@@ -69,13 +69,13 @@ Result<uint16_t, StringView> InstructionBuffer::emit(InstructionKind kind, uint8
 
     const uint8_t *begin = reinterpret_cast<const uint8_t *>(&inst);
     const uint8_t *end = begin + instructionSize(kind);
-    const uint16_t label = static_cast<uint16_t>(buffer_.size());
+    const uint16_t index = static_cast<uint16_t>(buffer_.size());
     buffer_.insert(buffer_.end(), begin, end);
-    return finishEmit(label);
+    return finishEmit(InstructionIndex{index});
 }
 
-Instruction InstructionBuffer::operator[](uint16_t index) const {
-    const uint8_t *instructionAddr = &buffer_.at(index);
+Instruction InstructionBuffer::operator[](InstructionIndex index) const {
+    const uint8_t *instructionAddr = &buffer_.at(index.value);
     const InstructionKind kind = static_cast<InstructionKind>(*instructionAddr);
 
     Instruction instruction;
@@ -83,12 +83,12 @@ Instruction InstructionBuffer::operator[](uint16_t index) const {
     return instruction;
 }
 
-Result<uint16_t, StringView> InstructionBuffer::finishEmit(uint16_t label) {
+Result<InstructionIndex, StringView> InstructionBuffer::finishEmit(InstructionIndex index) {
     if (buffer_.size() > std::numeric_limits<uint16_t>::max()) {
-        buffer_.resize(label);
+        buffer_.resize(index.value);
         return StringView("Instruction buffer overflow");
     }
     else {
-        return label;
+        return index;
     }
 }
