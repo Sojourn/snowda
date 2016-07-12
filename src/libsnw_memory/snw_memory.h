@@ -22,7 +22,6 @@ namespace Snowda {
     class PageAllocator;
     class ArenaAllocator;
     class ChunkAllocator;
-    class Heap;
     class MemoryManager;
 }
 
@@ -35,7 +34,6 @@ namespace Snowda {
 #include "snw_page_allocator.h"
 #include "snw_arena_allocator.h"
 #include "snw_chunk_allocator.h"
-#include "snw_heap.h"
 #include "snw_memory_manager.h"
 
 #endif // SNW_MEMORY_H

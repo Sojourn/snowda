@@ -135,6 +135,17 @@ namespace Snowda {
             return operator ==(StringView(str));
         }
 
+        bool operator <(StringView rhs) const
+        {
+            int cmp = memcmp(&*begin(), &*rhs.begin(), std::min(size(), rhs.size()));
+            if (cmp == 0) {
+                return size() < rhs.size();
+            }
+            else {
+                return cmp < 0;
+            }
+        }
+
         bool startsWith(StringView other)
         {
             if (size() < other.size()) {

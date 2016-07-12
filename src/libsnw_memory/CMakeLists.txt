@@ -4,7 +4,6 @@ set(SNW_LIBS
 
 set(SNW_HDRS
     snw_memory.h
-    snw_heap.h
     snw_page.h
     snw_block.h
     snw_region.h
@@ -17,7 +16,6 @@ set(SNW_HDRS
 )
 
 set(SNW_SRCS
-    snw_heap.cpp
     snw_page.cpp
     snw_block.cpp
     snw_region.cpp

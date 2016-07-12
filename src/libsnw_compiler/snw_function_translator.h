@@ -43,11 +43,15 @@ namespace Snowda {
         void emit(InstructionKind kind, uint8_t dst, uint8_t lhs, uint8_t rhs);
 
         uint8_t allocateRegister();
+        uint8_t allocateTempRegister();
+        void freeTempRegisters();
 
     private:
         Function function_;
         StringView error_;
-        uint8_t nextRegisterId_;
+        std::map<StringView, uint8_t> identifierMap_;
+        std::vector<uint8_t> freeRegisters_;
+        std::vector<uint8_t> tempRegisters_;
     };
 
 }

@@ -4,8 +4,10 @@ using namespace Snowda;
 using namespace Snowda::Ast;
 
 FunctionTranslator::FunctionTranslator()
-    : nextRegisterId_(0)
 {
+    for (size_t i = 0; i <= std::numeric_limits<uint8_t>::max(); ++i) {
+        freeRegisters_.push_back(static_cast<uint8_t>(i));
+    }
 }
 
 Result<Function, StringView> FunctionTranslator::result()
@@ -29,7 +31,7 @@ uint8_t FunctionTranslator::visit(const NumberExpr &expr)
         abort();
     }
     uint16_t value = static_cast<uint16_t>(expr.value());
-    uint8_t dst = allocateRegister();
+    uint8_t dst = allocateTempRegister();
     emit(InstructionKind::Load, dst, value);
     return dst;
 }
@@ -46,14 +48,22 @@ uint8_t FunctionTranslator::visit(const StringExpr &expr)
 
 uint8_t FunctionTranslator::visit(const IdentifierExpr &expr)
 {
-    return 0;
+    auto it = identifierMap_.find(expr.name());
+    if (it == identifierMap_.end()) {
+        const uint8_t reg = allocateRegister();
+        identifierMap_.insert(std::make_pair(expr.name(), reg));
+        return reg;
+    }
+    else {
+        return it->second;
+    }
 }
 
 uint8_t FunctionTranslator::visit(const BinaryExpr &expr)
 {
     uint8_t lhs = dispatch(*expr.lhsExpr());
     uint8_t rhs = dispatch(*expr.rhsExpr());
-    uint8_t dst = allocateRegister();
+    uint8_t dst = allocateTempRegister();
     switch (expr.op()) {
     case BinaryExpr::Operator::Add:
         emit(InstructionKind::Add, dst, lhs, rhs);
@@ -71,7 +81,7 @@ uint8_t FunctionTranslator::visit(const BinaryExpr &expr)
 uint8_t FunctionTranslator::visit(const UnaryExpr &expr)
 {
     uint8_t src = dispatch(*expr.expr());
-    uint8_t dst = allocateRegister();
+    uint8_t dst = allocateTempRegister();
     switch (expr.op()) {
     default:
         abort();
@@ -102,7 +112,9 @@ uint8_t FunctionTranslator::visit(const AssignExpr &expr)
 
 uint8_t FunctionTranslator::visit(const ExprStmt &stmt)
 {
-    return dispatch(*stmt.expr());
+    const uint8_t reg = dispatch(*stmt.expr());
+    freeTempRegisters();
+    return reg;
 }
 
 uint8_t FunctionTranslator::visit(const Node &node)
@@ -169,11 +181,28 @@ void FunctionTranslator::emit(InstructionKind kind, uint8_t dst, uint8_t lhs, ui
 
 uint8_t FunctionTranslator::allocateRegister()
 {
-    if (nextRegisterId_ == std::numeric_limits<uint8_t>::max()) {
+    if (freeRegisters_.empty()) {
         // FIXME: Return an error or something
         abort();
     }
     else {
-        return nextRegisterId_++;
+        const uint8_t reg = freeRegisters_.back();
+        freeRegisters_.pop_back();
     }
+}
+
+uint8_t FunctionTranslator::allocateTempRegister()
+{
+    const uint8_t reg = allocateRegister();
+    tempRegisters_.push_back(reg);
+    return reg;
+}
+
+void FunctionTranslator::freeTempRegisters()
+{
+    for (uint8_t reg: tempRegisters_) {
+        freeRegisters_.push_back(reg);
+    }
+
+    tempRegisters_.clear();
 }
