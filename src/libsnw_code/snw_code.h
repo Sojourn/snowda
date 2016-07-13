@@ -10,15 +10,25 @@
 #include "snw_memory.h"
 
 namespace Snowda {
+    using RawTypeId = uint16_t;
+    using RawModuleId = uint16_t;
+    using RawFunctionId = uint16_t;
+    using RawMemberId = uint16_t;
+    using RawConstantId = uint16_t;
+
 	struct TypeId {
-        uint32_t value;
+        RawTypeId value;
     };
 
-	struct MethodId {
+    struct ModuleId {
         uint16_t value;
     };
 
-	struct MemberId {
+	struct FunctionId {
+        uint16_t value;
+    };
+
+    struct MemberId {
         uint16_t value;
     };
 
@@ -31,9 +41,11 @@ namespace Snowda {
     };
 
     class Type;
+    class TypeSystem;
     class Function;
     union Instruction;
 }
+
 
 #include "snw_instruction.h"
 #include "snw_instruction_util.h"

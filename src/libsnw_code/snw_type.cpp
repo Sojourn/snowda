@@ -2,35 +2,27 @@
 
 using namespace Snowda;
 
-Member::Member(StringView name, TypeId typeId)
-    : name_(name)
-    , typeId_(typeId)
-{
-}
+// Type::Type(StringView name)
+//     : name_(name)
+// {
+// }
 
-StringView Member::name() const
-{
-    return name_;
-}
+// StringView Type::name() const {
+//     return name_;
+// }
 
-TypeId Member::typeId() const
-{
-    return typeId_;
-}
+// View<FunctionId> Type::functions() const {
+//     return View<FunctionId>(methods_.data(), methods_.data() + methods_.size());
+// }
 
+// View<MemberId> Type::members() const {
+//     return View<MemberId>(members_.data(), members_.data() + members_.size());
+// }
 
-Type::Type(View<Function> functions, View<Member> members)
-    : functions_(functions)
-    , members_(members)
-{
-}
+// void Type::addMethod(FunctionId functionId) {
+//     methods_.push_back(functionId);
+// }
 
-View<Function> Type::functions() const
-{
-    return functions_;
-}
-
-View<Member> Type::members() const
-{
-    return members_;
-}
+// void Type::addMember(MemberId memberId) {
+//     members_.push_back(memberId);
+// }

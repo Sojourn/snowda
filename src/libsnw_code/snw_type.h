@@ -3,29 +3,23 @@
 
 namespace Snowda {
 
-    class Member {
-    public:
-        Member(StringView name, TypeId typeId);
+    // class Type {
+    //     friend class TypeSystem;
+    // public:
+    //     Type(StringView name);
 
-        StringView name() const;
-        TypeId typeId() const;
+    //     StringView name() const;
+    //     View<FunctionId> methods() const;
+    //     View<MemberId> members() const;
 
-    private:
-        StringView name_;
-        TypeId typeId_;
-    };
+    // private:
+    //     void addMethod(FunctionId functionId);
+    //     void addMember(MemberId memberId);
 
-    class Type {
-    public:
-        Type(View<Function> functions, View<Member> members);
-
-        View<Function> functions() const;
-        View<Member> members() const;
-
-    private:
-        View<Function> functions_;
-        View<Member> members_;
-    };
+    // private:
+    //     std::vector<FunctionId> methods_;
+    //     std::vector<MemberId>   members_;
+    // };
 
 }
 
