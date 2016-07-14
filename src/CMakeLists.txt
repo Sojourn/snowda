@@ -9,4 +9,5 @@ add_subdirectory(libsnw_compiler)
 
 add_subdirectory(snw)
 add_subdirectory(snwc)
+add_subdirectory(snw_msg)
 add_subdirectory(snw_tst)
