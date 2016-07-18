@@ -1,6 +1,7 @@
 #ifndef SNW_UTIL_H
 #define SNW_UTIL_H
 
+#include <tuple>
 #include <limits>
 #include <utility>
 #include <type_traits>

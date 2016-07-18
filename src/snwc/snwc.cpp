@@ -1,7 +1,5 @@
 #include "snwc.h"
 
-#include <iostream>
-
 const char *src = 
 "a = 3"
 "b = 4"

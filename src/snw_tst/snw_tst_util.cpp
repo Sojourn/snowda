@@ -33,20 +33,22 @@ namespace {
     }
 
     template<size_t capacity>
-    void tstBitTreeHelper();
+    struct TstBitTreeHelper;
 
     template<size_t capacity>
-    void tstBitTreeHelper<capacity>()
-    {
-        BitTree<capacity> tree;
-        assert(tstBitTreeNode<capacity>(tree.root()) == capacity);
-        tstBitTreeHelper<capacity - 1>();
-    }
+    struct TstBitTreeHelper {
+        static void apply() {
+            BitTree<capacity> tree;
+            assert(tstBitTreeNode<capacity>(tree.root()) == capacity);
+            TstBitTreeHelper<capacity - 1>::apply();
+        }
+    };
 
     template<>
-    void tstBitTreeHelper<0>()
-    {
-    }
+    struct TstBitTreeHelper<0> {
+        static void apply() {
+        }
+    };
 }
 
 void Snowda::tstUtil()
@@ -58,5 +60,5 @@ void Snowda::tstUtil()
 void Snowda::tstBitTree()
 {
     TestCase test("BitTree");
-    tstBitTreeHelper<128>();
+    TstBitTreeHelper<128>::apply();
 }

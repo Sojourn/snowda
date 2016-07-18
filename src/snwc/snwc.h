@@ -7,6 +7,7 @@
 #include <map>
 #include <iostream>
 #include <cstdint>
+#include <cstring>
 #include <cassert>
 
 #include "snwc_lexer.h"
@@ -16,4 +17,4 @@
 #include "snwc_ast_dispatcher.h"
 #include "snwc_ast_translator.h"
 
-#endif SNWC_H
+#endif // SNWC_H
