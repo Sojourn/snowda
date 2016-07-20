@@ -1,99 +1,100 @@
 #ifndef SNW_MSG_H
 #define SNW_MSG_H
 
-#include <vector>
+#include <tuple>
+#include <array>
 #include <memory>
-#include <unordered_map>
-#include <iostream>
+#include <vector>
+#include <algorithm>
 
 #include <cstdint>
+#include <cstddef>
 #include <cstring>
 #include <cassert>
 
-namespace Snowda {
-    struct FieldDescriptor {
-        uint16_t tag;
-        uint16_t len;
-    };
+using FieldTag = uint16_t;
 
-    class Schema {
-    public:
-        Schema();
+struct Slice {
+    uint16_t off;
+    uint16_t len;
+};
 
-        void addField(uint16_t tag, uint16_t len);
-        void clear();
+#define FIELD_TYPES(X) \
+    X(Int32,  int32_t) \
+    X(UInt32, uint32_t) \
+    X(Float,  float) \
+    X(Double, double) \
+    X(Str,    Slice) \
+    X(Buf,    Slice)
 
-        uint16_t hash() const;
-        uint16_t fieldCount() const;
-        uint16_t fixedSize() const;
+enum class FieldType : uint16_t {
+#define X(xName, xType) e##xName,
+    FIELD_TYPES(X)
+#undef X
+    Count
+};
 
-        FieldDescriptor field(uint16_t index) const;
-        int compare(const Schema &rhs) const;
+size_t fieldTypeSize(FieldType type);
+const char *fieldTypeName(FieldType type);
 
-    private:
-        std::vector<FieldDescriptor> fields_;
-        uint16_t fixedSize_;
-        uint16_t hash_;
-    };
+struct FieldDescriptor {
+    FieldTag  tag;
+    FieldType type;
+};
 
-    class FieldIndex {
-    public:
-        FieldIndex(const Schema &schema);
+struct Schema {
+    const Schema          *prototype;
+    uint32_t               hash;
+    const FieldDescriptor *fields;
+    uint16_t               fieldCount;
+    uint16_t               fixedSize;
+};
 
-        uint16_t offset(uint16_t tag) const;
+struct Message {
+    const Message *prototype;
+    const Schema  *schema;
+    const uint8_t *fixedBuffer;
+    uint16_t       fixedSize;
+    const uint8_t *dynamicBuffer;
+    uint16_t       dynamicSize;
+};
 
-    private:
-        std::unordered_map<uint16_t, uint16_t> offsets_;
-    };
+class MessageBuilder {
+public:
+    MessageBuilder();
 
-    class Message {
-    public:
-        Message(const Schema &schema, const uint8_t *data, uint16_t size);
+    void prepare(const Message *prototype = nullptr);
 
-        Message(const Schema &schema,
-                const uint8_t *fixedData, uint16_t fixedSize,
-                const uint8_t *dynamicData, uint16_t dynamicSize);
+    void addField(FieldTag tag, int32_t val);
+    void addField(FieldTag tag, const char *str);
+    void addField(FieldTag tag, const char *str, size_t len);
+    // TODO: Other addField methods
 
-        const Schema &schema() const;
-        const uint8_t *fixedData() const;
-        uint16_t fixedSize() const;
-        const uint8_t *dynamicData() const;
-        uint16_t dynamicSize() const;
+    Message build();
 
-    private:
-        const Schema &schema_;
-        const uint8_t *fixedData_;
-        uint16_t fixedSize_;
-        const uint8_t *dynamicData_;
-        uint16_t dynamicSize_;
-    };
+private:
+    const Message               *prototype_;
+    Schema                       schema_;
+    std::vector<FieldDescriptor> fields_;
+    std::vector<uint8_t>         fixedBuffer_;
+    std::vector<uint8_t>         dynamicBuffer_;
+    uint16_t                     dynamicBase_;
+};
 
-    class MessageBuilder {
-    public:
-        MessageBuilder();
+// A writer should insert the message schema into this to figure
+// out if a schema message should be sent or the fixed hash
+class SchemaWriterMap {
+public:
+    SchemaWriterMap();
 
-        void clear();
+    std::tuple<uint32_t, bool> insert(const Schema *schema);
 
-        template<typename Value>
-        void addField(uint16_t tag, Value value) {
-            assert((fixed_.size() + sizeof(value)) < (1 << 16));
+private:
+    static bool compare(const Schema &lhs, const Schema &rhs);
 
-            const size_t pos = fixed_.size();
-            fixed_.resize(pos + sizeof(value));
-            memcpy(fixed_.data() + pos, &value, sizeof(value));
-
-            schema_.addField(tag, sizeof(value));
-        }
-
-        void addField(uint16_t tag, const uint8_t *data, uint16_t dataSize);
-
-        Message message() const;
-
-    private:
-        Schema schema_;
-        std::vector<uint8_t> fixed_;
-        std::vector<uint8_t> dynamic_;
-    };
-}
+private:
+    std::vector<Schema> schemas_;
+    std::vector<std::unique_ptr<FieldDescriptor[]>> fields_;
+};
 
 #endif // SNW_MSG_H
