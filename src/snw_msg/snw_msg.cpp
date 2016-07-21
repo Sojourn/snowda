@@ -121,35 +121,116 @@ std::tuple<uint32_t, bool> SchemaWriterMap::insert(const Schema *schema) {
     bool found = false;
     uint32_t hash = schema->hash;
 
+    // Find a point to start the search
     auto it = std::lower_bound(schemas_.begin(), schemas_.end(), *schema, compare);
-    if (it == schemas_.end()) {
-        // Not found
-    }
-    else if (it->hash != hash){
-        // Not found
-    }
-    else {
-        // This case is tricky, need to test a lot...
-        const Schema *base = schema;
-        while (base->prototype) {
-            base = base->prototype;
-        }
 
-        while (!found && (it != schemas_.end())) {
-            // TODO
-        }
+    // This should be the common case
+    if ((it != schemas_.end()) && (it->hash == hash) && compareFields(*schema, *it)) {
+        found = true;
     }
 
-    if (found) {
-        return std::make_tuple(it->hash, false);
+    // Resolve collisions
+    while (!found && (it != schemas_.end()) && (it->hash == hash)) {
+        if (!compareFields(*schema, *it)) {
+            ++it;
+            const uint32_t nextHash = hash + 1;
+            if (nextHash < it->hash) {
+                // Insert the schema before it
+                break;
+            }
+            else {
+                hash = nextHash;
+            }
+        }
+        else {
+            found = true;
+        }
     }
-    else {
-        return std::make_tuple(hash, true);
+
+    if (!found) {
+        insert(it, schema, hash);
     }
+
+    return std::make_tuple(hash, !found);
+}
+
+void SchemaWriterMap::insert(std::vector<Schema>::iterator it, const Schema *schema, uint32_t hash) {
+    const Schema *tempSchema;
+    uint16_t fieldCount = 0;
+    uint16_t fixedSize = 0;
+
+    tempSchema = schema;
+    while (tempSchema) {
+        fieldCount += tempSchema->fieldCount;
+        fixedSize += tempSchema->fixedSize;
+        tempSchema = tempSchema->prototype;
+    }
+
+    std::unique_ptr<FieldDescriptor[]> fields(new FieldDescriptor[fieldCount]);
+
+    tempSchema = schema;
+    size_t fieldIndex = fieldCount;
+    while (tempSchema) {
+        for (int i = tempSchema->fieldCount; i >= 0;) {
+            fields[--fieldIndex] = tempSchema->fields[--i];
+        }
+    }
+
+    Schema entry;
+    entry.prototype = nullptr;
+    entry.hash = hash;
+    entry.fields = fields.get();
+    entry.fieldCount = fieldCount;
+    entry.fixedSize = fixedSize;
+    schemas_.insert(it, entry);
+    fields_.push_back(std::move(fields));
 }
 
 bool SchemaWriterMap::compare(const Schema &lhs, const Schema &rhs) {
     return lhs.hash < rhs.hash;
+}
+
+bool SchemaWriterMap::compareFields(const Schema &lhs, const Schema &rhs) {
+    const Schema *lhsSchema = &lhs;
+    const Schema *rhsSchema = &rhs;
+    int lhsIndex = lhsSchema->fieldCount - 1;
+    int rhsIndex = rhsSchema->fieldCount - 1;
+
+    for (;;) {
+        FieldDescriptor lhsFd;
+        FieldDescriptor rhsFd;
+        bool lhsFound;
+        bool rhsFound;
+
+        std::tie(lhsFd, lhsFound) = prev(&lhsSchema, &lhsIndex);
+        std::tie(rhsFd, rhsFound) = prev(&rhsSchema, &rhsIndex);
+
+        if (lhsFound && rhsFound) {
+            if ((lhsFd.tag != rhsFd.tag) || (lhsFd.type != rhsFd.type)) {
+                return false;
+            }
+        }
+        else if (!lhsFound && !rhsFound) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+std::tuple<FieldDescriptor, bool> SchemaWriterMap::prev(const Schema **schema, int *index) {
+    if (*index < 0) {
+        if ((*schema)->prototype) {
+            *schema = (*schema)->prototype;
+            *index = (*schema)->fieldCount - 1;
+        }
+        else {
+            return std::make_tuple(FieldDescriptor(), false);
+        }
+    }
+
+    return std::make_tuple((*schema)->fields[(*index)--], true);
 }
 
 int main(int argc, char **argv) {

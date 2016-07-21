@@ -90,7 +90,11 @@ public:
     std::tuple<uint32_t, bool> insert(const Schema *schema);
 
 private:
+    void insert(std::vector<Schema>::iterator it, const Schema *schema, uint32_t hash);
+
     static bool compare(const Schema &lhs, const Schema &rhs);
+    static bool compareFields(const Schema &lhs, const Schema &rhs);
+    static std::tuple<FieldDescriptor, bool> prev(const Schema **schema, int *index);
 
 private:
     std::vector<Schema> schemas_;
