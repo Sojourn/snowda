@@ -101,4 +101,30 @@ private:
     std::vector<std::unique_ptr<FieldDescriptor[]>> fields_;
 };
 
+struct Buffer {
+    const uint8_t *ptr;
+    size_t len;
+};
+
+struct Frame {
+    uint16_t len;
+    uint8_t  version;
+    uint8_t  flags;
+    uint32_t hash;
+};
+
+class MessageWriter {
+public:
+    MessageWriter();
+
+    const std::vector<Buffer> &write(const Message &message);
+private:
+
+private:
+    SchemaWriterMap      schemaWriterMap_;
+    std::vector<Buffer>  buffers_;
+    Frame                messageFrame_;
+    std::vector<uint8_t> schemaBuffer_;
+};
+
 #endif // SNW_MSG_H
