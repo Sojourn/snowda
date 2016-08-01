@@ -4,6 +4,7 @@ set(SNW_LIBS
 set(SNW_HDRS
     snw_util.h
     snw_fixed_vector.h
+    snw_intrusive_list.h
     snw_result.h
     snw_view.h
     snw_bit_tree.h
@@ -11,6 +12,7 @@ set(SNW_HDRS
 )
 
 set(SNW_SRCS
+    snw_intrusive_list.cpp
     snw_bit_tree.cpp
 )
 

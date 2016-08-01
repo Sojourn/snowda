@@ -6,8 +6,10 @@
 #include <utility>
 #include <type_traits>
 #include <array>
+#include <iterator>
 #include <iostream>
 
+#include <cstdlib>
 #include <cstring>
 #include <cstddef>
 #include <cstdint>
@@ -20,6 +22,7 @@
 #endif
 
 #include "snw_fixed_vector.h"
+#include "snw_intrusive_list.h"
 #include "snw_result.h"
 #include "snw_view.h"
 #include "snw_bit_tree.h"
